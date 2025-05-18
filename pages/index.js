@@ -44,47 +44,17 @@ export default function Home() {
       <h1 className="text-4xl font-bold mb-10">Vote 4 GOAT 🐐</h1>
 
       {duel.length === 2 && (
-        <div className="flex flex-col md:flex-row justify-center gap-6 mb-12">
-          {duel.map((player, idx) => (
-            <div
-              key={player.id}
-              className="bg-white shadow-md rounded-2xl p-4 w-full md:w-64 flex flex-col items-center"
-            >
-              <img
-                src={player.image_url}
-                alt={player.name}
-                className="w-40 h-40 object-cover rounded-xl mb-4 border"
-              />
-              <h2 className="text-lg font-semibold mb-1">{player.name}</h2>
-              <div className="mb-4">
-                {player.country_primary && (
-                  <img
-                    className="inline-block h-5 w-5"
-                    src={`https://flagcdn.com/h40/${player.country_primary.toLowerCase()}.png`}
-                  />
-                )}
-                {player.country_secondary && (
-                  <img
-                    className="inline-block h-5 w-5 ml-1"
-                    src={`https://flagcdn.com/h40/${player.country_secondary.toLowerCase()}.png`}
-                  />
-                )}
-              </div>
-              <button
-                className="bg-black hover:bg-gray-800 text-white text-sm px-4 py-2 rounded-lg"
-                onClick={() => vote(player.id, duel[1 - idx].id)}
-              >
-                Vote
-              </button>
-            </div>
-          ))}
+        <div className="flex flex-col md:flex-row justify-center items-center gap-6 mb-12">
+          <PlayerCard player={duel[0]} onVote={() => vote(duel[0].id, duel[1].id)} />
+          <div className="text-3xl font-bold text-gray-600">VS</div>
+          <PlayerCard player={duel[1]} onVote={() => vote(duel[1].id, duel[0].id)} />
         </div>
       )}
 
       <h2 className="text-2xl font-semibold mb-4">Top {limit} Ranking</h2>
 
       <div className="overflow-x-auto">
-        <table className="mx-auto bg-white rounded-xl shadow-md">
+        <table className="mx-auto bg-white rounded-xl shadow-md text-sm">
           <thead>
             <tr className="bg-gray-200">
               <th className="px-4 py-2">#</th>
@@ -94,7 +64,7 @@ export default function Home() {
           </thead>
           <tbody>
             {ranking.map((player, i) => (
-              <tr key={player.id} className="border-t text-sm">
+              <tr key={player.id} className="border-t">
                 <td className="px-4 py-2">{i + 1}</td>
                 <td className="px-4 py-2">{player.name}</td>
                 <td className="px-4 py-2">{Math.round(player.rating)}</td>
@@ -104,7 +74,7 @@ export default function Home() {
         </table>
       </div>
 
-      {ranking.length >= limit && (
+      {ranking.length >= limit && limit < 50 && (
         <button
           className="mt-6 text-blue-600 underline text-sm"
           onClick={() => {
@@ -117,5 +87,38 @@ export default function Home() {
         </button>
       )}
     </main>
+  )
+}
+
+function PlayerCard({ player, onVote }) {
+  return (
+    <div className="bg-white shadow-md rounded-2xl p-4 w-full md:w-64 flex flex-col items-center">
+      <img
+        src={player.image_url}
+        alt={player.name}
+        className="w-40 h-40 object-cover rounded-xl mb-4 border"
+      />
+      <h2 className="text-lg font-semibold mb-1">{player.name}</h2>
+      <div className="mb-4">
+        {player.country_primary && (
+          <img
+            className="inline-block h-5 w-5"
+            src={`https://flagcdn.com/h40/${player.country_primary.toLowerCase()}.png`}
+          />
+        )}
+        {player.country_secondary && (
+          <img
+            className="inline-block h-5 w-5 ml-1"
+            src={`https://flagcdn.com/h40/${player.country_secondary.toLowerCase()}.png`}
+          />
+        )}
+      </div>
+      <button
+        className="bg-black hover:bg-gray-800 text-white text-sm px-4 py-2 rounded-lg"
+        onClick={onVote}
+      >
+        Vote
+      </button>
+    </div>
   )
 }
