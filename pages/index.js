@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
@@ -36,7 +35,7 @@ export default function Home() {
       winner_id_input: winnerId,
       loser_id_input: loserId
     })
-    fetchDuel()
+    fetchDuel() // ✅ nuevo duelo completo
     fetchRanking(limit)
   }
 
@@ -44,9 +43,9 @@ export default function Home() {
     <main className="min-h-screen bg-gray-100 p-4 text-center">
       <h1 className="text-3xl font-bold mb-6">Vote 4 GOAT 🐐</h1>
       {duel.length === 2 && (
-        <div className="flex justify-center gap-8 mb-8 flex-wrap">
+        <div className="flex flex-col md:flex-row justify-center gap-8 mb-8">
           {duel.map((player, idx) => (
-            <div key={player.id} className="bg-white rounded-2xl shadow-lg p-4 w-64">
+            <div key={player.id} className="bg-white rounded-2xl shadow-lg p-4 w-full md:w-64">
               <img
                 src={player.image_url}
                 alt={player.name}
@@ -54,8 +53,18 @@ export default function Home() {
               />
               <h2 className="text-xl font-semibold mb-1">{player.name}</h2>
               <div className="mb-2">
-                {player.country_primary && <img className="inline-block h-5 w-5" src={`https://flagcdn.com/h40/${player.country_primary.toLowerCase()}.png`} />}
-                {player.country_secondary && <img className="inline-block h-5 w-5 ml-1" src={`https://flagcdn.com/h40/${player.country_secondary.toLowerCase()}.png`} />}
+                {player.country_primary && (
+                  <img
+                    className="inline-block h-5 w-5"
+                    src={`https://flagcdn.com/h40/${player.country_primary.toLowerCase()}.png`}
+                  />
+                )}
+                {player.country_secondary && (
+                  <img
+                    className="inline-block h-5 w-5 ml-1"
+                    src={`https://flagcdn.com/h40/${player.country_secondary.toLowerCase()}.png`}
+                  />
+                )}
               </div>
               <button
                 className="bg-black text-white rounded-xl px-4 py-2 mt-2"
