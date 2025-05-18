@@ -35,24 +35,28 @@ export default function Home() {
       winner_id_input: winnerId,
       loser_id_input: loserId
     })
-    fetchDuel() // ✅ nuevo duelo completo
+    fetchDuel()
     fetchRanking(limit)
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 p-4 text-center">
-      <h1 className="text-3xl font-bold mb-6">Vote 4 GOAT 🐐</h1>
+    <main className="min-h-screen bg-gray-50 px-4 py-8 text-center">
+      <h1 className="text-4xl font-bold mb-10">Vote 4 GOAT 🐐</h1>
+
       {duel.length === 2 && (
-        <div className="flex flex-col md:flex-row justify-center gap-8 mb-8">
+        <div className="flex flex-col md:flex-row justify-center gap-6 mb-12">
           {duel.map((player, idx) => (
-            <div key={player.id} className="bg-white rounded-2xl shadow-lg p-4 w-full md:w-64">
+            <div
+              key={player.id}
+              className="bg-white shadow-md rounded-2xl p-4 w-full md:w-64 flex flex-col items-center"
+            >
               <img
                 src={player.image_url}
                 alt={player.name}
-                className="w-full h-64 object-cover rounded-xl mb-2"
+                className="w-40 h-40 object-cover rounded-xl mb-4 border"
               />
-              <h2 className="text-xl font-semibold mb-1">{player.name}</h2>
-              <div className="mb-2">
+              <h2 className="text-lg font-semibold mb-1">{player.name}</h2>
+              <div className="mb-4">
                 {player.country_primary && (
                   <img
                     className="inline-block h-5 w-5"
@@ -67,7 +71,7 @@ export default function Home() {
                 )}
               </div>
               <button
-                className="bg-black text-white rounded-xl px-4 py-2 mt-2"
+                className="bg-black hover:bg-gray-800 text-white text-sm px-4 py-2 rounded-lg"
                 onClick={() => vote(player.id, duel[1 - idx].id)}
               >
                 Vote
@@ -77,28 +81,32 @@ export default function Home() {
         </div>
       )}
 
-      <h2 className="text-2xl font-bold mb-4">Top {limit} Ranking</h2>
-      <table className="mx-auto bg-white rounded-xl shadow-lg">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="px-4 py-2">#</th>
-            <th className="px-4 py-2">Player</th>
-            <th className="px-4 py-2">Rating</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ranking.map((player, i) => (
-            <tr key={player.id} className="border-t">
-              <td className="px-4 py-2">{i + 1}</td>
-              <td className="px-4 py-2">{player.name}</td>
-              <td className="px-4 py-2">{Math.round(player.rating)}</td>
+      <h2 className="text-2xl font-semibold mb-4">Top {limit} Ranking</h2>
+
+      <div className="overflow-x-auto">
+        <table className="mx-auto bg-white rounded-xl shadow-md">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="px-4 py-2">#</th>
+              <th className="px-4 py-2">Player</th>
+              <th className="px-4 py-2">Rating</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {ranking.map((player, i) => (
+              <tr key={player.id} className="border-t text-sm">
+                <td className="px-4 py-2">{i + 1}</td>
+                <td className="px-4 py-2">{player.name}</td>
+                <td className="px-4 py-2">{Math.round(player.rating)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       {ranking.length >= limit && (
         <button
-          className="mt-4 text-blue-500 underline"
+          className="mt-6 text-blue-600 underline text-sm"
           onClick={() => {
             const newLimit = limit + 10
             setLimit(newLimit)
