@@ -43,7 +43,7 @@ export default function Home() {
     <main className="min-h-screen bg-[#D9DEE4] px-4 py-8 text-center text-black">
       <header className="flex items-center justify-between px-6 py-4 border-b border-gray-300">
         <div className="flex items-center gap-2">
-          <img src="/logo.svg" alt="logo" className="h-8 w-8" />
+          <img src="/logo.png" alt="logo" className="h-8 w-8" />
           <span className="text-2xl font-bold">DUELS</span>
         </div>
         <nav className="flex gap-4">
