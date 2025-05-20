@@ -44,7 +44,9 @@ export default function Home() {
       <header className="flex items-center justify-between px-6 py-4 border-b border-goat">
         <div className="flex items-center gap-4">
           <img src="/logo.png" alt="logo" className="h-20 w-20" />
-          <span className="text-3xl font-bold">DUELS</span>
+          <span className="text-3xl font-bold">
+  D<span className="text-goat">V</span>EL<span className="text-goat">S</span>
+</span>
         </div>
         <nav className="flex gap-4">
           <img src="/icons/football.svg" alt="Football" className="h-5 w-5" />
