@@ -128,15 +128,21 @@ function PlayerCard({ player, onVote }) {
   return (
     <button
       onClick={onVote}
-      className="bg-white shadow-md rounded-2xl p-4 w-full md:w-64 flex flex-col items-center transition hover:scale-105 hover:ring-4 hover:ring-goat focus:outline-none cursor-pointer"
+      className="bg-white shadow-md rounded-2xl p-4 w-full md:w-64 h-[350px] flex flex-col items-center justify-between transition hover:scale-105 hover:ring-4 hover:ring-goat focus:outline-none cursor-pointer"
     >
-      <img
-        src={player.image_url}
-        alt={player.name}
-        className="w-40 h-40 object-cover rounded-xl mb-4 border"
-      />
+      {player.image_url ? (
+        <img
+          src={player.image_url}
+          alt={player.name}
+          className="w-40 h-40 object-cover rounded-xl mb-4 border"
+        />
+      ) : (
+        <div className="w-40 h-40 bg-gray-200 rounded-xl mb-4 border flex items-center justify-center text-gray-500 text-xs">
+          No image
+        </div>
+      )}
       <div className="text-sm font-medium tracking-wide text-gray-700">{firstName.toUpperCase()}</div>
-      <div className="text-2xl font-extrabold text-gray-900 mb-2">{lastName.toUpperCase()}</div>
+      <div className="text-2xl font-extrabold text-gray-900">{lastName.toUpperCase()}</div>
       <div>
         {player.country_primary && (
           <img
@@ -154,3 +160,4 @@ function PlayerCard({ player, onVote }) {
     </button>
   )
 }
+
