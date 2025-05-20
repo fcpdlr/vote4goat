@@ -40,11 +40,11 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#D9DEE4] px-4 py-8 text-center text-black">
-      <header className="flex items-center justify-between px-6 py-4 border-b border-gray-300">
-        <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="logo" className="h-8 w-8" />
-          <span className="text-2xl font-bold">DUELS</span>
+    <main className="min-h-screen bg-[#1E2A38] px-4 py-8 text-center text-white font-sans">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-[#D98C3F]">
+        <div className="flex items-center gap-4">
+          <img src="/logo.png" alt="logo" className="h-12 w-12" />
+          <span className="text-3xl font-bold">DUELS</span>
         </div>
         <nav className="flex gap-4">
           <img src="/icons/football.svg" alt="Football" className="h-5 w-5" />
@@ -52,6 +52,8 @@ export default function Home() {
           <img src="/icons/tennis.svg" alt="Tennis" className="h-5 w-5" />
         </nav>
       </header>
+
+      <h1 className="text-4xl font-extrabold mt-10 mb-6 text-[#D98C3F]">WHO IS THE GOAT?</h1>
 
       {duel.length === 2 && (
         <section className="flex flex-col items-center justify-center px-4 py-12">
@@ -63,7 +65,7 @@ export default function Home() {
         </section>
       )}
 
-      <div id="ranking-section" className="bg-white px-6 py-12 mt-8 rounded-t-3xl shadow-inner">
+      <div id="ranking-section" className="bg-white text-black px-6 py-12 mt-8 rounded-t-3xl shadow-inner">
         <h2 className="text-2xl font-bold mb-6">Top {limit} Ranking</h2>
 
         <div className="overflow-x-auto">
@@ -130,8 +132,8 @@ function PlayerCard({ player, onVote }) {
         alt={player.name}
         className="w-40 h-40 object-cover rounded-xl mb-4 border"
       />
-      <div className="text-sm font-medium tracking-wide">{firstName.toUpperCase()}</div>
-      <div className="text-2xl font-extrabold mb-2">{lastName.toUpperCase()}</div>
+      <div className="text-sm font-medium tracking-wide text-gray-700">{firstName.toUpperCase()}</div>
+      <div className="text-2xl font-extrabold text-gray-900 mb-2">{lastName.toUpperCase()}</div>
       <div className="mb-4">
         {player.country_primary && (
           <img
