@@ -43,7 +43,7 @@ export default function Home() {
     <main className="min-h-screen bg-background px-4 py-8 text-center text-white font-sans">
       <header className="flex items-center justify-between px-6 py-4 border-b border-goat">
         <div className="flex items-center gap-4">
-          <img src="/logo.png" alt="logo" className="h-12 w-12" />
+          <img src="/logo.png" alt="logo" className="h-20 w-20" />
           <span className="text-3xl font-bold">DUELS</span>
         </div>
         <nav className="flex gap-4">
@@ -128,7 +128,7 @@ function PlayerCard({ player, onVote }) {
   return (
     <button
       onClick={onVote}
-      className="bg-white shadow-md rounded-2xl p-4 w-full md:w-64 flex flex-col items-center transition hover:scale-105 hover:ring-4 hover:ring-goat focus:outline-none"
+      className="bg-white shadow-md rounded-2xl p-4 w-full md:w-64 flex flex-col items-center transition hover:scale-105 hover:ring-4 hover:ring-goat focus:outline-none cursor-pointer"
     >
       <img
         src={player.image_url}
