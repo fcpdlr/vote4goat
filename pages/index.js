@@ -40,8 +40,8 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#1E2A38] px-4 py-8 text-center text-white font-sans">
-      <header className="flex items-center justify-between px-6 py-4 border-b border-[#D98C3F]">
+    <main className="min-h-screen bg-background px-4 py-8 text-center text-white font-sans">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-goat">
         <div className="flex items-center gap-4">
           <img src="/logo.png" alt="logo" className="h-12 w-12" />
           <span className="text-3xl font-bold">DUELS</span>
@@ -53,13 +53,13 @@ export default function Home() {
         </nav>
       </header>
 
-      <h1 className="text-4xl font-extrabold mt-10 mb-6 text-[#D98C3F]">WHO IS THE GOAT?</h1>
+      <h1 className="text-4xl font-extrabold mt-10 mb-6 text-goat">WHO IS THE GOAT?</h1>
 
       {duel.length === 2 && (
         <section className="flex flex-col items-center justify-center px-4 py-12">
           <div className="flex items-center gap-6">
             <PlayerCard player={duel[0]} onVote={() => vote(duel[0].id, duel[1].id)} />
-            <div className="text-[#D98C3F] text-4xl font-extrabold">VS</div>
+            <div className="text-goat text-4xl font-extrabold">VS</div>
             <PlayerCard player={duel[1]} onVote={() => vote(duel[1].id, duel[0].id)} />
           </div>
         </section>
@@ -126,7 +126,10 @@ function PlayerCard({ player, onVote }) {
   const lastName = lastNameParts.join(" ")
 
   return (
-    <div className="bg-white shadow-md rounded-2xl p-4 w-full md:w-64 flex flex-col items-center">
+    <button
+      onClick={onVote}
+      className="bg-white shadow-md rounded-2xl p-4 w-full md:w-64 flex flex-col items-center transition hover:scale-105 hover:ring-4 hover:ring-goat focus:outline-none"
+    >
       <img
         src={player.image_url}
         alt={player.name}
@@ -134,7 +137,7 @@ function PlayerCard({ player, onVote }) {
       />
       <div className="text-sm font-medium tracking-wide text-gray-700">{firstName.toUpperCase()}</div>
       <div className="text-2xl font-extrabold text-gray-900 mb-2">{lastName.toUpperCase()}</div>
-      <div className="mb-4">
+      <div>
         {player.country_primary && (
           <img
             className="inline-block h-5 w-5"
@@ -148,12 +151,6 @@ function PlayerCard({ player, onVote }) {
           />
         )}
       </div>
-      <button
-        className="bg-[#D98C3F] hover:opacity-90 text-white text-sm px-4 py-2 rounded-full"
-        onClick={onVote}
-      >
-        Vote
-      </button>
-    </div>
+    </button>
   )
 }
