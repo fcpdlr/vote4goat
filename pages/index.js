@@ -65,7 +65,7 @@ export default function Home() {
 
 
       {duel.length === 2 && (
-        <section className="flex items-center justify-center px-4 py-12 relative">
+        <section className="flex flex-col items-center justify-center px-4 py-12 relative">
   <div className="flex flex-row items-center justify-center gap-6">
     <PlayerCard player={duel[0]} onVote={() => vote(duel[0].id, duel[1].id)} />
     <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg z-10">VS</div>
