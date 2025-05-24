@@ -62,6 +62,12 @@ export default function Home() {
       </header>
 
       <h1 className="text-4xl font-extrabold mt-10 mb-6 text-goat">WHO IS THE GOAT?</h1>
+<button
+  onClick={() => document.getElementById('ranking-section')?.scrollIntoView({ behavior: 'smooth' })}
+  className="text-white underline text-sm mb-6"
+>
+  RANKING ↓
+</button>
 
       {duel.length === 2 && (
         <section className="flex items-center justify-center px-4 py-12 relative">
@@ -74,7 +80,10 @@ export default function Home() {
       )}
 
       <div id="ranking-section" className="bg-white text-black px-6 py-12 mt-8 rounded-t-3xl shadow-inner">
-        <h2 className="text-2xl font-bold mb-6">Top {limit} Ranking</h2>
+        <h2 className="text-2xl font-bold mb-6">
+  <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline text-sm mr-2">↑ VOTE</button>
+  RANKING
+</h2>
 
         <div className="overflow-x-auto">
           <table className="mx-auto bg-white rounded-xl shadow-md text-sm">
