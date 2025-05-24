@@ -82,29 +82,12 @@ export default function Home() {
               <tr className="bg-gray-200">
                 <th className="px-4 py-2">#</th>
                 <th className="px-4 py-2">Player</th>
-                <th className="px-4 py-2">Country</th>
-                <th className="px-4 py-2">Rating</th>
+                                <th className="px-4 py-2">Rating</th>
               </tr>
             </thead>
             <tbody>
               {ranking.map((player, i) => (
                 <tr key={player.id} className="border-t">
-                  <td className="px-4 py-2">{i + 1}</td>
-                  <td className="px-4 py-2">{player.name}</td>
-                  <td className="px-4 py-2">
-                    {player.country_primary && (
-                      <img
-                        className="inline-block h-5 w-5"
-                        src={`https://flagcdn.com/h40/${player.country_primary.toLowerCase()}.png`}
-                      />
-                    )}
-                    {player.country_secondary && (
-                      <img
-                        className="inline-block h-5 w-5 ml-1"
-                        src={`https://flagcdn.com/h40/${player.country_secondary.toLowerCase()}.png`}
-                      />
-                    )}
-                  </td>
                   <td className="px-4 py-2">{Math.round(player.rating)}</td>
                 </tr>
               ))}
@@ -149,26 +132,12 @@ function PlayerCard({ player, onVote }) {
           No image
         </div>
       )}
-      <div className="mt-2 text-sm font-medium tracking-wide text-white">
-        {firstName.toUpperCase()}
-      </div>
-      <div className="text-xl font-extrabold text-white">
-        {lastName.toUpperCase()}
-      </div>
-      <div className="mt-1">
-        {player.country_primary && (
-          <img
-            className="inline-block h-5 w-5"
-            src={`https://flagcdn.com/h40/${player.country_primary.toLowerCase()}.png`}
-          />
-        )}
-        {player.country_secondary && (
-          <img
-            className="inline-block h-5 w-5 ml-1"
-            src={`https://flagcdn.com/h40/${player.country_secondary.toLowerCase()}.png`}
-          />
-        )}
-      </div>
+      <div className="mt-2 text-xs font-medium tracking-wide text-white">
+  {lastName ? firstName.toUpperCase() : ""}
+</div>
+<div className="text-xl font-extrabold text-goat">
+  {(lastName || firstName).toUpperCase()}
+</div>
     </button>
   )
 }
