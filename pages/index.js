@@ -49,9 +49,9 @@ export default function Home() {
 </span>
         </div>
         <nav className="flex gap-4">
-          <img src="/icons/football.svg" alt="Football" className="h-5 w-5" />
-          <img src="/icons/basketball.svg" alt="Basketball" className="h-5 w-5" />
-          <img src="/icons/tennis.svg" alt="Tennis" className="h-5 w-5" />
+          <img src="/icons/football_logo.svg" alt="Football" className="h-5 w-5" />
+          <img src="/icons/basketball_logo.svg" alt="Basketball" className="h-5 w-5" />
+          <img src="/icons/tennis_logo.svg" alt="Tennis" className="h-5 w-5" />
         </nav>
       </header>
 
