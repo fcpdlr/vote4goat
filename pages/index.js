@@ -91,17 +91,21 @@ export default function Home() {
           <table className="mx-auto w-full text-sm">
             <thead>
               <tr>
-                <th className="px-4 py-2 text-goat text-left">RANK</th>
-                <th className="px-4 py-2 text-goat text-left">PLAYER</th>
+  <th className="px-4 py-2 text-goat text-left">RANK</th>
+  <th className="px-4 py-2 text-goat text-center">PLAYER</th>
+  <th className="px-4 py-2 text-goat text-left">POINTS</th>
+  <th className="px-4 py-2 text-goat text-left">WIN%</th>
+                <th className="px-4 py-2 text-goat text-center">PLAYER</th>
                                 <th className="px-4 py-2 text-goat text-left">POINTS</th>
               </tr>
             </thead>
             <tbody>
   {ranking.map((player, i) => (
-    <tr key={player.id} className="border-t">
+    <tr key={player.id} className="border-t border-goat/30 hover:bg-white/5 transition">
       <td className="px-4 py-2">{i + 1}</td>
-      <td className="px-4 py-2 text-white font-semibold">{player.name}</td>
+      <td className="px-4 py-2 text-white font-semibold text-center">{player.name}</td>
       <td className="px-4 py-2">{Math.round(player.rating)}</td>
+<td className="px-4 py-2">{player.votes_won + player.votes_lost > 0 ? Math.round((player.votes_won / (player.votes_won + player.votes_lost)) * 100) + '%' : '-'}</td>
     </tr>
   ))}
 </tbody>
