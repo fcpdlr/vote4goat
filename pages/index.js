@@ -49,10 +49,17 @@ export default function Home() {
 </span>
         </div>
         <nav className="flex gap-4">
-          <img src="/icons/football_logo.svg" alt="Football" className="h-5 w-5" />
-          <img src="/icons/basketball_logo.svg" alt="Basketball" className="h-5 w-5" />
-          <img src="/icons/tennis_logo.svg" alt="Tennis" className="h-5 w-5" />
-        </nav>
+  <img src="/icons/football_logo.svg" alt="Football" className="h-5 w-5" />
+  <img src="/icons/basketball_logo.svg" alt="Basketball" className="h-5 w-5" />
+  <img src="/icons/tennis_logo.svg" alt="Tennis" className="h-5 w-5" />
+  <img src="/icons/chess_logo.svg" alt="Chess" className="h-5 w-5" />
+  <img src="/icons/formula1_logo.svg" alt="F1" className="h-5 w-5" />
+  <img src="/icons/golf_logo.svg" alt="Golf" className="h-5 w-5" />
+  <img src="/icons/nfl_logo.svg" alt="NFL" className="h-5 w-5" />
+  <img src="/icons/cycling_logo.svg" alt="Cycling" className="h-5 w-5" />
+  <img src="/icons/moto_logo.svg" alt="MotoGP" className="h-5 w-5" />
+  <img src="/icons/boxing_logo.svg" alt="Boxing" className="h-5 w-5" />
+</nav>
       </header>
 
       <h1 className="text-4xl font-extrabold mt-10 mb-6 text-goat">WHO IS THE GOAT?</h1>
