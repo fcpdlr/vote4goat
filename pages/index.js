@@ -94,18 +94,17 @@ export default function Home() {
   <th className="px-4 py-2 text-goat text-left">RANK</th>
   <th className="px-4 py-2 text-goat text-center">PLAYER</th>
   <th className="px-4 py-2 text-goat text-left">POINTS</th>
-  <th className="px-4 py-2 text-goat text-left">WIN%</th>
-                <th className="px-4 py-2 text-goat text-center">PLAYER</th>
+                  <th className="px-4 py-2 text-goat text-center">PLAYER</th>
                                 <th className="px-4 py-2 text-goat text-left">POINTS</th>
               </tr>
             </thead>
             <tbody>
   {ranking.map((player, i) => (
-    <tr key={player.id} className="border-t border-goat/30 hover:bg-white/5 transition">
+    {/* Estilo especial para el top 3 */}
+<tr key={player.id} className={`border-t border-goat/30 hover:bg-white/5 transition ${i === 0 ? 'bg-goat/10 font-bold text-goat' : i === 1 ? 'bg-goat/5 font-semibold text-goat/90' : i === 2 ? 'bg-goat/5 text-goat/80' : ''}`}>
       <td className="px-4 py-2">{i + 1}</td>
       <td className="px-4 py-2 text-white font-semibold text-center">{player.name}</td>
       <td className="px-4 py-2">{Math.round(player.rating)}</td>
-<td className="px-4 py-2">{player.votes_won + player.votes_lost > 0 ? Math.round((player.votes_won / (player.votes_won + player.votes_lost)) * 100) + '%' : '-'}</td>
     </tr>
   ))}
 </tbody>
