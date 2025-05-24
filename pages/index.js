@@ -41,16 +41,16 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-background px-4 py-8 text-center text-white font-sans">
-      <header className="flex items-center justify-between px-6 py-4 border-b border-goat">
+      <header className="flex flex-col md:flex-row items-center justify-between px-6 py-4 border-b border-goat gap-4">
         <div className="flex items-center gap-4">
           <img src="/logo.png" alt="logo" className="h-20 w-20" />
           <span className="text-3xl font-bold">
   D<span className="text-goat">V</span>EL<span className="text-goat">S</span>
 </span>
         </div>
-        <nav className="flex gap-8 items-center justify-end">
+        <nav className="flex gap-6 items-center justify-center md:justify-end">
   <a href="/football">
-    <img src="/icons/football_logo.png" alt="Football" className="h-10 w-10" />
+    <img src="/icons/football_logo.png" alt="Football" className="h-12 w-12" />
   </a>
   <a href="/basketball">
     <img src="/icons/basketball_logo.png" alt="Basketball" className="h-10 w-10" />
@@ -64,8 +64,8 @@ export default function Home() {
       <h1 className="text-4xl font-extrabold mt-10 mb-6 text-goat">WHO IS THE GOAT?</h1>
 
       {duel.length === 2 && (
-        <section className="flex flex-col items-center justify-center px-4 py-12">
-          <div className="flex items-center gap-6">
+        <section className="flex items-center justify-center px-4 py-12">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6">
             <PlayerCard player={duel[0]} onVote={() => vote(duel[0].id, duel[1].id)} />
             <div className="text-goat text-4xl font-extrabold">VS</div>
             <PlayerCard player={duel[1]} onVote={() => vote(duel[1].id, duel[0].id)} />
