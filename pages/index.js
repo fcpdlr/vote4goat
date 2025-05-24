@@ -48,17 +48,16 @@ export default function Home() {
   D<span className="text-goat">V</span>EL<span className="text-goat">S</span>
 </span>
         </div>
-        <nav className="flex gap-4">
-  <img src="/icons/football_logo.png" alt="Football" className="h-5 w-5" />
-  <img src="/icons/basketball_logo.png" alt="Basketball" className="h-5 w-5" />
-  <img src="/icons/tennis_logo.png" alt="Tennis" className="h-5 w-5" />
-  <img src="/icons/chess_logo.png" alt="Chess" className="h-5 w-5" />
-  <img src="/icons/formula1_logo.png" alt="F1" className="h-5 w-5" />
-  <img src="/icons/golf_logo.png" alt="Golf" className="h-5 w-5" />
-  <img src="/icons/nfl_logo.png" alt="NFL" className="h-5 w-5" />
-  <img src="/icons/cycling_logo.png" alt="Cycling" className="h-5 w-5" />
-  <img src="/icons/moto_logo.png" alt="MotoGP" className="h-5 w-5" />
-  <img src="/icons/boxing_logo.png" alt="Boxing" className="h-5 w-5" />
+        <nav className="flex gap-8 items-center justify-end">
+  <a href="/football">
+    <img src="/icons/football_logo.png" alt="Football" className="h-10 w-10" />
+  </a>
+  <a href="/basketball">
+    <img src="/icons/basketball_logo.png" alt="Basketball" className="h-10 w-10" />
+  </a>
+  <a href="/tennis">
+    <img src="/icons/tennis_logo.png" alt="Tennis" className="h-10 w-10" />
+  </a>
 </nav>
       </header>
 
@@ -169,4 +168,3 @@ function PlayerCard({ player, onVote }) {
     </button>
   )
 }
-
