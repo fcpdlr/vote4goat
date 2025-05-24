@@ -91,18 +91,20 @@ export default function Home() {
           <table className="mx-auto bg-white rounded-xl shadow-md text-sm">
             <thead>
               <tr className="bg-gray-200">
-                <th className="px-4 py-2">#</th>
-                <th className="px-4 py-2">Player</th>
-                                <th className="px-4 py-2">Rating</th>
+                <th className="px-4 py-2">RANK</th>
+                <th className="px-4 py-2">PLAYER</th>
+                                <th className="px-4 py-2">POINTS</th>
               </tr>
             </thead>
             <tbody>
-              {ranking.map((player, i) => (
-                <tr key={player.id} className="border-t">
-                  <td className="px-4 py-2">{Math.round(player.rating)}</td>
-                </tr>
-              ))}
-            </tbody>
+  {ranking.map((player, i) => (
+    <tr key={player.id} className="border-t">
+      <td className="px-4 py-2">{i + 1}</td>
+      <td className="px-4 py-2 text-black font-semibold">{player.name}</td>
+      <td className="px-4 py-2">{Math.round(player.rating)}</td>
+    </tr>
+  ))}
+</tbody>
           </table>
         </div>
 
