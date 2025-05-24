@@ -80,7 +80,7 @@ export default function Home() {
 </section>
       )}
 
-      <div id="ranking-section" className="bg-white text-black px-6 py-12 mt-8 rounded-t-3xl shadow-inner">
+      <div id="ranking-section" className="bg-background text-white px-6 py-12 mt-8 rounded-t-3xl">
         <div className="text-center text-sm mb-2">
   <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline">↑ VOTE</button>
 </div>
@@ -88,19 +88,19 @@ export default function Home() {
 </h2>
 
         <div className="overflow-x-auto">
-          <table className="mx-auto bg-white rounded-xl shadow-md text-sm">
+          <table className="mx-auto w-full text-sm">
             <thead>
-              <tr className="bg-gray-200">
-                <th className="px-4 py-2">RANK</th>
-                <th className="px-4 py-2">PLAYER</th>
-                                <th className="px-4 py-2">POINTS</th>
+              <tr>
+                <th className="px-4 py-2 text-goat text-left">RANK</th>
+                <th className="px-4 py-2 text-goat text-left">PLAYER</th>
+                                <th className="px-4 py-2 text-goat text-left">POINTS</th>
               </tr>
             </thead>
             <tbody>
   {ranking.map((player, i) => (
     <tr key={player.id} className="border-t">
       <td className="px-4 py-2">{i + 1}</td>
-      <td className="px-4 py-2 text-black font-semibold">{player.name}</td>
+      <td className="px-4 py-2 text-white font-semibold">{player.name}</td>
       <td className="px-4 py-2">{Math.round(player.rating)}</td>
     </tr>
   ))}
