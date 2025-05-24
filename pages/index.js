@@ -142,7 +142,7 @@ function PlayerCard({ player, onVote }) {
         <img
           src={player.image_url}
           alt={player.name}
-          className="w-40 h-40 object-cover rounded-xl border mx-auto"
+          className="w-40 h-40 object-cover rounded-xl border mx-auto transition duration-200 ease-in-out hover:ring-4 hover:ring-goat hover:brightness-110"
         />
       ) : (
         <div className="w-40 h-40 bg-gray-200 rounded-xl border flex items-center justify-center text-gray-500 text-xs mx-auto">
