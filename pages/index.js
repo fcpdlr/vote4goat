@@ -64,10 +64,10 @@ export default function Home() {
       <h1 className="text-4xl font-extrabold mt-10 mb-6 text-goat">WHO IS THE GOAT?</h1>
 
       {duel.length === 2 && (
-        <section className="flex items-center justify-center px-4 py-12">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+        <section className="flex items-center justify-center px-4 py-12 relative">
+          <div className="flex flex-row items-center justify-center gap-6">
             <PlayerCard player={duel[0]} onVote={() => vote(duel[0].id, duel[1].id)} />
-            <div className="text-goat text-4xl font-extrabold">VS</div>
+            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg z-10">VS</div>
             <PlayerCard player={duel[1]} onVote={() => vote(duel[1].id, duel[0].id)} />
           </div>
         </section>
