@@ -62,27 +62,29 @@ export default function Home() {
       </header>
 
       <h1 className="text-4xl font-extrabold mt-10 mb-6 text-goat">WHO IS THE GOAT?</h1>
-<button
-  onClick={() => document.getElementById('ranking-section')?.scrollIntoView({ behavior: 'smooth' })}
-  className="text-white underline text-sm mb-6"
->
-  RANKING ↓
-</button>
+
 
       {duel.length === 2 && (
         <section className="flex items-center justify-center px-4 py-12 relative">
-          <div className="flex flex-row items-center justify-center gap-6">
-            <PlayerCard player={duel[0]} onVote={() => vote(duel[0].id, duel[1].id)} />
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg z-10">VS</div>
-            <PlayerCard player={duel[1]} onVote={() => vote(duel[1].id, duel[0].id)} />
-          </div>
-        </section>
+  <div className="flex flex-row items-center justify-center gap-6">
+    <PlayerCard player={duel[0]} onVote={() => vote(duel[0].id, duel[1].id)} />
+    <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg z-10">VS</div>
+    <PlayerCard player={duel[1]} onVote={() => vote(duel[1].id, duel[0].id)} />
+  </div>
+  <button
+    onClick={() => document.getElementById('ranking-section')?.scrollIntoView({ behavior: 'smooth' })}
+    className="mt-10 text-white underline text-sm"
+  >
+    RANKING ↓
+  </button>
+</section>
       )}
 
       <div id="ranking-section" className="bg-white text-black px-6 py-12 mt-8 rounded-t-3xl shadow-inner">
-        <h2 className="text-2xl font-bold mb-6">
-  <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline text-sm mr-2">↑ VOTE</button>
-  RANKING
+        <div className="text-center text-sm mb-2">
+  <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline">↑ VOTE</button>
+</div>
+<h2 className="text-2xl font-bold mb-6 text-center">RANKING
 </h2>
 
         <div className="overflow-x-auto">
