@@ -27,32 +27,40 @@ export default function ManualDuel() {
       .in('id', [id1, id2])
 
     if (players) {
-      setPlayer1(players.find(p => p.id === id1))
-      setPlayer2(players.find(p => p.id === id2))
+      setPlayer1(players.find(p => String(p.id) === String(id1)))
+      setPlayer2(players.find(p => String(p.id) === String(id2)))
     }
   }
 
   return (
     <main className="min-h-screen bg-background flex items-center justify-center text-white px-4 py-8">
       <div className="flex flex-col md:flex-row items-center justify-center gap-8 relative">
-        {player1 && (
+        {player1 ? (
           <img
             src={player1.image_url}
             alt=""
             className="w-40 h-40 md:w-64 md:h-64 object-cover rounded-xl border"
           />
+        ) : (
+          <div className="w-40 h-40 md:w-64 md:h-64 bg-gray-700 rounded-xl flex items-center justify-center text-white text-xs">
+            No Image
+          </div>
         )}
 
         <div className="text-goat text-2xl md:text-4xl font-bold absolute md:static top-1/2 -translate-y-1/2 z-10 bg-background px-4 py-2 rounded-full border border-goat">
           VS
         </div>
 
-        {player2 && (
+        {player2 ? (
           <img
             src={player2.image_url}
             alt=""
             className="w-40 h-40 md:w-64 md:h-64 object-cover rounded-xl border"
           />
+        ) : (
+          <div className="w-40 h-40 md:w-64 md:h-64 bg-gray-700 rounded-xl flex items-center justify-center text-white text-xs">
+            No Image
+          </div>
         )}
       </div>
     </main>
