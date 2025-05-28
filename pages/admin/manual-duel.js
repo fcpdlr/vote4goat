@@ -19,7 +19,9 @@ export default function ManualDuel() {
         .select('id, name, image_url')
         .in('id', [id1, id2])
         .then(({ data }) => {
-          if (data && data.length === 2) setPlayers(data)
+          if (data && data.length === 2) {
+            setPlayers(data)
+          }
         })
     }
   }, [id1, id2])
