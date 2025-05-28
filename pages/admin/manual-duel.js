@@ -26,7 +26,7 @@ export default function ManualDuel() {
       .select('id, name, image_url')
       .in('id', [id1, id2])
 
-    console.log('Players:', players) // 👈 DEBUG: vemos lo que llega
+    alert(JSON.stringify(players, null, 2)) // 👈 DEBUG: vemos lo que llega
 
     if (players) {
       setPlayer1(players.find(p => String(p.id) === String(id1)))
