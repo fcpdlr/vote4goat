@@ -26,6 +26,8 @@ export default function ManualDuel() {
       .select('id, name, image_url')
       .in('id', [id1, id2])
 
+    console.log('Players:', players) // 👈 DEBUG: vemos lo que llega
+
     if (players) {
       setPlayer1(players.find(p => String(p.id) === String(id1)))
       setPlayer2(players.find(p => String(p.id) === String(id2)))
@@ -38,7 +40,7 @@ export default function ManualDuel() {
         {player1 ? (
           <img
             src={player1.image_url}
-            alt=""
+            alt={player1.name}
             className="w-40 h-40 md:w-64 md:h-64 object-cover rounded-xl border"
           />
         ) : (
@@ -54,7 +56,7 @@ export default function ManualDuel() {
         {player2 ? (
           <img
             src={player2.image_url}
-            alt=""
+            alt={player2.name}
             className="w-40 h-40 md:w-64 md:h-64 object-cover rounded-xl border"
           />
         ) : (
