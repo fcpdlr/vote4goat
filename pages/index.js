@@ -143,6 +143,7 @@ function PlayerCard({ player, onVote, selected }) {
   return (
     <button onClick={onVote} className="cursor-pointer transition hover:scale-105 focus:outline-none">
       <div className="flex flex-col items-center justify-start w-44 h-72">
+        {/* Imagen */}
         {player.image_url ? (
           <img
             src={player.image_url}
@@ -156,19 +157,23 @@ function PlayerCard({ player, onVote, selected }) {
             No image
           </div>
         )}
-        {player.name_line1 && (
-          <div className="mt-2 text-xs font-medium tracking-wide text-white h-[1rem] leading-none">
-            {player.name_line1}
+
+        {/* Bloque de texto alineado */}
+        <div className="flex flex-col items-center justify-center w-full h-[96px] mt-2 space-y-1">
+          {player.name_line1 && (
+            <div className="text-xs font-medium tracking-wide text-white leading-none">
+              {player.name_line1}
+            </div>
+          )}
+          <div className="text-xl font-extrabold text-goat leading-none">
+            {player.name_line2}
           </div>
-        )}
-        <div className="text-xl font-extrabold text-goat h-[1.6rem] leading-none">
-          {player.name_line2}
+          {player.name_line3 && (
+            <div className="text-xs font-medium text-white leading-none">
+              {player.name_line3}
+            </div>
+          )}
         </div>
-        {player.name_line3 && (
-          <div className="text-xs font-medium text-white h-[1rem] leading-none">
-            {player.name_line3}
-          </div>
-        )}
       </div>
     </button>
   )
