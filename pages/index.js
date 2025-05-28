@@ -18,7 +18,7 @@ export default function Home() {
   }, [])
 
   const fetchDuel = async () => {
-    setSelected(null) // Limpia selección anterior
+    setSelected(null)
     const { data } = await supabase.rpc('get_duel')
     setDuel(data)
   }
@@ -68,7 +68,7 @@ export default function Home() {
               onVote={() => vote(duel[0].id, duel[1].id)}
               selected={selected === duel[0].id}
             />
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg z-10">
+            <div className="absolute left-1/2 top-[50%] -translate-x-1/2 -translate-y-[80px] bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg z-10">
               VS
             </div>
             <PlayerCard
@@ -140,33 +140,35 @@ export default function Home() {
 }
 
 function PlayerCard({ player, onVote, selected }) {
-  const nameParts = player.name.trim().split(" ")
-  const first = nameParts[0] || ""
-  const middle = nameParts.length === 3 ? nameParts[1] : ""
-  const last = nameParts.length >= 2 ? nameParts[nameParts.length - 1] : ""
-
   return (
-    <button
-      onClick={onVote}
-      className={`cursor-pointer transition hover:scale-105 focus:outline-none ${
-        selected ? 'ring-4 ring-goat' : ''
-      }`}
-    >
+    <button onClick={onVote} className="cursor-pointer transition hover:scale-105 focus:outline-none">
       <div className="flex flex-col items-center justify-start w-44 h-72">
         {player.image_url ? (
           <img
             src={player.image_url}
             alt={player.name}
-            className="w-40 h-40 object-cover rounded-xl border mx-auto transition duration-200 ease-in-out hover:ring-goat hover:brightness-110"
+            className={`w-40 h-40 object-cover rounded-xl border mx-auto transition duration-200 ease-in-out hover:brightness-110 ${
+              selected ? 'ring-4 ring-goat' : ''
+            }`}
           />
         ) : (
           <div className="w-40 h-40 bg-gray-200 rounded-xl border flex items-center justify-center text-gray-500 text-xs mx-auto">
             No image
           </div>
         )}
-        <div className="mt-2 text-xs font-medium tracking-wide text-white h-[1rem] leading-none">{first.toUpperCase()}</div>
-        <div className="text-xl font-extrabold text-goat h-[1.6rem] leading-none">{last.toUpperCase()}</div>
-        {middle && <div className="text-xs font-medium text-white h-[1rem] leading-none">{middle.toUpperCase()}</div>}
+        {player.name_line1 && (
+          <div className="mt-2 text-xs font-medium tracking-wide text-white h-[1rem] leading-none">
+            {player.name_line1}
+          </div>
+        )}
+        <div className="text-xl font-extrabold text-goat h-[1.6rem] leading-none">
+          {player.name_line2}
+        </div>
+        {player.name_line3 && (
+          <div className="text-xs font-medium text-white h-[1rem] leading-none">
+            {player.name_line3}
+          </div>
+        )}
       </div>
     </button>
   )
