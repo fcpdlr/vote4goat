@@ -1,5 +1,7 @@
-import { useRouter } from 'next/router'
+'use client'
+
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -8,63 +10,65 @@ const supabase = createClient(
 )
 
 export default function ManualDuel() {
-  const router = useRouter()
-  const { id1, id2 } = router.query
+  const searchParams = useSearchParams()
+  const id1 = searchParams.get('id1')
+  const id2 = searchParams.get('id2')
 
-  const [player1, setPlayer1] = useState(null)
-  const [player2, setPlayer2] = useState(null)
+  const [players, setPlayers] = useState([])
 
   useEffect(() => {
-    if (id1 && id2) {
-      fetchPlayers()
+    const fetchPlayers = async () => {
+      if (!id1 || !id2) return
+      const { data } = await supabase
+        .from('players')
+        .select('id, name, image_url')
+        .in('id', [id1, id2])
+      setPlayers(data || [])
     }
+
+    fetchPlayers()
   }, [id1, id2])
 
-  const fetchPlayers = async () => {
-    const { data: players } = await supabase
-      .from('players')
-      .select('id, name, image_url')
-      .in('id', [id1, id2])
+  if (players.length !== 2) return <p className="text-white text-center mt-10">Loading duel...</p>
 
-    alert(JSON.stringify(players, null, 2)) // 👈 DEBUG: vemos lo que llega
-
-    if (players) {
-      setPlayer1(players.find(p => String(p.id) === String(id1)))
-      setPlayer2(players.find(p => String(p.id) === String(id2)))
-    }
-  }
+  const [player1, player2] = players
 
   return (
-    <main className="min-h-screen bg-background flex items-center justify-center text-white px-4 py-8">
-      <div className="flex flex-col md:flex-row items-center justify-center gap-8 relative">
-        {player1 ? (
-          <img
-            src={player1.image_url}
-            alt={player1.name}
-            className="w-40 h-40 md:w-64 md:h-64 object-cover rounded-xl border"
-          />
-        ) : (
-          <div className="w-40 h-40 md:w-64 md:h-64 bg-gray-700 rounded-xl flex items-center justify-center text-white text-xs">
-            No Image
-          </div>
-        )}
-
-        <div className="text-goat text-2xl md:text-4xl font-bold absolute md:static top-1/2 -translate-y-1/2 z-10 bg-background px-4 py-2 rounded-full border border-goat">
-          VS
+    <main className="min-h-screen bg-background px-4 py-8 text-center text-white font-sans">
+      <section className="flex flex-col items-center justify-center px-4 py-12 relative">
+        <div className="flex flex-row items-center justify-center gap-6">
+          <PlayerCard player={player1} />
+          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg z-10">VS</div>
+          <PlayerCard player={player2} />
         </div>
-
-        {player2 ? (
-          <img
-            src={player2.image_url}
-            alt={player2.name}
-            className="w-40 h-40 md:w-64 md:h-64 object-cover rounded-xl border"
-          />
-        ) : (
-          <div className="w-40 h-40 md:w-64 md:h-64 bg-gray-700 rounded-xl flex items-center justify-center text-white text-xs">
-            No Image
-          </div>
-        )}
-      </div>
+      </section>
     </main>
+  )
+}
+
+function PlayerCard({ player }) {
+  const [firstName, ...lastNameParts] = player.name.split(" ")
+  const lastName = lastNameParts.join(" ")
+
+  return (
+    <div className="cursor-default transition hover:scale-105 focus:outline-none">
+      {player.image_url ? (
+        <img
+          src={player.image_url}
+          alt={player.name}
+          className="w-40 h-40 object-cover rounded-xl border mx-auto transition duration-200 ease-in-out hover:ring-4 hover:ring-goat hover:brightness-110"
+        />
+      ) : (
+        <div className="w-40 h-40 bg-gray-200 rounded-xl border flex items-center justify-center text-gray-500 text-xs mx-auto">
+          No image
+        </div>
+      )}
+      <div className="mt-2 text-xs font-medium tracking-wide text-white">
+        {lastName ? firstName.toUpperCase() : ""}
+      </div>
+      <div className="text-xl font-extrabold text-goat">
+        {(lastName || firstName).toUpperCase()}
+      </div>
+    </div>
   )
 }
