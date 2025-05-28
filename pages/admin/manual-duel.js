@@ -11,25 +11,45 @@ const supabase = createClient(
 
 export default function ManualDuel() {
   const searchParams = useSearchParams()
-  const id1 = searchParams.get('id1')
-  const id2 = searchParams.get('id2')
-
+  const id1 = searchParams?.get('id1')
+  const id2 = searchParams?.get('id2')
   const [players, setPlayers] = useState([])
+  const [error, setError] = useState("")
 
   useEffect(() => {
     const fetchPlayers = async () => {
-      if (!id1 || !id2) return
-      const { data } = await supabase
+      if (!id1 || !id2) {
+        setError("Missing player IDs")
+        return
+      }
+      const { data, error } = await supabase
         .from('players')
         .select('id, name, image_url')
         .in('id', [id1, id2])
-      setPlayers(data || [])
+
+      if (error || !data) {
+        setError("Failed to fetch players")
+        return
+      }
+
+      if (data.length !== 2) {
+        setError("One or both players not found")
+        return
+      }
+
+      setPlayers(data)
     }
 
     fetchPlayers()
   }, [id1, id2])
 
-  if (players.length !== 2) return <p className="text-white text-center mt-10">Loading duel...</p>
+  if (error) {
+    return <p className="text-red-500 text-center mt-10">{error}</p>
+  }
+
+  if (players.length !== 2) {
+    return <p className="text-white text-center mt-10">Loading players...</p>
+  }
 
   const [player1, player2] = players
 
