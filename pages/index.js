@@ -68,7 +68,7 @@ export default function Home() {
               onVote={() => vote(duel[0].id, duel[1].id)}
               selected={selected === duel[0].id}
             />
-            <div className="absolute left-1/2 top-[50%] -translate-x-1/2 -translate-y-[80px] bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg z-10">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg z-10">
               VS
             </div>
             <PlayerCard
@@ -141,24 +141,18 @@ export default function Home() {
 
 function PlayerCard({ player, onVote, selected }) {
   return (
-    <button onClick={onVote} className="cursor-pointer transition hover:scale-105 focus:outline-none">
+    <button onClick={onVote} className="cursor-pointer transition focus:outline-none">
       <div className="flex flex-col items-center justify-start w-44 h-72">
         {/* Imagen */}
-        {player.image_url ? (
+        <div className="w-40 h-40 rounded-xl overflow-hidden border mx-auto transition duration-200 ease-in-out hover:brightness-110">
           <img
             src={player.image_url}
             alt={player.name}
-            className={`w-40 h-40 object-cover rounded-xl border mx-auto transition duration-200 ease-in-out hover:brightness-110 ${
-              selected ? 'ring-4 ring-goat' : ''
-            }`}
+            className={`w-full h-full object-cover ${selected ? 'ring-4 ring-goat' : ''}`}
           />
-        ) : (
-          <div className="w-40 h-40 bg-gray-200 rounded-xl border flex items-center justify-center text-gray-500 text-xs mx-auto">
-            No image
-          </div>
-        )}
+        </div>
 
-        {/* Bloque de texto alineado */}
+        {/* Nombre */}
         <div className="flex flex-col items-center justify-center w-full h-[96px] mt-2 space-y-1">
           {player.name_line1 && (
             <div className="text-xs font-medium tracking-wide text-white leading-none">
