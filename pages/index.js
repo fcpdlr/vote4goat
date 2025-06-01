@@ -76,33 +76,41 @@ export default function Home() {
       <h1 className="text-3xl font-extrabold mt-4 mb-4 text-goat">WHO IS THE GOAT?</h1>
 
       {duel.length === 2 && (
-        <section className="flex flex-col items-center justify-center px-4 py-10 relative grow min-h-[calc(100vh-320px)]">
-          <div className="relative flex items-center justify-center gap-4 min-h-[288px]">
-            <PlayerCard
-              player={duel[0]}
-              onVote={() => vote(duel[0].id, duel[1].id)}
-              selected={selected === duel[0].id}
-            />
-            <div className="absolute inset-y-0 left-1/2 flex items-center justify-center -translate-x-1/2 z-10">
-              <div className="bg-goat text-white text-xl font-bold w-10 h-10 flex items-center justify-center rounded-full shadow-lg">
-                VS
-              </div>
-            </div>
-            <PlayerCard
-              player={duel[1]}
-              onVote={() => vote(duel[1].id, duel[0].id)}
-              selected={selected === duel[1].id}
-            />
-          </div>
+  <section className="flex flex-col items-center justify-center px-4 py-10 relative grow min-h-[calc(100vh-320px)]">
+    <div className="relative flex items-start justify-center gap-6">
+      <div className="flex flex-col items-center">
+        <PlayerCard
+          player={duel[0]}
+          onVote={() => vote(duel[0].id, duel[1].id)}
+          selected={selected === duel[0].id}
+        />
+      </div>
 
-          <button
-            onClick={() => document.getElementById('ranking-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="mt-6 text-white underline text-sm"
-          >
-            RANKING ↓
-          </button>
-        </section>
-      )}
+      {/* VS centrado respecto a las imágenes */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[80px] z-10">
+        <div className="bg-goat text-white text-xl font-bold w-10 h-10 flex items-center justify-center rounded-full shadow-lg">
+          VS
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center">
+        <PlayerCard
+          player={duel[1]}
+          onVote={() => vote(duel[1].id, duel[0].id)}
+          selected={selected === duel[1].id}
+        />
+      </div>
+    </div>
+
+    <button
+      onClick={() => document.getElementById('ranking-section')?.scrollIntoView({ behavior: 'smooth' })}
+      className="mt-6 text-white underline text-sm"
+    >
+      RANKING ↓
+    </button>
+  </section>
+)}
+
 
       <div id="ranking-section" className="bg-background text-white px-6 py-12 mt-8 rounded-t-3xl">
         <div className="text-center text-sm mb-2">
@@ -160,15 +168,18 @@ export default function Home() {
 function PlayerCard({ player, onVote, selected }) {
   return (
     <button onClick={onVote} className="cursor-pointer transition focus:outline-none">
-      <div className="flex flex-col items-center justify-start w-44 h-72">
-        <div className="w-40 h-40 rounded-xl overflow-hidden border mx-auto transition duration-200 ease-in-out hover:brightness-110">
+      <div className="flex flex-col items-center w-44">
+        {/* Imagen - referencia para centrar VS */}
+        <div className="player-image-block w-40 h-40 relative rounded-xl overflow-hidden border mx-auto transition duration-200 ease-in-out hover:brightness-110">
           <img
             src={player.image_url}
             alt={player.name}
             className={`w-full h-full object-cover ${selected ? 'ring-4 ring-goat' : ''}`}
           />
         </div>
-        <div className="flex flex-col items-center justify-center w-full h-[96px] mt-2 space-y-1">
+
+        {/* Nombre */}
+        <div className="flex flex-col items-center justify-center w-full mt-2 space-y-1 h-[96px]">
           {player.name_line1 && (
             <div className="text-xs font-medium tracking-wide text-white leading-none">
               {player.name_line1}
@@ -187,3 +198,4 @@ function PlayerCard({ player, onVote, selected }) {
     </button>
   )
 }
+
