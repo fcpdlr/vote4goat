@@ -43,67 +43,66 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-4 py-8 text-center text-white font-sans">
-<header className="flex flex-col items-center justify-center pt-4 pb-6 gap-6">
-  {/* Logo */}
-  <div className="flex flex-col items-center">
-    <img src="/logo.png" alt="logo" className="h-20 w-20 mb-1" />
-    <span className="text-2xl font-bold">Vote<span className="text-goat">4</span>GOAT</span>
-  </div>
+    <main className="min-h-screen bg-background px-4 pt-2 text-center text-white font-sans flex flex-col">
+      
+      <header className="flex flex-col items-center justify-center pt-2 pb-4 gap-4">
+        {/* Logo */}
+        <a href="/" className="flex flex-col items-center">
+          <img src="/logo.png" alt="logo" className="h-20 w-20 mb-1" />
+          <span className="text-2xl font-bold">Vote<span className="text-goat">4</span>GOAT</span>
+        </a>
 
-  {/* Iconos de deportes en línea */}
-  <div className="flex flex-row items-center justify-center gap-6">
-    <div className="flex flex-col items-center">
-      <a href="/football">
-        <img src="/icons/football_logo.png" alt="Football" className="h-10 w-10 mb-1" />
-      </a>
-      <span className="text-goat font-semibold text-xs uppercase">Football</span>
-    </div>
-    <div className="flex flex-col items-center">
-      <a href="/basketball">
-        <img src="/icons/basketball_logo.png" alt="Basketball" className="h-10 w-10 mb-1" />
-      </a>
-      <span className="text-goat font-semibold text-xs uppercase">Basketball</span>
-    </div>
-    <div className="flex flex-col items-center">
-      <a href="/tennis">
-        <img src="/icons/tennis_logo.png" alt="Tennis" className="h-10 w-10 mb-1" />
-      </a>
-      <span className="text-goat font-semibold text-xs uppercase">Tennis</span>
-    </div>
-  </div>
-</header>
+        {/* Iconos */}
+        <div className="flex flex-row items-center justify-center gap-6">
+          <div className="flex flex-col items-center">
+            <a href="/football">
+              <img src="/icons/football_logo.png" alt="Football" className="h-10 w-10 mb-1" />
+            </a>
+            <span className="text-goat font-semibold text-xs uppercase">Football</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <a href="/basketball">
+              <img src="/icons/basketball_logo.png" alt="Basketball" className="h-10 w-10 mb-1" />
+            </a>
+            <span className="text-goat font-semibold text-xs uppercase">Basketball</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <a href="/tennis">
+              <img src="/icons/tennis_logo.png" alt="Tennis" className="h-10 w-10 mb-1" />
+            </a>
+            <span className="text-goat font-semibold text-xs uppercase">Tennis</span>
+          </div>
+        </div>
+      </header>
 
-
-
-      <h1 className="text-4xl font-extrabold mt-10 mb-6 text-goat">WHO IS THE GOAT?</h1>
+      <h1 className="text-3xl font-extrabold mt-4 mb-4 text-goat">WHO IS THE GOAT?</h1>
 
       {duel.length === 2 && (
-<section className="flex flex-col items-center justify-center px-4 pt-4 pb-10 relative min-h-[60vh]">
-  <div className="flex flex-row items-center justify-center gap-4 relative">
-    <PlayerCard
-      player={duel[0]}
-      onVote={() => vote(duel[0].id, duel[1].id)}
-      selected={selected === duel[0].id}
-    />
-    <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-10 h-10 flex items-center justify-center rounded-full shadow-lg z-10">
-      VS
-    </div>
-    <PlayerCard
-      player={duel[1]}
-      onVote={() => vote(duel[1].id, duel[0].id)}
-      selected={selected === duel[1].id}
-    />
-  </div>
+        <section className="flex flex-col items-center justify-center px-4 py-10 relative grow min-h-[calc(100vh-320px)]">
+          <div className="relative flex items-center justify-center gap-4 min-h-[180px]">
+            <PlayerCard
+              player={duel[0]}
+              onVote={() => vote(duel[0].id, duel[1].id)}
+              selected={selected === duel[0].id}
+            />
+            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-10 h-10 flex items-center justify-center rounded-full shadow-lg z-10">
+              VS
+            </div>
+            <PlayerCard
+              player={duel[1]}
+              onVote={() => vote(duel[1].id, duel[0].id)}
+              selected={selected === duel[1].id}
+            />
+          </div>
 
-  <button
-    onClick={() => document.getElementById('ranking-section')?.scrollIntoView({ behavior: 'smooth' })}
-    className="mt-6 text-white underline text-sm"
-  >
-    RANKING ↓
-  </button>
-</section>
-
+          <button
+            onClick={() => document.getElementById('ranking-section')?.scrollIntoView({ behavior: 'smooth' })}
+            className="mt-6 text-white underline text-sm"
+          >
+            RANKING ↓
+          </button>
+        </section>
+      )}
 
       <div id="ranking-section" className="bg-background text-white px-6 py-12 mt-8 rounded-t-3xl">
         <div className="text-center text-sm mb-2">
