@@ -53,26 +53,29 @@ export default function Home() {
         </a>
 
         {/* Iconos */}
-        <div className="flex flex-row items-center justify-center gap-6">
-          <div className="flex flex-col items-center">
-            <a href="/football">
-              <img src="/icons/football_logo.png" alt="Football" className="h-10 w-10 mb-1" />
-            </a>
-            <span className="text-goat font-semibold text-xs uppercase">Football</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <a href="/basketball">
-              <img src="/icons/basketball_logo.png" alt="Basketball" className="h-10 w-10 mb-1" />
-            </a>
-            <span className="text-goat font-semibold text-xs uppercase">Basketball</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <a href="/tennis">
-              <img src="/icons/tennis_logo.png" alt="Tennis" className="h-10 w-10 mb-1" />
-            </a>
-            <span className="text-goat font-semibold text-xs uppercase">Tennis</span>
-          </div>
-        </div>
+       <div className="flex flex-row items-center justify-center gap-6">
+  <div className="flex flex-col items-center">
+    <a href="/football">
+      <img src="/icons/football_logo.png" alt="Football" className="h-10 w-10 mb-1" />
+    </a>
+    <span className="text-goat font-semibold text-xs uppercase">Football</span>
+  </div>
+  <div className="flex flex-col items-center">
+    <a href="/basketball">
+      <img src="/icons/basketball_logo.png" alt="Basketball" className="h-10 w-10 mb-1 opacity-60 cursor-default" />
+    </a>
+    <span className="text-goat font-semibold text-xs uppercase">Basketball</span>
+    <span className="text-xs text-white/50 mt-1 italic">Coming soon</span>
+  </div>
+  <div className="flex flex-col items-center">
+    <a href="/tennis">
+      <img src="/icons/tennis_logo.png" alt="Tennis" className="h-10 w-10 mb-1 opacity-60 cursor-default" />
+    </a>
+    <span className="text-goat font-semibold text-xs uppercase">Tennis</span>
+    <span className="text-xs text-white/50 mt-1 italic">Coming soon</span>
+  </div>
+</div>
+
       </header>
 
       <h1 className="text-3xl font-extrabold mt-4 mb-4 text-goat">WHO IS THE GOAT?</h1>
