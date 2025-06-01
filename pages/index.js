@@ -44,15 +44,14 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-center text-white font-sans flex flex-col">
-      
-      <header className="flex flex-col items-center justify-center pt-2 pb-4 gap-4">
-        {/* Logo */}
+
+      {/* HEADER */}
+      <header className="flex flex-col items-center justify-start pt-2 pb-4 gap-4">
         <a href="/" className="flex flex-col items-center">
           <img src="/logo.png" alt="logo" className="h-20 w-20 mb-1" />
           <span className="text-2xl font-bold">Vote<span className="text-goat">4</span>GOAT</span>
         </a>
 
-        {/* Iconos */}
         <div className="flex flex-row items-center justify-center gap-6">
           <div className="flex flex-col items-center">
             <a href="/football">
@@ -73,45 +72,40 @@ export default function Home() {
         </div>
       </header>
 
-      <h1 className="text-3xl font-extrabold mt-4 mb-4 text-goat">WHO IS THE GOAT?</h1>
+      {/* TÍTULO */}
+      <h1 className="text-3xl font-extrabold mt-2 mb-2 text-goat">WHO IS THE GOAT?</h1>
 
+      {/* DUEL - OCUPA EL CENTRO */}
       {duel.length === 2 && (
-  <section className="flex flex-col items-center justify-center px-4 py-10 relative grow min-h-[calc(100vh-320px)]">
-    <div className="relative flex items-start justify-center gap-6">
-      <div className="flex flex-col items-center">
-        <PlayerCard
-          player={duel[0]}
-          onVote={() => vote(duel[0].id, duel[1].id)}
-          selected={selected === duel[0].id}
-        />
-      </div>
+        <section className="flex flex-col items-center justify-center flex-grow relative">
+          <div className="relative flex items-start justify-center gap-6">
+            <PlayerCard
+              player={duel[0]}
+              onVote={() => vote(duel[0].id, duel[1].id)}
+              selected={selected === duel[0].id}
+            />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[80px] z-10">
+              <div className="bg-goat text-white text-xl font-bold w-10 h-10 flex items-center justify-center rounded-full shadow-lg">
+                VS
+              </div>
+            </div>
+            <PlayerCard
+              player={duel[1]}
+              onVote={() => vote(duel[1].id, duel[0].id)}
+              selected={selected === duel[1].id}
+            />
+          </div>
 
-      {/* VS centrado respecto a las imágenes */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[80px] z-10">
-        <div className="bg-goat text-white text-xl font-bold w-10 h-10 flex items-center justify-center rounded-full shadow-lg">
-          VS
-        </div>
-      </div>
+          <button
+            onClick={() => document.getElementById('ranking-section')?.scrollIntoView({ behavior: 'smooth' })}
+            className="mt-6 text-white underline text-sm"
+          >
+            RANKING ↓
+          </button>
+        </section>
+      )}
 
-      <div className="flex flex-col items-center">
-        <PlayerCard
-          player={duel[1]}
-          onVote={() => vote(duel[1].id, duel[0].id)}
-          selected={selected === duel[1].id}
-        />
-      </div>
-    </div>
-
-    <button
-      onClick={() => document.getElementById('ranking-section')?.scrollIntoView({ behavior: 'smooth' })}
-      className="mt-6 text-white underline text-sm"
-    >
-      RANKING ↓
-    </button>
-  </section>
-)}
-
-
+      {/* RANKING */}
       <div id="ranking-section" className="bg-background text-white px-6 py-12 mt-8 rounded-t-3xl">
         <div className="text-center text-sm mb-2">
           <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline">↑ VOTE</button>
@@ -169,7 +163,7 @@ function PlayerCard({ player, onVote, selected }) {
   return (
     <button onClick={onVote} className="cursor-pointer transition focus:outline-none">
       <div className="flex flex-col items-center w-44">
-        {/* Imagen - referencia para centrar VS */}
+        {/* Imagen */}
         <div className="player-image-block w-40 h-40 relative rounded-xl overflow-hidden border mx-auto transition duration-200 ease-in-out hover:brightness-110">
           <img
             src={player.image_url}
@@ -198,4 +192,3 @@ function PlayerCard({ player, onVote, selected }) {
     </button>
   )
 }
-
