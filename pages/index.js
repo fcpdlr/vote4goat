@@ -44,29 +44,36 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-background px-4 py-8 text-center text-white font-sans">
-<header className="flex flex-col items-center justify-center py-10 gap-10">
+<header className="flex flex-col items-center justify-center py-10 gap-8">
   {/* Logo */}
   <div className="flex flex-col items-center">
     <img src="/logo.png" alt="logo" className="h-24 w-24 mb-2" />
     <span className="text-3xl font-bold">Vote<span className="text-goat">4</span>GOAT</span>
   </div>
 
-  {/* Iconos de deportes en columna */}
-  <div className="flex flex-col items-center gap-6">
+  {/* Iconos de deportes en línea */}
+  <div className="flex flex-row items-center justify-center gap-10">
     <div className="flex flex-col items-center">
-      <img src="/icons/football_logo.png" alt="Football" className="h-12 w-12 mb-1" />
+      <a href="/football">
+        <img src="/icons/football_logo.png" alt="Football" className="h-12 w-12 mb-1" />
+      </a>
       <span className="text-goat font-semibold text-sm uppercase">Football</span>
     </div>
     <div className="flex flex-col items-center">
-      <img src="/icons/basketball_logo.png" alt="Basketball" className="h-12 w-12 mb-1" />
+      <a href="/basketball">
+        <img src="/icons/basketball_logo.png" alt="Basketball" className="h-12 w-12 mb-1" />
+      </a>
       <span className="text-goat font-semibold text-sm uppercase">Basketball</span>
     </div>
     <div className="flex flex-col items-center">
-      <img src="/icons/tennis_logo.png" alt="Tennis" className="h-12 w-12 mb-1" />
+      <a href="/tennis">
+        <img src="/icons/tennis_logo.png" alt="Tennis" className="h-12 w-12 mb-1" />
+      </a>
       <span className="text-goat font-semibold text-sm uppercase">Tennis</span>
     </div>
   </div>
 </header>
+
 
 
       <h1 className="text-4xl font-extrabold mt-10 mb-6 text-goat">WHO IS THE GOAT?</h1>
