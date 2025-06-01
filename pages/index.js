@@ -53,43 +53,40 @@ export default function Home() {
         </a>
 
         {/* Iconos */}
-       <div className="flex flex-row items-center justify-center gap-6">
-  <div className="flex flex-col items-center">
-    <a href="/football">
-      <img src="/icons/football_logo.png" alt="Football" className="h-10 w-10 mb-1" />
-    </a>
-    <span className="text-goat font-semibold text-xs uppercase">Football</span>
-  </div>
-  <div className="flex flex-col items-center">
-    <a href="/basketball">
-      <img src="/icons/basketball_logo.png" alt="Basketball" className="h-10 w-10 mb-1 opacity-60 cursor-default" />
-    </a>
-    <span className="text-goat font-semibold text-xs uppercase">Basketball</span>
-    <span className="text-xs text-white/50 mt-1 italic">Coming soon</span>
-  </div>
-  <div className="flex flex-col items-center">
-    <a href="/tennis">
-      <img src="/icons/tennis_logo.png" alt="Tennis" className="h-10 w-10 mb-1 opacity-60 cursor-default" />
-    </a>
-    <span className="text-goat font-semibold text-xs uppercase">Tennis</span>
-    <span className="text-xs text-white/50 mt-1 italic">Coming soon</span>
-  </div>
-</div>
-
+        <div className="flex flex-row items-center justify-center gap-6">
+          <div className="flex flex-col items-center">
+            <a href="/football">
+              <img src="/icons/football_logo.png" alt="Football" className="h-10 w-10 mb-1" />
+            </a>
+            <span className="text-goat font-semibold text-xs uppercase">Football</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <img src="/icons/basketball_logo.png" alt="Basketball" className="h-10 w-10 mb-1 opacity-60 cursor-default" />
+            <span className="text-goat font-semibold text-xs uppercase">Basketball</span>
+            <span className="text-xs text-white/50 mt-1 italic">Coming soon</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <img src="/icons/tennis_logo.png" alt="Tennis" className="h-10 w-10 mb-1 opacity-60 cursor-default" />
+            <span className="text-goat font-semibold text-xs uppercase">Tennis</span>
+            <span className="text-xs text-white/50 mt-1 italic">Coming soon</span>
+          </div>
+        </div>
       </header>
 
       <h1 className="text-3xl font-extrabold mt-4 mb-4 text-goat">WHO IS THE GOAT?</h1>
 
       {duel.length === 2 && (
         <section className="flex flex-col items-center justify-center px-4 py-10 relative grow min-h-[calc(100vh-320px)]">
-          <div className="relative flex items-center justify-center gap-4 min-h-[180px]">
+          <div className="relative flex items-center justify-center gap-4 min-h-[288px]">
             <PlayerCard
               player={duel[0]}
               onVote={() => vote(duel[0].id, duel[1].id)}
               selected={selected === duel[0].id}
             />
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-10 h-10 flex items-center justify-center rounded-full shadow-lg z-10">
-              VS
+            <div className="absolute inset-y-0 left-1/2 flex items-center justify-center -translate-x-1/2 z-10">
+              <div className="bg-goat text-white text-xl font-bold w-10 h-10 flex items-center justify-center rounded-full shadow-lg">
+                VS
+              </div>
             </div>
             <PlayerCard
               player={duel[1]}
@@ -164,7 +161,6 @@ function PlayerCard({ player, onVote, selected }) {
   return (
     <button onClick={onVote} className="cursor-pointer transition focus:outline-none">
       <div className="flex flex-col items-center justify-start w-44 h-72">
-        {/* Imagen */}
         <div className="w-40 h-40 rounded-xl overflow-hidden border mx-auto transition duration-200 ease-in-out hover:brightness-110">
           <img
             src={player.image_url}
@@ -172,8 +168,6 @@ function PlayerCard({ player, onVote, selected }) {
             className={`w-full h-full object-cover ${selected ? 'ring-4 ring-goat' : ''}`}
           />
         </div>
-
-        {/* Nombre */}
         <div className="flex flex-col items-center justify-center w-full h-[96px] mt-2 space-y-1">
           {player.name_line1 && (
             <div className="text-xs font-medium tracking-wide text-white leading-none">
