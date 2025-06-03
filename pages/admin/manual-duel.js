@@ -15,21 +15,24 @@ export default function ManualDuel() {
     const id2 = urlParams.get('id2')
 
     if (id1 && id2) {
-      fetchPlayers([id1, id2])
+      fetchPlayers(id1, id2)
     }
   }, [])
 
-  const fetchPlayers = async (ids) => {
-    const uniqueIds = Array.from(new Set(ids))
+  const fetchPlayers = async (id1, id2) => {
     const { data, error } = await supabase
       .from('players')
       .select('id, name, image_url')
-      .in('id', uniqueIds)
+      .in('id', [id1, id2])
 
     if (error) {
       console.error('Error fetching players:', error)
     } else {
-      setPlayers(data)
+      const ordered = [
+        data.find(p => p.id === id1),
+        data.find(p => p.id === id2)
+      ]
+      setPlayers(ordered)
     }
   }
 
@@ -44,7 +47,7 @@ export default function ManualDuel() {
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center">
       <div className="flex flex-row items-center justify-center gap-6 relative">
-        {[players[0], players[1] || players[0]].map((player, index) => (
+        {players.map((player, index) => (
           <img
             key={index}
             src={player.image_url}
