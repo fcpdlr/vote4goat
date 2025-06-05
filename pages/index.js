@@ -11,6 +11,7 @@ export default function Home() {
   const [ranking, setRanking] = useState([])
   const [limit, setLimit] = useState(10)
   const [selected, setSelected] = useState(null)
+  const [showHelp, setShowHelp] = useState(false)
 
   useEffect(() => {
     fetchDuel()
@@ -52,28 +53,48 @@ export default function Home() {
           <span className="text-2xl font-bold">Vote<span className="text-goat">4</span>GOAT</span>
         </a>
 
-        <div className="flex flex-row items-center justify-center gap-6">
+        <div className="flex flex-row items-center justify-center gap-5">
           <div className="flex flex-col items-center">
             <a href="/football">
-              <img src="/icons/football_logo.png" alt="Football" className="h-10 w-10 mb-1" />
+              <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 mb-1" />
             </a>
-            <span className="text-goat font-semibold text-xs uppercase">Football</span>
+            <span className="text-goat font-semibold text-[10px] uppercase">Football</span>
           </div>
           <div className="flex flex-col items-center">
-            <img src="/icons/basketball_logo.png" alt="Basketball" className="h-10 w-10 mb-1 opacity-60 cursor-default" />
-            <span className="text-goat font-semibold text-xs uppercase">Basketball</span>
-            <span className="text-xs text-white/50 mt-1 italic">Coming soon</span>
+            <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 mb-1 opacity-60 cursor-default" />
+            <span className="text-goat font-semibold text-[10px] uppercase">Basketball</span>
+            <span className="text-[10px] text-white/50 mt-0.5 italic">Coming soon</span>
           </div>
           <div className="flex flex-col items-center">
-            <img src="/icons/tennis_logo.png" alt="Tennis" className="h-10 w-10 mb-1 opacity-60 cursor-default" />
-            <span className="text-goat font-semibold text-xs uppercase">Tennis</span>
-            <span className="text-xs text-white/50 mt-1 italic">Coming soon</span>
+            <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 mb-1 opacity-60 cursor-default" />
+            <span className="text-goat font-semibold text-[10px] uppercase">Tennis</span>
+            <span className="text-[10px] text-white/50 mt-0.5 italic">Coming soon</span>
           </div>
         </div>
       </header>
 
       {/* TÍTULO */}
       <h1 className="text-3xl font-extrabold mt-2 mb-2 text-goat">WHO IS THE GOAT?</h1>
+
+      {/* BOTÓN HELP */}
+      <button
+        onClick={() => setShowHelp(!showHelp)}
+        className="text-sm text-white underline mb-4"
+      >
+        How does it work?
+      </button>
+
+      {showHelp && (
+        <div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mb-4 border border-white/10">
+          <p className="mb-2 font-semibold text-goat">🧠 It’s simple:</p>
+          <ul className="list-disc list-inside space-y-1 text-left">
+            <li>Two players appear randomly on screen.</li>
+            <li>You vote for who you think is the better one.</li>
+            <li>Their Elo ratings update after each vote.</li>
+            <li>Scroll down to see the live ranking.</li>
+          </ul>
+        </div>
+      )}
 
       {/* DUEL - OCUPA EL CENTRO */}
       {duel.length === 2 && (
