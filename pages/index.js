@@ -13,6 +13,8 @@ export default function Home() {
   const [selected, setSelected] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
 
+  const ENTITY_CATEGORY_ID = 1 // Football Players → ajusta si tienes otras categorías
+
   useEffect(() => {
     fetchDuel()
     fetchRanking(limit)
@@ -20,16 +22,20 @@ export default function Home() {
 
   const fetchDuel = async () => {
     setSelected(null)
-    const { data } = await supabase.rpc('get_duel')
+    const { data } = await supabase.rpc('get_duel', {
+      entity_category_input: ENTITY_CATEGORY_ID
+    })
     setDuel(data)
   }
 
   const fetchRanking = async (top) => {
     const { data } = await supabase
-      .from('players')
-      .select('*')
-      .order('rating', { ascending: false })
+      .from('entity_rankings')
+      .select('id, elo_rating, entity_id, entities (name, name_line1, name_line2, name_line3, image_url)')
+      .eq('entity_category_id', ENTITY_CATEGORY_ID)
+      .order('elo_rating', { ascending: false })
       .limit(top)
+
     setRanking(data)
   }
 
@@ -96,7 +102,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* DUEL - OCUPA EL CENTRO */}
+      {/* DUEL */}
       {duel.length === 2 && (
         <section className="flex flex-col items-center justify-center flex-grow relative">
           <div className="relative flex items-start justify-center gap-6">
@@ -154,8 +160,10 @@ export default function Home() {
                 return (
                   <tr key={player.id} className={`border-t border-goat/30 hover:bg-white/5 transition ${rowStyle}`}>
                     <td className="px-4 py-2">{i + 1}</td>
-                    <td className="px-4 py-2 text-white font-semibold text-center">{player.name}</td>
-                    <td className="px-4 py-2">{Math.round(player.rating)}</td>
+                    <td className="px-4 py-2 text-white font-semibold text-center">
+                      {player.entities.name}
+                    </td>
+                    <td className="px-4 py-2">{Math.round(player.elo_rating)}</td>
                   </tr>
                 )
               })}
@@ -188,7 +196,7 @@ function PlayerCard({ player, onVote, selected }) {
         <div className="player-image-block w-40 h-40 relative rounded-xl overflow-hidden border mx-auto transition duration-200 ease-in-out hover:brightness-110">
           <img
             src={player.image_url}
-            alt={player.name}
+            alt={player.name_line2 || player.name_line1 || player.entities?.name}
             className={`w-full h-full object-cover ${selected ? 'ring-4 ring-goat' : ''}`}
           />
         </div>
