@@ -12,18 +12,20 @@ export default function Home() {
   const [limit, setLimit] = useState(10)
   const [selected, setSelected] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
+  const [duelLimit, setDuelLimit] = useState(null) // null = All players
 
-  const ENTITY_CATEGORY_ID = 1 // Football Players → ajusta si tienes otras categorías
+  const ENTITY_CATEGORY_ID = 1 // Football Players
 
   useEffect(() => {
     fetchDuel()
     fetchRanking(limit)
-  }, [])
+  }, [duelLimit]) // refetch duel when duelLimit changes
 
   const fetchDuel = async () => {
     setSelected(null)
     const { data } = await supabase.rpc('get_duel', {
-      entity_category_input: ENTITY_CATEGORY_ID
+      entity_category_input: ENTITY_CATEGORY_ID,
+      limit_rank: duelLimit
     })
     setDuel(data)
   }
@@ -82,25 +84,27 @@ export default function Home() {
       {/* TÍTULO */}
       <h1 className="text-3xl font-extrabold mt-2 mb-2 text-goat">WHO IS THE GOAT?</h1>
 
-      {/* BOTÓN HELP */}
-      <button
-        onClick={() => setShowHelp(!showHelp)}
-        className="text-sm text-white underline mb-4"
-      >
-        How does it work?
-      </button>
-
-      {showHelp && (
-        <div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mb-4 border border-white/10">
-          <p className="mb-2 font-semibold text-goat">🧠 It’s simple:</p>
-          <ul className="list-disc list-inside space-y-1 text-left">
-            <li>Two players appear randomly on screen.</li>
-            <li>You vote for who you think is the better one.</li>
-            <li>Their Elo ratings update after each vote.</li>
-            <li>Scroll down to see the live ranking.</li>
-          </ul>
-        </div>
-      )}
+      {/* BOTONES DE SELECCIÓN */}
+      <div className="flex justify-center space-x-4 mb-4">
+        <button
+          className={`px-3 py-1 rounded-full text-sm ${duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'}`}
+          onClick={() => setDuelLimit(null)}
+        >
+          All Players
+        </button>
+        <button
+          className={`px-3 py-1 rounded-full text-sm ${duelLimit === 100 ? 'bg-goat text-white' : 'bg-white text-black'}`}
+          onClick={() => setDuelLimit(100)}
+        >
+          Top 100
+        </button>
+        <button
+          className={`px-3 py-1 rounded-full text-sm ${duelLimit === 50 ? 'bg-goat text-white' : 'bg-white text-black'}`}
+          onClick={() => setDuelLimit(50)}
+        >
+          Top 50
+        </button>
+      </div>
 
       {/* DUEL */}
       {duel.length === 2 && (
@@ -122,14 +126,27 @@ export default function Home() {
               selected={selected === duel[1].id}
             />
           </div>
-
-          <button
-            onClick={() => document.getElementById('ranking-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="mt-6 text-white underline text-sm"
-          >
-            RANKING ↓
-          </button>
         </section>
+      )}
+
+      {/* BOTÓN HELP → MOVIDO ABAJO */}
+      <button
+        onClick={() => setShowHelp(!showHelp)}
+        className="text-sm text-white underline mb-4 mt-8"
+      >
+        How does it work?
+      </button>
+
+      {showHelp && (
+        <div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mb-4 border border-white/10">
+          <p className="mb-2 font-semibold text-goat">🧠 It’s simple:</p>
+          <ul className="list-disc list-inside space-y-1 text-left">
+            <li>Two players appear randomly on screen.</li>
+            <li>You vote for who you think is the better one.</li>
+            <li>Their Elo ratings update after each vote.</li>
+            <li>Scroll down to see the live ranking.</li>
+          </ul>
+        </div>
       )}
 
       {/* RANKING */}
@@ -192,16 +209,13 @@ function PlayerCard({ player, onVote, selected }) {
   return (
     <button onClick={onVote} className="cursor-pointer transition focus:outline-none">
       <div className="flex flex-col items-center w-44">
-        {/* Imagen */}
         <div className="player-image-block w-40 h-40 relative rounded-xl overflow-hidden border mx-auto transition duration-200 ease-in-out hover:brightness-110">
           <img
             src={player.image_url}
-            alt={player.name_line2 || player.name_line1 || player.entities?.name}
+            alt={player.name_line2 || player.name_line1}
             className={`w-full h-full object-cover ${selected ? 'ring-4 ring-goat' : ''}`}
           />
         </div>
-
-        {/* Nombre */}
         <div className="flex flex-col items-center justify-center w-full mt-2 space-y-1 h-[96px]">
           {player.name_line1 && (
             <div className="text-xs font-medium tracking-wide text-white leading-none">
