@@ -12,14 +12,14 @@ export default function Home() {
   const [limit, setLimit] = useState(10)
   const [selected, setSelected] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
-  const [duelLimit, setDuelLimit] = useState(null) // null = All players
+  const [duelLimit, setDuelLimit] = useState(null)
 
-  const ENTITY_CATEGORY_ID = 1 // Football Players
+  const ENTITY_CATEGORY_ID = 1
 
   useEffect(() => {
     fetchDuel()
     fetchRanking(limit)
-  }, [duelLimit]) // refetch duel when duelLimit changes
+  }, [duelLimit])
 
   const fetchDuel = async () => {
     setSelected(null)
@@ -87,19 +87,19 @@ export default function Home() {
       {/* BOTONES DE SELECCIÓN */}
       <div className="flex justify-center space-x-4 mb-4">
         <button
-          className={px-3 py-1 rounded-full text-sm ${duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'}}
+          className={`px-3 py-1 rounded-full text-sm ${duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'}`}
           onClick={() => setDuelLimit(null)}
         >
           All Players
         </button>
         <button
-          className={px-3 py-1 rounded-full text-sm ${duelLimit === 100 ? 'bg-goat text-white' : 'bg-white text-black'}}
+          className={`px-3 py-1 rounded-full text-sm ${duelLimit === 100 ? 'bg-goat text-white' : 'bg-white text-black'}`}
           onClick={() => setDuelLimit(100)}
         >
           Top 100
         </button>
         <button
-          className={px-3 py-1 rounded-full text-sm ${duelLimit === 50 ? 'bg-goat text-white' : 'bg-white text-black'}}
+          className={`px-3 py-1 rounded-full text-sm ${duelLimit === 50 ? 'bg-goat text-white' : 'bg-white text-black'}`}
           onClick={() => setDuelLimit(50)}
         >
           Top 50
@@ -175,7 +175,7 @@ export default function Home() {
                     ? 'bg-goat/5 text-goat/80'
                     : ''
                 return (
-                  <tr key={player.id} className={border-t border-goat/30 hover:bg-white/5 transition ${rowStyle}}>
+                  <tr key={player.id} className={`border-t border-goat/30 hover:bg-white/5 transition ${rowStyle}`}>
                     <td className="px-4 py-2">{i + 1}</td>
                     <td className="px-4 py-2 text-white font-semibold text-center">
                       {player.entities.name}
@@ -209,11 +209,11 @@ function PlayerCard({ player, onVote, selected }) {
   return (
     <button onClick={onVote} className="cursor-pointer transition focus:outline-none">
       <div className="flex flex-col items-center w-44">
-        <div className="player-image-block w-40 h-40 relative rounded-xl overflow-hidden border mx-auto transition duration-200 ease-in-out hover:brightness-110">
+        <div className={`player-image-block w-40 h-40 relative rounded-xl overflow-hidden border mx-auto transition duration-300 ease-in-out hover:brightness-110 ${selected ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}>
           <img
             src={player.image_url}
             alt={player.name_line2 || player.name_line1}
-            className={w-full h-full object-cover ${selected ? 'ring-4 ring-goat' : ''}}
+            className="w-full h-full object-cover"
           />
         </div>
         <div className="flex flex-col items-center justify-center w-full mt-2 space-y-1 h-[96px]">
