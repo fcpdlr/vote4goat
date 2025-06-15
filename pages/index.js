@@ -12,14 +12,14 @@ export default function Home() {
   const [limit, setLimit] = useState(10)
   const [selected, setSelected] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
-  const [duelLimit, setDuelLimit] = useState(null) // null = All players
+  const [duelLimit, setDuelLimit] = useState(null)
 
-  const ENTITY_CATEGORY_ID = 1 // Football Players
+  const ENTITY_CATEGORY_ID = 1
 
   useEffect(() => {
     fetchDuel()
     fetchRanking(limit)
-  }, [duelLimit]) // refetch duel when duelLimit changes
+  }, [duelLimit])
 
   const fetchDuel = async () => {
     setSelected(null)
@@ -53,60 +53,15 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-center text-white font-sans flex flex-col">
-
-      {/* HEADER */}
       <header className="flex flex-col items-center justify-start pt-2 pb-4 gap-4">
         <a href="/" className="flex flex-col items-center">
           <img src="/logo.png" alt="logo" className="h-20 w-20 mb-1" />
           <span className="text-2xl font-bold">Vote<span className="text-goat">4</span>GOAT</span>
         </a>
-
-        <div className="flex flex-row items-center justify-center gap-5">
-          <div className="flex flex-col items-center">
-            <a href="/football">
-              <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 mb-1" />
-            </a>
-            <span className="text-goat font-semibold text-[10px] uppercase">Football</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 mb-1 opacity-60 cursor-default" />
-            <span className="text-goat font-semibold text-[10px] uppercase">Basketball</span>
-            <span className="text-[10px] text-white/50 mt-0.5 italic">Coming soon</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 mb-1 opacity-60 cursor-default" />
-            <span className="text-goat font-semibold text-[10px] uppercase">Tennis</span>
-            <span className="text-[10px] text-white/50 mt-0.5 italic">Coming soon</span>
-          </div>
-        </div>
       </header>
 
-      {/* TÍTULO */}
       <h1 className="text-3xl font-extrabold mt-2 mb-2 text-goat">WHO IS THE GOAT?</h1>
 
-      {/* BOTONES DE SELECCIÓN */}
-      <div className="flex justify-center space-x-4 mb-4">
-        <button
-          className={`px-3 py-1 rounded-full text-sm ${duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'}`}
-          onClick={() => setDuelLimit(null)}
-        >
-          All Players
-        </button>
-        <button
-          className={`px-3 py-1 rounded-full text-sm ${duelLimit === 100 ? 'bg-goat text-white' : 'bg-white text-black'}`}
-          onClick={() => setDuelLimit(100)}
-        >
-          Top 100
-        </button>
-        <button
-          className={`px-3 py-1 rounded-full text-sm ${duelLimit === 50 ? 'bg-goat text-white' : 'bg-white text-black'}`}
-          onClick={() => setDuelLimit(50)}
-        >
-          Top 50
-        </button>
-      </div>
-
-      {/* DUEL */}
       {duel.length === 2 && (
         <section className="flex flex-col items-center justify-center flex-grow relative">
           <div className="relative flex items-start justify-center gap-6">
@@ -128,79 +83,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
-      {/* BOTÓN HELP → MOVIDO ABAJO */}
-      <button
-        onClick={() => setShowHelp(!showHelp)}
-        className="text-sm text-white underline mb-4 mt-8"
-      >
-        How does it work?
-      </button>
-
-      {showHelp && (
-        <div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mb-4 border border-white/10">
-          <p className="mb-2 font-semibold text-goat">🧠 It’s simple:</p>
-          <ul className="list-disc list-inside space-y-1 text-left">
-            <li>Two players appear randomly on screen.</li>
-            <li>You vote for who you think is the better one.</li>
-            <li>Their Elo ratings update after each vote.</li>
-            <li>Scroll down to see the live ranking.</li>
-          </ul>
-        </div>
-      )}
-
-      {/* RANKING */}
-      <div id="ranking-section" className="bg-background text-white px-6 py-12 mt-8 rounded-t-3xl">
-        <div className="text-center text-sm mb-2">
-          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline">↑ VOTE</button>
-        </div>
-        <h2 className="text-2xl font-bold mb-6 text-center">RANKING</h2>
-        <div className="overflow-x-auto">
-          <table className="mx-auto w-full text-sm">
-            <thead>
-              <tr>
-                <th className="px-4 py-2 text-goat text-left">RANK</th>
-                <th className="px-4 py-2 text-goat text-center">PLAYER</th>
-                <th className="px-4 py-2 text-goat text-left">POINTS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ranking.map((player, i) => {
-                const rowStyle =
-                  i === 0
-                    ? 'bg-goat/10 font-bold text-goat'
-                    : i === 1
-                    ? 'bg-goat/5 font-semibold text-goat/90'
-                    : i === 2
-                    ? 'bg-goat/5 text-goat/80'
-                    : ''
-                return (
-                  <tr key={player.id} className={`border-t border-goat/30 hover:bg-white/5 transition ${rowStyle}`}>
-                    <td className="px-4 py-2">{i + 1}</td>
-                    <td className="px-4 py-2 text-white font-semibold text-center">
-                      {player.entities.name}
-                    </td>
-                    <td className="px-4 py-2">{Math.round(player.elo_rating)}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {ranking.length >= limit && limit < 50 && (
-          <button
-            className="mt-6 text-blue-600 underline text-sm"
-            onClick={() => {
-              const newLimit = limit + 10
-              setLimit(newLimit)
-              fetchRanking(newLimit)
-            }}
-          >
-            Show more
-          </button>
-        )}
-      </div>
     </main>
   )
 }
@@ -209,11 +91,11 @@ function PlayerCard({ player, onVote, selected }) {
   return (
     <button onClick={onVote} className="cursor-pointer transition focus:outline-none">
       <div className="flex flex-col items-center w-44">
-        <div className="player-image-block w-40 h-40 relative rounded-xl overflow-hidden border mx-auto transition duration-200 ease-in-out hover:brightness-110">
+        <div className={`player-image-block w-40 h-40 relative rounded-xl overflow-hidden border mx-auto transition duration-300 ease-in-out hover:brightness-110 ${selected ? 'scale-110 ring-4 ring-goat z-10' : ''}`}>
           <img
             src={player.image_url}
             alt={player.name_line2 || player.name_line1}
-            className={`w-full h-full object-cover ${selected ? 'ring-4 ring-goat' : ''}`}
+            className="w-full h-full object-cover"
           />
         </div>
         <div className="flex flex-col items-center justify-center w-full mt-2 space-y-1 h-[96px]">
