@@ -129,7 +129,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* BOTÓN HELP → MOVIDO ABAJO */}
+      {/* BOTÓN HELP */}
       <button
         onClick={() => setShowHelp(!showHelp)}
         className="text-sm text-white underline mb-4 mt-8"
@@ -178,7 +178,14 @@ export default function Home() {
                   <tr key={player.id} className={`border-t border-goat/30 hover:bg-white/5 transition ${rowStyle}`}>
                     <td className="px-4 py-2">{i + 1}</td>
                     <td className="px-4 py-2 text-white font-semibold text-center">
-                      {player.entities.name}
+                      <div className="flex items-center justify-center gap-2">
+                        <img
+                          src={player.entities.image_url}
+                          alt={player.entities.name}
+                          className="w-6 h-6 rounded-full object-cover"
+                        />
+                        <span>{player.entities.name}</span>
+                      </div>
                     </td>
                     <td className="px-4 py-2">{Math.round(player.elo_rating)}</td>
                   </tr>
