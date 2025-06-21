@@ -98,12 +98,13 @@ const vote = async (winnerId, loserId) => {
     console.warn('Error obteniendo IP:', err)
   }
 
-  const { error: voteError } = await supabase.rpc('vote_and_update_elo', {
-    winner_id_input: winnerId,
-    loser_id_input: loserId,
-    user_id_input: userId,
-    ip_address_input: ipAddress,
-  })
+   const { error: voteError } = await supabase.rpc('vote_and_update_elo', {
+  winner_id_input: duel.find(e => e.id === winnerId).entity_id,
+  loser_id_input: duel.find(e => e.id === loserId).entity_id,
+  user_id_input: userId,
+  ip_address_input: ipAddress,
+})
+
 
   if (voteError) {
     console.error('Error al votar:', voteError)
