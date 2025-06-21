@@ -64,27 +64,50 @@ export default function Home() {
     setRanking(data)
   }
 
-  const vote = async (winnerId, loserId) => {
+    const vote = async (winnerId, loserId) => {
     setSelected(winnerId)
 
-    console.log('Votando con:', {
-      winnerId,
-      loserId,
-      userId: user?.id || null,
-      ip: ipAddress || null,
+    // Obtener IP
+    let ipAddress = null
+    try {
+      const res = await fetch('https://api.ipify.org?format=json')
+      const json = await res.json()
+      ipAddress = json.ip
+    } catch (err) {
+      console.warn('Error obteniendo IP:', err)
+    }
+
+    // Obtener usuario (si está logueado)
+    let userId = null
+    try {
+      const {
+        data: { user },
+        error
+      } = await supabase.auth.getUser()
+      if (error) console.warn('Error obteniendo usuario:', error)
+      userId = user?.id || null
+    } catch (err) {
+      console.warn('Error obteniendo usuario:', err)
+    }
+
+    // Llamar a la función SQL
+    const { error: voteError } = await supabase.rpc('vote_and_update_elo', {
+      winner_id_input: winnerId,
+      loser_id_input: loserId,
+      user_id_input: userId,
+      ip_address_input: ipAddress
     })
 
-await supabase.rpc('vote_and_update_elo', {
-  winner_id_input: winnerId,
-  loser_id_input: loserId,
-  user_id_input: userId || null,
-  ip_address_input: ipAddress || null,
-})
+    if (voteError) {
+      console.error('Error al votar:', voteError)
+      return
+    }
 
-
+    // Recargar duelo y ranking
     fetchDuel()
     fetchRanking(limit)
   }
+
 
   // ... el resto del JSX permanece igual
 
