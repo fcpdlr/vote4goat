@@ -71,45 +71,49 @@ export default function Home() {
     setRanking(data || [])
   }
 
-  const vote = async (winnerId, loserId) => {
-    setSelected(winnerId)
+const vote = async (winnerId, loserId) => {
+  setSelected(winnerId)
 
-    let userId = null
-    try {
-      const {
-        data: { user },
-        error
-      } = await supabase.auth.getUser()
-      if (error) console.warn('Error obteniendo usuario:', error)
-      userId = user?.id || null
-    } catch (err) {
-      console.warn('Error obteniendo usuario:', err)
+  let userId = null
+  let ipAddress = null
+
+  try {
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession()
+    if (sessionError) {
+      console.warn('Error obteniendo sesión:', sessionError)
     }
-
-    let ipAddress = null
-    try {
-      const res = await fetch('https://api.ipify.org?format=json')
-      const json = await res.json()
-      ipAddress = json.ip
-    } catch (err) {
-      console.warn('Error obteniendo IP:', err)
-    }
-
-    const { error: voteError } = await supabase.rpc('vote_and_update_elo', {
-      winner_id_input: winnerId,
-      loser_id_input: loserId,
-      user_id_input: userId,
-      ip_address_input: ipAddress
-    })
-
-    if (voteError) {
-      console.error('Error al votar:', voteError)
-      return
-    }
-
-    fetchDuel()
-    fetchRanking(limit)
+    userId = session?.user?.id || null
+  } catch (err) {
+    console.warn('Error obteniendo sesión:', err)
   }
+
+  try {
+    const res = await fetch('https://api.ipify.org?format=json')
+    const json = await res.json()
+    ipAddress = json.ip
+  } catch (err) {
+    console.warn('Error obteniendo IP:', err)
+  }
+
+  const { error: voteError } = await supabase.rpc('vote_and_update_elo', {
+    winner_id_input: winnerId,
+    loser_id_input: loserId,
+    user_id_input: userId,
+    ip_address_input: ipAddress,
+  })
+
+  if (voteError) {
+    console.error('Error al votar:', voteError)
+    return
+  }
+
+  fetchDuel()
+  fetchRanking(limit)
+}
+
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
