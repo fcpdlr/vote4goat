@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { createClient } from '@supabase/supabase-js'
 import countries from 'i18n-iso-countries'
@@ -79,70 +79,92 @@ export default function Signup() {
 
         {error && <div className="text-red-500 text-sm">{error}</div>}
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          required
-          value={formData.email}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          required
-          value={formData.password}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          required
-          value={formData.username}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          type="date"
-          name="birthdate"
-          required
-          value={formData.birthdate}
-          onChange={handleChange}
-          className="input"
-        />
-        <select
-          name="country"
-          required
-          value={formData.country}
-          onChange={handleChange}
-          className="input"
-        >
-          <option value="">Select your country</option>
-          {countryList.map(({ code, name }) => (
-            <option key={code} value={name}>
-              {name}
-            </option>
-          ))}
-        </select>
-<div className="flex items-start mb-4">
-  <input
-    id="terms"
-    name="terms"
-    type="checkbox"
-    required
-    className="mt-1 mr-2 w-4 h-4"
-  />
-  <label htmlFor="terms" className="text-sm">
-    I accept the{' '}
-    <a href="/legal" className="underline" target="_blank">Legal Notice</a>,{' '}
-    <a href="/privacy" className="underline" target="_blank">Privacy Policy</a>, and{' '}
-    <a href="/cookies" className="underline" target="_blank">Cookies Policy</a>.
-  </label>
-</div>
+        <div>
+          <label htmlFor="email" className="block mb-1 text-sm font-medium">Email</label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            required
+            value={formData.email}
+            onChange={handleChange}
+            className="input"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className="block mb-1 text-sm font-medium">Password</label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            required
+            value={formData.password}
+            onChange={handleChange}
+            className="input"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="username" className="block mb-1 text-sm font-medium">Username</label>
+          <input
+            type="text"
+            name="username"
+            id="username"
+            required
+            value={formData.username}
+            onChange={handleChange}
+            className="input"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="birthdate" className="block mb-1 text-sm font-medium">Date of Birth</label>
+          <input
+            type="date"
+            name="birthdate"
+            id="birthdate"
+            required
+            value={formData.birthdate}
+            onChange={handleChange}
+            className="input"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="country" className="block mb-1 text-sm font-medium">Country</label>
+          <select
+            name="country"
+            id="country"
+            required
+            value={formData.country}
+            onChange={handleChange}
+            className="input bg-black text-white border border-white rounded p-2"
+          >
+            <option value="">Select your country</option>
+            {countryList.map(({ code, name }) => (
+              <option key={code} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-start mb-4">
+          <input
+            id="terms"
+            name="terms"
+            type="checkbox"
+            required
+            className="mt-1 mr-2 w-4 h-4"
+          />
+          <label htmlFor="terms" className="text-sm">
+            I accept the{' '}
+            <a href="/legal" className="underline" target="_blank">Legal Notice</a>,{' '}
+            <a href="/privacy" className="underline" target="_blank">Privacy Policy</a>, and{' '}
+            <a href="/cookies" className="underline" target="_blank">Cookies Policy</a>.
+          </label>
+        </div>
 
         <button
           type="submit"
