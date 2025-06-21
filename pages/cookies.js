@@ -1,4 +1,3 @@
-<!-- /pages/cookies.js -->
 export default function Cookies() {
   return (
     <main className="min-h-screen bg-black text-white p-8">
