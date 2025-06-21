@@ -64,6 +64,7 @@ const vote = async (winnerId, loserId) => {
   fetchRanking(limit)
 }
 
+
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 
