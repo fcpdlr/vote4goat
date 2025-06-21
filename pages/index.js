@@ -108,24 +108,31 @@ export default function Home() {
 
       {/* DUEL */}
       {duel.length === 2 && (
-        <section className="flex flex-col items-center justify-center flex-grow relative">
-          <div className="relative flex items-center justify-center gap-6 min-h-[160px]">
-            <PlayerCard
-              player={duel[0]}
-              onVote={() => vote(duel[0].id, duel[1].id)}
-              selected={selected === duel[0].id}
-            />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-              <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">
-               VS
+        <section className="min-h-[400px] flex items-center justify-center">
+          <div className="relative flex flex-row items-center justify-center gap-6">
+            <button onClick={() => vote(duel[0].id, duel[1].id)} className="cursor-pointer transition focus:outline-none w-40 h-40">
+              <div className={`player-image-block w-full h-full relative rounded-xl overflow-hidden border transition duration-300 ease-in-out hover:brightness-110 ${selected === duel[0].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}>
+                <img
+                  src={duel[0].image_url}
+                  alt={duel[0].name_line2 || duel[0].name_line1}
+                  className="w-full h-full object-cover"
+                />
               </div>
+            </button>
+
+            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg z-10">
+              VS
             </div>
 
-            <PlayerCard
-              player={duel[1]}
-              onVote={() => vote(duel[1].id, duel[0].id)}
-              selected={selected === duel[1].id}
-            />
+            <button onClick={() => vote(duel[1].id, duel[0].id)} className="cursor-pointer transition focus:outline-none w-40 h-40">
+              <div className={`player-image-block w-full h-full relative rounded-xl overflow-hidden border transition duration-300 ease-in-out hover:brightness-110 ${selected === duel[1].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}>
+                <img
+                  src={duel[1].image_url}
+                  alt={duel[1].name_line2 || duel[1].name_line1}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </button>
           </div>
         </section>
       )}
@@ -210,36 +217,5 @@ export default function Home() {
         )}
       </div>
     </main>
-  )
-}
-
-function PlayerCard({ player, onVote, selected }) {
-  return (
-    <button onClick={onVote} className="cursor-pointer transition focus:outline-none">
-      <div className="flex flex-col items-center w-44">
-        <div className={`player-image-block w-40 h-40 relative rounded-xl overflow-hidden border mx-auto transition duration-300 ease-in-out hover:brightness-110 ${selected ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}>
-          <img
-            src={player.image_url}
-            alt={player.name_line2 || player.name_line1}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="flex flex-col items-center justify-center w-full mt-2 space-y-1 h-[96px]">
-          {player.name_line1 && (
-            <div className="text-xs font-medium tracking-wide text-white leading-none">
-              {player.name_line1}
-            </div>
-          )}
-          <div className="text-xl font-extrabold text-goat leading-none">
-            {player.name_line2}
-          </div>
-          {player.name_line3 && (
-            <div className="text-xs font-medium text-white leading-none">
-              {player.name_line3}
-            </div>
-          )}
-        </div>
-      </div>
-    </button>
   )
 }
