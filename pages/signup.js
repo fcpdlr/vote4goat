@@ -40,7 +40,10 @@ export default function Signup() {
 
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
-      password
+      password,
+      options: {
+        emailRedirectTo: 'https://www.vote4goat.com/login'
+      }
     })
 
     if (signUpError) {
@@ -49,23 +52,27 @@ export default function Signup() {
       return
     }
 
-    const userId = data.user?.id
-if (userId) {
-  const { error: profileError } = await supabase.from('profiles').insert([
-    {
-      id: userId,
-      username,
-      birthdate,
-      country
+    if (!data.user) {
+      // Email sent but user needs to confirm it
+      router.push('/verify-email')
+      setLoading(false)
+      return
     }
-  ])
-  if (profileError) {
-    setError(profileError.message)
-  } else {
-    router.push('/verify-email')  // 🔁 redirige tras el signup
-  }
-}
 
+    const userId = data.user.id
+    const { error: profileError } = await supabase.from('profiles').insert([
+      {
+        id: userId,
+        username,
+        birthdate,
+        country
+      }
+    ])
+    if (profileError) {
+      setError(profileError.message)
+    } else {
+      router.push('/')
+    }
 
     setLoading(false)
   }
@@ -143,7 +150,7 @@ if (userId) {
             required
             value={formData.country}
             onChange={handleChange}
-            className="input bg-black text-white"
+            className="input bg-white text-black"
           >
             <option value="">Select your country</option>
             {countryList.map(({ code, name }) => (
