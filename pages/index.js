@@ -115,11 +115,12 @@ export default function Home() {
               onVote={() => vote(duel[0].id, duel[1].id)}
               selected={selected === duel[0].id}
             />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[80px] z-10">
-              <div className="bg-goat text-white text-xl font-bold w-10 h-10 flex items-center justify-center rounded-full shadow-lg">
-                VS
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+              <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">
+               VS
               </div>
             </div>
+
             <PlayerCard
               player={duel[1]}
               onVote={() => vote(duel[1].id, duel[0].id)}
