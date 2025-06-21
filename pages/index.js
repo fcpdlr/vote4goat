@@ -87,7 +87,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
-      {/* HEADER */}
       <header className="flex items-center justify-between px-3 py-2">
         <a href="/" className="flex items-center gap-1">
           <img src="/logo.png" alt="logo" className="h-8 w-8 sm:h-10 sm:w-10" />
@@ -97,10 +96,7 @@ export default function Home() {
         </a>
 
         <nav className="flex items-center gap-3 text-xs sm:text-sm">
-          <button
-            onClick={() => setShowHelp(!showHelp)}
-            className="hover:underline"
-          >
+          <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">
             About
           </button>
           {user ? (
@@ -123,14 +119,6 @@ export default function Home() {
         </nav>
       </header>
 
-      {/* Aquí continúa el resto de tu componente tal cual ya estaba (deportes, ayuda, título, duelo, ranking...) */}
-      {/* Lo omito aquí por espacio pero ya lo tienes igual en tu última versión. Si necesitas todo copiado otra vez, te lo pego completo. */}
-    </main>
-  )
-}
-
-
-      {/* DEPORTES */}
       <div className="flex flex-row items-center justify-center gap-5 mt-2">
         <div className="flex flex-col items-center">
           <a href="/football">
@@ -150,7 +138,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ABOUT */}
       {showHelp && (
         <div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
           <p className="mb-2 font-semibold text-goat">⚽ What is Vote4GOAT?</p>
@@ -163,17 +150,12 @@ export default function Home() {
           <p className="mb-2">
             The more people vote, the more accurate the ranking becomes. No stats, no explanations — just pure instinct and opinion.
           </p>
-          <p className="mb-2">
-            New features are coming soon: filters, user profiles, generational matchups, and more sports beyond football.
-          </p>
           <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT list.</p>
         </div>
       )}
 
-      {/* TÍTULO */}
       <h1 className="text-3xl font-extrabold mt-4 mb-2 text-goat text-center">WHO IS THE GOAT?</h1>
 
-      {/* BOTONES DE SELECCIÓN */}
       <div className="flex justify-center space-x-4 mb-4">
         <button
           className={`px-3 py-1 rounded-full text-sm ${duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'}`}
@@ -195,7 +177,6 @@ export default function Home() {
         </button>
       </div>
 
-      {/* DUEL */}
       {duel.length === 2 && (
         <section className="flex flex-col items-center justify-center py-4">
           <div className="relative flex flex-row items-center justify-center gap-6 h-40">
@@ -240,7 +221,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* RANKING */}
       <div id="ranking-section" className="bg-background text-white px-6 py-12 mt-8 rounded-t-3xl">
         <div className="text-center text-sm mb-2">
           <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline">↑ VOTE</button>
@@ -302,4 +282,3 @@ export default function Home() {
     </main>
   )
 }
-
