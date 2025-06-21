@@ -134,24 +134,28 @@ export default function Home() {
           </div>
 
           <div className="flex flex-row justify-center gap-6 mt-2">
-            {[duel[0], duel[1]].map((player) => (
-              <div key={player.id} className="flex flex-col items-center w-44 space-y-1">
-                {player.name_line1 && (
-                  <div className="text-xs font-medium tracking-wide text-white leading-none">
-                    {player.name_line1}
-                  </div>
-                )}
-                <div className="text-xl font-extrabold text-goat leading-none">
-                  {player.name_line2}
-                </div>
-                {player.name_line3 && (
-                  <div className="text-xs font-medium text-white leading-none">
-                    {player.name_line3}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+  {[duel[0], duel[1]].map((player) => (
+    <div key={player.id} className="flex flex-col items-center w-44 space-y-1 leading-none">
+      
+      {/* Línea 1 (arriba) */}
+      <div className="text-xs font-medium tracking-wide text-white h-4">
+        {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
+      </div>
+
+      {/* Línea 2 (nombre central, siempre visible) */}
+      <div className="text-xl font-extrabold text-goat h-6">
+        {player.name_line2}
+      </div>
+
+      {/* Línea 3 (abajo) */}
+      <div className="text-xs font-medium text-white h-4">
+        {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
+      </div>
+      
+    </div>
+  ))}
+</div>
+
         </section>
       )}
 
