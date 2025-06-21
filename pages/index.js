@@ -43,17 +43,24 @@ export default function Home() {
 const vote = async (winnerId, loserId) => {
   setSelected(winnerId)
 
-  // Obtener IP del cliente
-  const ipRes = await fetch('https://api.ipify.org?format=json')
-  const ipData = await ipRes.json()
-  const ipAddress = ipData.ip
+  let ipAddress = null
+  try {
+    const ipRes = await fetch('https://api.ipify.org?format=json')
+    const ipData = await ipRes.json()
+    ipAddress = ipData.ip
+  } catch (e) {
+    console.warn('No se pudo obtener la IP:', e)
+  }
 
-  // Obtener usuario autenticado
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  const userId = user?.id || null
+  let userId = null
+  try {
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
+    userId = user?.id || null
+  } catch (e) {
+    console.warn('No se pudo obtener el usuario:', e)
+  }
 
   await supabase.rpc('vote_and_update_elo', {
     winner_id_input: winnerId,
