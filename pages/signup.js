@@ -50,21 +50,22 @@ export default function Signup() {
     }
 
     const userId = data.user?.id
-    if (userId) {
-      const { error: profileError } = await supabase.from('profiles').insert([
-        {
-          id: userId,
-          username,
-          birthdate,
-          country
-        }
-      ])
-      if (profileError) {
-        setError(profileError.message)
-      } else {
-        router.push('/')
-      }
+if (userId) {
+  const { error: profileError } = await supabase.from('profiles').insert([
+    {
+      id: userId,
+      username,
+      birthdate,
+      country
     }
+  ])
+  if (profileError) {
+    setError(profileError.message)
+  } else {
+    router.push('/verify-email')  // 🔁 redirige tras el signup
+  }
+}
+
 
     setLoading(false)
   }
