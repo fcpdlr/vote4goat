@@ -43,30 +43,26 @@ export default function Home() {
 const vote = async (winnerId, loserId) => {
   setSelected(winnerId)
 
-  // Obtener user_id actual
   const {
     data: { user }
   } = await supabase.auth.getUser()
 
-  const user_id = user?.id || null
+  const userId = user?.id || null
 
-  // Obtener IP pública
   const ipRes = await fetch('https://api.ipify.org?format=json')
   const ipData = await ipRes.json()
-  const ip_address = ipData.ip || null
+  const ipAddress = ipData.ip || null
 
-  // Ejecutar función
   await supabase.rpc('vote_and_update_elo', {
     winner_id_input: winnerId,
     loser_id_input: loserId,
-    user_id_input: user_id,
-    ip_address_input: ip_address
+    user_id_input: userId,
+    ip_address_input: ipAddress
   })
 
   fetchDuel()
   fetchRanking(limit)
 }
-
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
