@@ -42,36 +42,15 @@ export default function Signup() {
       email,
       password,
       options: {
-        emailRedirectTo: 'https://www.vote4goat.com/login'
+        data: { username, birthdate, country },
+        emailRedirectTo: 'https://www.vote4goat.com/verify-email'
       }
     })
 
     if (signUpError) {
       setError(signUpError.message)
-      setLoading(false)
-      return
-    }
-
-    if (!data.user) {
-      // Email sent but user needs to confirm it
-      router.push('/verify-email')
-      setLoading(false)
-      return
-    }
-
-    const userId = data.user.id
-    const { error: profileError } = await supabase.from('profiles').insert([
-      {
-        id: userId,
-        username,
-        birthdate,
-        country
-      }
-    ])
-    if (profileError) {
-      setError(profileError.message)
     } else {
-      router.push('/')
+      router.push('/verify-email')
     }
 
     setLoading(false)
@@ -188,3 +167,4 @@ export default function Signup() {
     </main>
   )
 }
+
