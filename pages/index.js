@@ -14,6 +14,7 @@ export default function Home() {
   const [showHelp, setShowHelp] = useState(false)
   const [duelLimit, setDuelLimit] = useState(null)
   const [user, setUser] = useState(null)
+  const [ipAddress, setIpAddress] = useState(null)
 
   const ENTITY_CATEGORY_ID = 1
 
@@ -21,6 +22,7 @@ export default function Home() {
     fetchDuel()
     fetchRanking(limit)
     checkUser()
+    fetchIp()
   }, [duelLimit])
 
   const checkUser = async () => {
@@ -28,6 +30,16 @@ export default function Home() {
       data: { user },
     } = await supabase.auth.getUser()
     setUser(user)
+  }
+
+  const fetchIp = async () => {
+    try {
+      const res = await fetch('https://api.ipify.org?format=json')
+      const data = await res.json()
+      setIpAddress(data.ip)
+    } catch (e) {
+      console.warn('No se pudo obtener la IP:', e)
+    }
   }
 
   const fetchDuel = async () => {
@@ -55,35 +67,26 @@ export default function Home() {
   const vote = async (winnerId, loserId) => {
     setSelected(winnerId)
 
-    let ipAddress = null
-    try {
-      const ipRes = await fetch('https://api.ipify.org?format=json')
-      const ipData = await ipRes.json()
-      ipAddress = ipData.ip
-    } catch (e) {
-      console.warn('No se pudo obtener la IP:', e)
-    }
-
-    let userId = null
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      userId = user?.id || null
-    } catch (e) {
-      console.warn('No se pudo obtener el usuario:', e)
-    }
+    console.log('Votando con:', {
+      winnerId,
+      loserId,
+      userId: user?.id || null,
+      ip: ipAddress || null,
+    })
 
     await supabase.rpc('vote_and_update_elo', {
       winner_id_input: winnerId,
       loser_id_input: loserId,
-      user_id_input: userId,
-      ip_address_input: ipAddress,
+      user_id_input: user?.id || null,
+      ip_address_input: ipAddress || null,
     })
 
     fetchDuel()
     fetchRanking(limit)
   }
+
+  // ... el resto del JSX permanece igual
+
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
