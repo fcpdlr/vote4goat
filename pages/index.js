@@ -55,11 +55,14 @@ export default function Home() {
     <main className="min-h-screen bg-background px-4 pt-2 text-center text-white font-sans flex flex-col">
 
       {/* HEADER */}
-      <header className="flex flex-col items-center justify-start pt-2 pb-4 gap-4">
-        <a href="/" className="flex flex-col items-center">
-          <img src="/logo.png" alt="logo" className="h-20 w-20 mb-1" />
-          <span className="text-2xl font-bold">Vote<span className="text-goat">4</span>GOAT</span>
-        </a>
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-2 pb-4 px-2 gap-4">
+  <a href="/" className="flex flex-row items-center gap-2">
+    <img src="/logo.png" alt="logo" className="h-12 w-12 sm:h-16 sm:w-16" />
+    <span className="text-xl sm:text-2xl font-bold">
+      Vote<span className="text-goat">4</span>GOAT
+    </span>
+  </a>
+
 
         <div className="flex flex-row items-center justify-center gap-5">
           <div className="flex flex-col items-center">
