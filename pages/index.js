@@ -55,34 +55,28 @@ export default function Home() {
     <main className="min-h-screen bg-background px-4 pt-2 text-center text-white font-sans flex flex-col">
 
       {/* HEADER */}
-      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-2 pb-4 px-2 gap-4">
+<header className="flex flex-row items-center justify-between px-4 py-3">
+  {/* Logo + nombre */}
   <a href="/" className="flex flex-row items-center gap-2">
-    <img src="/logo.png" alt="logo" className="h-12 w-12 sm:h-16 sm:w-16" />
-    <span className="text-xl sm:text-2xl font-bold">
+    <img src="/logo.png" alt="logo" className="h-10 w-10 sm:h-12 sm:w-12" />
+    <span className="text-lg sm:text-2xl font-bold">
       Vote<span className="text-goat">4</span>GOAT
     </span>
   </a>
 
+  {/* Navegación */}
+  <nav className="flex items-center gap-4 text-sm sm:text-base">
+    <a href="/about" className="hover:underline">About</a>
+    <a href="/login" className="hover:underline">Log In</a>
+    <a
+      href="/signup"
+      className="bg-goat text-black px-3 py-1 rounded-full font-semibold hover:brightness-105"
+    >
+      Sign Up
+    </a>
+  </nav>
+</header>
 
-        <div className="flex flex-row items-center justify-center gap-5">
-          <div className="flex flex-col items-center">
-            <a href="/football">
-              <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 mb-1" />
-            </a>
-            <span className="text-goat font-semibold text-[10px] uppercase">Football</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 mb-1 opacity-60 cursor-default" />
-            <span className="text-goat font-semibold text-[10px] uppercase">Basketball</span>
-            <span className="text-[10px] text-white/50 mt-0.5 italic">Coming soon</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 mb-1 opacity-60 cursor-default" />
-            <span className="text-goat font-semibold text-[10px] uppercase">Tennis</span>
-            <span className="text-[10px] text-white/50 mt-0.5 italic">Coming soon</span>
-          </div>
-        </div>
-      </header>
 
       {/* TÍTULO */}
       <h1 className="text-3xl font-extrabold mt-2 mb-2 text-goat">WHO IS THE GOAT?</h1>
