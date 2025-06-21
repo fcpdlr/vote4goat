@@ -210,11 +210,11 @@ const vote = async (winnerId, loserId) => {
       {duel.length === 2 && (
         <section className="flex flex-col items-center justify-center py-4">
           <div className="relative flex flex-row items-center justify-center gap-6 h-40">
-            <button onClick={() => vote(duel[0].id, duel[1].id)} className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative">
+            <button onClick={() => vote(duel[0].entity_id, duel[1].entity_id)} className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative">
               <img
                 src={duel[0].image_url}
                 alt={duel[0].name_line2 || duel[0].name_line1}
-                className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === duel[0].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
+                className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === duel[0].entity_id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
               />
             </button>
 
@@ -224,11 +224,11 @@ const vote = async (winnerId, loserId) => {
               </div>
             </div>
 
-            <button onClick={() => vote(duel[1].id, duel[0].id)} className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative">
+            <button onClick={() => vote(duel[1].entity_id, duel[0].entity_id)} className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative">
               <img
                 src={duel[1].image_url}
                 alt={duel[1].name_line2 || duel[1].name_line1}
-                className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === duel[1].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
+                className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === duel[1].entity_id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
               />
             </button>
           </div>
