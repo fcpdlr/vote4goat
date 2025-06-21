@@ -82,6 +82,19 @@ export default function Home() {
   </nav>
 </header>
 
+  {showHelp && (
+  <div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
+    <p className="mb-2 font-semibold text-goat">🧠 How it works:</p>
+    <ul className="list-disc list-inside space-y-1 text-left">
+      <li>Two players appear randomly on screen.</li>
+      <li>You vote for who you think is the better one.</li>
+      <li>Their Elo ratings update after each vote.</li>
+      <li>Rankings update live based on votes.</li>
+      <li>More features coming soon: filters, user profiles, history...</li>
+    </ul>
+  </div>
+)}
+
       {/* TÍTULO */}
       <h1 className="text-3xl font-extrabold mt-2 mb-2 text-goat">WHO IS THE GOAT?</h1>
 
@@ -160,13 +173,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* BOTÓN HELP */}
-      <button
-        onClick={() => setShowHelp(!showHelp)}
-        className="text-sm text-white underline mb-4 mt-8"
-      >
-        How does it work?
-      </button>
 
       {showHelp && (
         <div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mb-4 border border-white/10">
