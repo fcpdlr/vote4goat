@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
-import useUser from '../lib/useUser'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -14,20 +13,28 @@ export default function Home() {
   const [selected, setSelected] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
   const [duelLimit, setDuelLimit] = useState(null)
-  const user = useUser()
+  const [user, setUser] = useState(null)
 
   const ENTITY_CATEGORY_ID = 1
 
   useEffect(() => {
     fetchDuel()
     fetchRanking(limit)
+    checkUser()
   }, [duelLimit])
+
+  const checkUser = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    setUser(user)
+  }
 
   const fetchDuel = async () => {
     setSelected(null)
     const { data } = await supabase.rpc('get_duel', {
       entity_category_input: ENTITY_CATEGORY_ID,
-      limit_rank: duelLimit
+      limit_rank: duelLimit,
     })
     setDuel(data)
   }
@@ -35,7 +42,9 @@ export default function Home() {
   const fetchRanking = async (top) => {
     const { data } = await supabase
       .from('entity_rankings')
-      .select('id, elo_rating, entity_id, entities (name, name_line1, name_line2, name_line3, image_url)')
+      .select(
+        'id, elo_rating, entity_id, entities (name, name_line1, name_line2, name_line3, image_url)'
+      )
       .eq('entity_category_id', ENTITY_CATEGORY_ID)
       .order('elo_rating', { ascending: false })
       .limit(top)
@@ -55,13 +64,21 @@ export default function Home() {
       console.warn('No se pudo obtener la IP:', e)
     }
 
-    const userId = user?.id || null
+    let userId = null
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      userId = user?.id || null
+    } catch (e) {
+      console.warn('No se pudo obtener el usuario:', e)
+    }
 
     await supabase.rpc('vote_and_update_elo', {
       winner_id_input: winnerId,
       loser_id_input: loserId,
       user_id_input: userId,
-      ip_address_input: ipAddress
+      ip_address_input: ipAddress,
     })
 
     fetchDuel()
@@ -70,7 +87,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
-
       {/* HEADER */}
       <header className="flex items-center justify-between px-3 py-2">
         <a href="/" className="flex items-center gap-1">
@@ -88,15 +104,14 @@ export default function Home() {
             About
           </button>
           {user ? (
-            <a
-              href="/profile"
-              className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105"
-            >
+            <a href="/account" className="hover:underline">
               My Profile
             </a>
           ) : (
             <>
-              <a href="/login" className="hover:underline">Log In</a>
+              <a href="/login" className="hover:underline">
+                Log In
+              </a>
               <a
                 href="/signup"
                 className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105"
@@ -107,6 +122,13 @@ export default function Home() {
           )}
         </nav>
       </header>
+
+      {/* Aquí continúa el resto de tu componente tal cual ya estaba (deportes, ayuda, título, duelo, ranking...) */}
+      {/* Lo omito aquí por espacio pero ya lo tienes igual en tu última versión. Si necesitas todo copiado otra vez, te lo pego completo. */}
+    </main>
+  )
+}
+
 
       {/* DEPORTES */}
       <div className="flex flex-row items-center justify-center gap-5 mt-2">
