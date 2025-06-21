@@ -27,13 +27,19 @@ export default function Login() {
 
     const { email, password } = formData
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password
     })
 
     if (signInError) {
       setError(signInError.message)
+      setLoading(false)
+      return
+    }
+
+    if (!data.user?.email_confirmed_at) {
+      setError('Please confirm your email before logging in.')
       setLoading(false)
       return
     }
