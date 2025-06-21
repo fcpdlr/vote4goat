@@ -93,7 +93,15 @@ export default function Login() {
         >
           {loading ? 'Logging in...' : 'Log In'}
         </button>
+
+        <p className="text-sm text-center text-white/70 mt-4">
+          Forgot your password?{' '}
+          <a href="/forgot-password" className="underline text-goat">
+            Reset it here
+          </a>
+        </p>
       </form>
     </main>
   )
 }
+
