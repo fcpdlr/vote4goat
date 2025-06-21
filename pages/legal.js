@@ -1,4 +1,3 @@
-<!-- /pages/legal.js -->
 export default function Legal() {
   return (
     <main className="min-h-screen bg-black text-white p-8">
