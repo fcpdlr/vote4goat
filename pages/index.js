@@ -52,58 +52,76 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-4 pt-2 text-center text-white font-sans flex flex-col">
+    <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 
       {/* HEADER */}
-<header className="flex items-center justify-between px-3 py-2">
-  {/* Logo + nombre */}
-  <a href="/" className="flex items-center gap-1">
-    <img src="/logo.png" alt="logo" className="h-8 w-8 sm:h-10 sm:w-10" />
-    <span className="text-base sm:text-xl font-bold leading-none">
-      Vote<span className="text-goat">4</span>GOAT
-    </span>
-  </a>
+      <header className="flex items-center justify-between px-3 py-2">
+        <a href="/" className="flex items-center gap-1">
+          <img src="/logo.png" alt="logo" className="h-8 w-8 sm:h-10 sm:w-10" />
+          <span className="text-base sm:text-xl font-bold leading-none">
+            Vote<span className="text-goat">4</span>GOAT
+          </span>
+        </a>
 
-  {/* Navegación */}
-  <nav className="flex items-center gap-3 text-xs sm:text-sm">
-    <button
-      onClick={() => setShowHelp(!showHelp)}
-      className="hover:underline"
-    >
-      About
-    </button>
-    <a href="/login" className="hover:underline">Log In</a>
-    <a
-      href="/signup"
-      className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105"
-    >
-      Sign Up
-    </a>
-  </nav>
-</header>
+        <nav className="flex items-center gap-3 text-xs sm:text-sm">
+          <button
+            onClick={() => setShowHelp(!showHelp)}
+            className="hover:underline"
+          >
+            About
+          </button>
+          <a href="/login" className="hover:underline">Log In</a>
+          <a
+            href="/signup"
+            className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105"
+          >
+            Sign Up
+          </a>
+        </nav>
+      </header>
 
-  {showHelp && (
-<div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
-  <p className="mb-2 font-semibold text-goat">⚽ What is Vote4GOAT?</p>
-  <p className="mb-2">
-    Everyone has an opinion on who’s the greatest of all time — but what if we could let the world decide, one vote at a time?
-  </p>
-  <p className="mb-2">
-    Vote4GOAT is a simple, fun and addicting way to settle the debate. Two players appear on screen. You choose the one you think is greater. Your vote updates their score using a ranking system based on Elo — the same method used in chess and competitive gaming.
-  </p>
-  <p className="mb-2">
-    The more people vote, the more accurate the ranking becomes. No stats, no explanations — just pure instinct and opinion.
-  </p>
-  <p className="mb-2">
-    New features are coming soon: filters, user profiles, generational matchups, and more sports beyond football.
-  </p>
-  <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT list.</p>
-</div>
+      {/* DEPORTES */}
+      <div className="flex flex-row items-center justify-center gap-5 mt-2">
+        <div className="flex flex-col items-center">
+          <a href="/football">
+            <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 mb-1" />
+          </a>
+          <span className="text-goat font-semibold text-[10px] uppercase">Football</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 mb-1 opacity-60 cursor-default" />
+          <span className="text-goat font-semibold text-[10px] uppercase">Basketball</span>
+          <span className="text-[10px] text-white/50 mt-0.5 italic">Coming soon</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 mb-1 opacity-60 cursor-default" />
+          <span className="text-goat font-semibold text-[10px] uppercase">Tennis</span>
+          <span className="text-[10px] text-white/50 mt-0.5 italic">Coming soon</span>
+        </div>
+      </div>
 
-)}
+      {/* ABOUT */}
+      {showHelp && (
+        <div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
+          <p className="mb-2 font-semibold text-goat">⚽ What is Vote4GOAT?</p>
+          <p className="mb-2">
+            Everyone has an opinion on who’s the greatest of all time — but what if we could let the world decide, one vote at a time?
+          </p>
+          <p className="mb-2">
+            Vote4GOAT is a simple, fun and addicting way to settle the debate. Two players appear on screen. You choose the one you think is greater. Your vote updates their score using a ranking system based on Elo — the same method used in chess and competitive gaming.
+          </p>
+          <p className="mb-2">
+            The more people vote, the more accurate the ranking becomes. No stats, no explanations — just pure instinct and opinion.
+          </p>
+          <p className="mb-2">
+            New features are coming soon: filters, user profiles, generational matchups, and more sports beyond football.
+          </p>
+          <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT list.</p>
+        </div>
+      )}
 
       {/* TÍTULO */}
-      <h1 className="text-3xl font-extrabold mt-2 mb-2 text-goat">WHO IS THE GOAT?</h1>
+      <h1 className="text-3xl font-extrabold mt-4 mb-2 text-goat text-center">WHO IS THE GOAT?</h1>
 
       {/* BOTONES DE SELECCIÓN */}
       <div className="flex justify-center space-x-4 mb-4">
@@ -155,42 +173,21 @@ export default function Home() {
           </div>
 
           <div className="flex flex-row justify-center gap-6 mt-2">
-  {[duel[0], duel[1]].map((player) => (
-    <div key={player.id} className="flex flex-col items-center w-44 space-y-1 leading-none">
-      
-      {/* Línea 1 (arriba) */}
-      <div className="text-xs font-medium tracking-wide text-white h-4">
-        {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
-      </div>
-
-      {/* Línea 2 (nombre central, siempre visible) */}
-      <div className="text-xl font-extrabold text-goat h-6">
-        {player.name_line2}
-      </div>
-
-      {/* Línea 3 (abajo) */}
-      <div className="text-xs font-medium text-white h-4">
-        {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
-      </div>
-      
-    </div>
-  ))}
-</div>
-
+            {[duel[0], duel[1]].map((player) => (
+              <div key={player.id} className="flex flex-col items-center w-44 space-y-1 leading-none">
+                <div className="text-xs font-medium tracking-wide text-white h-4">
+                  {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
+                </div>
+                <div className="text-xl font-extrabold text-goat h-6">
+                  {player.name_line2}
+                </div>
+                <div className="text-xs font-medium text-white h-4">
+                  {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
-      )}
-
-
-      {showHelp && (
-        <div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mb-4 border border-white/10">
-          <p className="mb-2 font-semibold text-goat">🧠 It’s simple:</p>
-          <ul className="list-disc list-inside space-y-1 text-left">
-            <li>Two players appear randomly on screen.</li>
-            <li>You vote for who you think is the better one.</li>
-            <li>Their Elo ratings update after each vote.</li>
-            <li>Scroll down to see the live ranking.</li>
-          </ul>
-        </div>
       )}
 
       {/* RANKING */}
@@ -255,3 +252,4 @@ export default function Home() {
     </main>
   )
 }
+
