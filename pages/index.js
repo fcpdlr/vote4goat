@@ -83,16 +83,23 @@ export default function Home() {
 </header>
 
   {showHelp && (
-  <div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
-    <p className="mb-2 font-semibold text-goat">🧠 How it works:</p>
-    <ul className="list-disc list-inside space-y-1 text-left">
-      <li>Two players appear randomly on screen.</li>
-      <li>You vote for who you think is the better one.</li>
-      <li>Their Elo ratings update after each vote.</li>
-      <li>Rankings update live based on votes.</li>
-      <li>More features coming soon: filters, user profiles, history...</li>
-    </ul>
-  </div>
+<div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
+  <p className="mb-2 font-semibold text-goat">⚽ What is Vote4GOAT?</p>
+  <p className="mb-2">
+    Everyone has an opinion on who’s the greatest of all time — but what if we could let the world decide, one vote at a time?
+  </p>
+  <p className="mb-2">
+    Vote4GOAT is a simple, fun and addicting way to settle the debate. Two players appear on screen. You choose the one you think is greater. Your vote updates their score using a ranking system based on Elo — the same method used in chess and competitive gaming.
+  </p>
+  <p className="mb-2">
+    The more people vote, the more accurate the ranking becomes. No stats, no explanations — just pure instinct and opinion.
+  </p>
+  <p className="mb-2">
+    New features are coming soon: filters, user profiles, generational matchups, and more sports beyond football.
+  </p>
+  <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT list.</p>
+</div>
+
 )}
 
       {/* TÍTULO */}
