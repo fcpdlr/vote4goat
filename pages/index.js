@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import useUser from '../lib/useUser'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -13,6 +14,7 @@ export default function Home() {
   const [selected, setSelected] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
   const [duelLimit, setDuelLimit] = useState(null)
+  const user = useUser()
 
   const ENTITY_CATEGORY_ID = 1
 
@@ -40,38 +42,31 @@ export default function Home() {
 
     setRanking(data)
   }
-const vote = async (winnerId, loserId) => {
-  setSelected(winnerId)
 
-  let ipAddress = null
-  try {
-    const ipRes = await fetch('https://api.ipify.org?format=json')
-    const ipData = await ipRes.json()
-    ipAddress = ipData.ip
-  } catch (e) {
-    console.warn('No se pudo obtener la IP:', e)
+  const vote = async (winnerId, loserId) => {
+    setSelected(winnerId)
+
+    let ipAddress = null
+    try {
+      const ipRes = await fetch('https://api.ipify.org?format=json')
+      const ipData = await ipRes.json()
+      ipAddress = ipData.ip
+    } catch (e) {
+      console.warn('No se pudo obtener la IP:', e)
+    }
+
+    const userId = user?.id || null
+
+    await supabase.rpc('vote_and_update_elo', {
+      winner_id_input: winnerId,
+      loser_id_input: loserId,
+      user_id_input: userId,
+      ip_address_input: ipAddress
+    })
+
+    fetchDuel()
+    fetchRanking(limit)
   }
-
-  let userId = null
-  try {
-    const {
-      data: { user }
-    } = await supabase.auth.getUser()
-    userId = user?.id || null
-  } catch (e) {
-    console.warn('No se pudo obtener el usuario:', e)
-  }
-
-  await supabase.rpc('vote_and_update_elo', {
-    winner_id_input: winnerId,
-    loser_id_input: loserId,
-    user_id_input: userId,
-    ip_address_input: ipAddress
-  })
-
-  fetchDuel()
-  fetchRanking(limit)
-}
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
@@ -92,13 +87,24 @@ const vote = async (winnerId, loserId) => {
           >
             About
           </button>
-          <a href="/login" className="hover:underline">Log In</a>
-          <a
-            href="/signup"
-            className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105"
-          >
-            Sign Up
-          </a>
+          {user ? (
+            <a
+              href="/profile"
+              className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105"
+            >
+              My Profile
+            </a>
+          ) : (
+            <>
+              <a href="/login" className="hover:underline">Log In</a>
+              <a
+                href="/signup"
+                className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105"
+              >
+                Sign Up
+              </a>
+            </>
+          )}
         </nav>
       </header>
 
