@@ -108,64 +108,49 @@ export default function Home() {
 
       {/* DUEL */}
       {duel.length === 2 && (
-        <section className="min-h-[400px] flex items-center justify-center">
-          <div className="relative flex flex-row items-center justify-center gap-6">
-            {/* JUGADOR 1 */}
-            <button onClick={() => vote(duel[0].id, duel[1].id)} className="cursor-pointer transition focus:outline-none flex flex-col items-center w-44">
-              <div className={`player-image-block w-40 h-40 relative rounded-xl overflow-hidden border transition duration-300 ease-in-out hover:brightness-110 ${selected === duel[0].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}>
-                <img
-                  src={duel[0].image_url}
-                  alt={duel[0].name_line2 || duel[0].name_line1}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex flex-col items-center justify-center w-full mt-2 space-y-1 h-[96px]">
-                {duel[0].name_line1 && (
-                  <div className="text-xs font-medium tracking-wide text-white leading-none">
-                    {duel[0].name_line1}
-                  </div>
-                )}
-                <div className="text-xl font-extrabold text-goat leading-none">
-                  {duel[0].name_line2}
-                </div>
-                {duel[0].name_line3 && (
-                  <div className="text-xs font-medium text-white leading-none">
-                    {duel[0].name_line3}
-                  </div>
-                )}
-              </div>
+        <section className="flex flex-col items-center justify-center py-4">
+          <div className="relative flex flex-row items-center justify-center gap-6 h-40">
+            <button onClick={() => vote(duel[0].id, duel[1].id)} className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative">
+              <img
+                src={duel[0].image_url}
+                alt={duel[0].name_line2 || duel[0].name_line1}
+                className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === duel[0].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
+              />
             </button>
 
-            {/* VS */}
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg z-10">
-              VS
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+              <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">
+                VS
+              </div>
             </div>
 
-            {/* JUGADOR 2 */}
-            <button onClick={() => vote(duel[1].id, duel[0].id)} className="cursor-pointer transition focus:outline-none flex flex-col items-center w-44">
-              <div className={`player-image-block w-40 h-40 relative rounded-xl overflow-hidden border transition duration-300 ease-in-out hover:brightness-110 ${selected === duel[1].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}>
-                <img
-                  src={duel[1].image_url}
-                  alt={duel[1].name_line2 || duel[1].name_line1}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex flex-col items-center justify-center w-full mt-2 space-y-1 h-[96px]">
-                {duel[1].name_line1 && (
+            <button onClick={() => vote(duel[1].id, duel[0].id)} className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative">
+              <img
+                src={duel[1].image_url}
+                alt={duel[1].name_line2 || duel[1].name_line1}
+                className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === duel[1].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
+              />
+            </button>
+          </div>
+
+          <div className="flex flex-row justify-center gap-6 mt-2">
+            {[duel[0], duel[1]].map((player) => (
+              <div key={player.id} className="flex flex-col items-center w-44 space-y-1">
+                {player.name_line1 && (
                   <div className="text-xs font-medium tracking-wide text-white leading-none">
-                    {duel[1].name_line1}
+                    {player.name_line1}
                   </div>
                 )}
                 <div className="text-xl font-extrabold text-goat leading-none">
-                  {duel[1].name_line2}
+                  {player.name_line2}
                 </div>
-                {duel[1].name_line3 && (
+                {player.name_line3 && (
                   <div className="text-xs font-medium text-white leading-none">
-                    {duel[1].name_line3}
+                    {player.name_line3}
                   </div>
                 )}
               </div>
-            </button>
+            ))}
           </div>
         </section>
       )}
