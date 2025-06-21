@@ -44,15 +44,18 @@ export default function Home() {
 
   const fetchDuel = async () => {
     setSelected(null)
-    const { data } = await supabase.rpc('get_duel', {
+    const { data, error } = await supabase.rpc('get_duel', {
       entity_category_input: ENTITY_CATEGORY_ID,
       limit_rank: duelLimit,
     })
-    setDuel(data)
+    if (error) {
+      console.error('Error en fetchDuel:', error)
+    }
+    setDuel(data || [])
   }
 
   const fetchRanking = async (top) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('entity_rankings')
       .select(
         'id, elo_rating, entity_id, entities (name, name_line1, name_line2, name_line3, image_url)'
@@ -61,23 +64,16 @@ export default function Home() {
       .order('elo_rating', { ascending: false })
       .limit(top)
 
-    setRanking(data)
-  }
-
-    const vote = async (winnerId, loserId) => {
-    setSelected(winnerId)
-
-    // Obtener IP
-    let ipAddress = null
-    try {
-      const res = await fetch('https://api.ipify.org?format=json')
-      const json = await res.json()
-      ipAddress = json.ip
-    } catch (err) {
-      console.warn('Error obteniendo IP:', err)
+    if (error) {
+      console.error('Error en fetchRanking:', error)
     }
 
-    // Obtener usuario (si está logueado)
+    setRanking(data || [])
+  }
+
+  const vote = async (winnerId, loserId) => {
+    setSelected(winnerId)
+
     let userId = null
     try {
       const {
@@ -90,7 +86,15 @@ export default function Home() {
       console.warn('Error obteniendo usuario:', err)
     }
 
-    // Llamar a la función SQL
+    let ipAddress = null
+    try {
+      const res = await fetch('https://api.ipify.org?format=json')
+      const json = await res.json()
+      ipAddress = json.ip
+    } catch (err) {
+      console.warn('Error obteniendo IP:', err)
+    }
+
     const { error: voteError } = await supabase.rpc('vote_and_update_elo', {
       winner_id_input: winnerId,
       loser_id_input: loserId,
@@ -103,14 +107,9 @@ export default function Home() {
       return
     }
 
-    // Recargar duelo y ranking
     fetchDuel()
     fetchRanking(limit)
   }
-
-
-  // ... el resto del JSX permanece igual
-
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
