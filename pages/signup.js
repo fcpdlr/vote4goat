@@ -85,6 +85,7 @@ export default function Signup() {
             type="email"
             name="email"
             id="email"
+            placeholder="you@example.com"
             required
             value={formData.email}
             onChange={handleChange}
@@ -98,6 +99,7 @@ export default function Signup() {
             type="password"
             name="password"
             id="password"
+            placeholder="********"
             required
             value={formData.password}
             onChange={handleChange}
@@ -111,6 +113,7 @@ export default function Signup() {
             type="text"
             name="username"
             id="username"
+            placeholder="Your nickname"
             required
             value={formData.username}
             onChange={handleChange}
@@ -139,7 +142,7 @@ export default function Signup() {
             required
             value={formData.country}
             onChange={handleChange}
-            className="input bg-black text-white border border-white rounded p-2"
+            className="input bg-black text-white"
           >
             <option value="">Select your country</option>
             {countryList.map(({ code, name }) => (
@@ -150,7 +153,7 @@ export default function Signup() {
           </select>
         </div>
 
-        <div className="flex items-start mb-4">
+        <div className="flex items-start">
           <input
             id="terms"
             name="terms"
