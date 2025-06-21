@@ -1,5 +1,3 @@
-
-<!-- /pages/privacy.js -->
 export default function Privacy() {
   return (
     <main className="min-h-screen bg-black text-white p-8">
