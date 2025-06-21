@@ -109,7 +109,7 @@ export default function Home() {
       {/* DUEL */}
       {duel.length === 2 && (
         <section className="flex flex-col items-center justify-center flex-grow relative">
-          <div className="relative flex items-start justify-center gap-6">
+          <div className="relative flex items-center justify-center gap-6 min-h-[160px]">
             <PlayerCard
               player={duel[0]}
               onVote={() => vote(duel[0].id, duel[1].id)}
