@@ -74,12 +74,13 @@ export default function Home() {
       ip: ipAddress || null,
     })
 
-    await supabase.rpc('vote_and_update_elo', {
+await supabase.rpc('vote_and_update_elo', {
   winner_id_input: winnerId,
   loser_id_input: loserId,
-  user_id_input: userId ? userId : null,
-  ip_address_input: ipAddress ? ipAddress : null,
+  user_id_input: userId || null,
+  ip_address_input: ipAddress || null,
 })
+
 
     fetchDuel()
     fetchRanking(limit)
