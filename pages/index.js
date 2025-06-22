@@ -150,12 +150,10 @@ return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
       {/* HEADER */}
       <header className="flex items-center justify-between px-3 py-2">
-        {/* Izquierda: Logo y título */}
         <div className="flex items-center gap-2">
           <span className="text-xl sm:text-2xl font-bold text-white">Vote4GOAT</span>
         </div>
 
-        {/* Derecha: Menú */}
         <nav className="flex items-center gap-3 text-xs sm:text-sm">
           <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">
             About
@@ -193,57 +191,8 @@ return (
               </a>
               <a
                 href="/signup"
-                className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105"
-              >
-                Sign Up
-              </a>
-            </>
-          )}
-        </nav>
-      </header>
+                className="bg-goat text-black px-2
 
-      {/* ICONOS DE DEPORTES – CENTRADOS BAJO EL HEADER */}
-      <div className="flex justify-center gap-4 mt-2 mb-2">
-        {/* Fútbol - Activo */}
-        <a href="/football" title="Football">
-          <img src="/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
-        </a>
-
-        {/* Baloncesto - Coming Soon */}
-        <div title="Coming Soon" className="opacity-40 cursor-not-allowed">
-          <img src="/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
-        </div>
-
-        {/* Tenis - Coming Soon */}
-        <div title="Coming Soon" className="opacity-40 cursor-not-allowed">
-          <img src="/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
-        </div>
-      </div>
-
-      {/* ⬇️ Aquí seguiría el resto del contenido, como el duelo, ranking, etc. */}
-
-    </main>
-  </>
-)
-
-
-
-
-      {showHelp && (
-        <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
-          <p className="mb-2 font-semibold text-goat">⚽ What is Vote4GOAT?</p>
-          <p className="mb-2">
-            Everyone has an opinion on who’s the greatest of all time — but what if we could let the world decide, one vote at a time?
-          </p>
-          <p className="mb-2">
-            Vote4GOAT is a simple, fun and addicting way to settle the debate. Two players appear on screen. You choose the one you think is greater. Your vote updates their score using a ranking system based on Elo — the same method used in chess and competitive gaming.
-          </p>
-          <p className="mb-2">
-            The more people vote, the more accurate the ranking becomes. No stats, no explanations — just pure instinct and opinion.
-          </p>
-          <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT list.</p>
-        </div>
-      )
       
       <h1 className="text-3xl font-extrabold mt-4 mb-2 text-goat text-center">WHO IS THE GOAT?</h1>
 
