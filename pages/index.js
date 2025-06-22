@@ -244,6 +244,7 @@ try {
       setDuelLimit(100)
     }}
     disabled={!user}
+    title={!user ? 'Please log in to use this filter' : ''}
   >
     Top 100
   </button>
@@ -264,11 +265,11 @@ try {
       setDuelLimit(50)
     }}
     disabled={!user}
+    title={!user ? 'Please log in to use this filter' : ''}
   >
     Top 50
   </button>
 </div>
-
 
       {duel.length === 2 && (
         <section className="flex flex-col items-center justify-center py-4">
