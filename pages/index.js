@@ -244,7 +244,7 @@ return (
           <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT list.</p>
         </div>
       )
-      }
+      
       <h1 className="text-3xl font-extrabold mt-4 mb-2 text-goat text-center">WHO IS THE GOAT?</h1>
 
 <div className="flex justify-center space-x-4 mb-4">
