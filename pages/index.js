@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -15,8 +15,12 @@ export default function Home() {
   const [duelLimit, setDuelLimit] = useState(null)
   const [user, setUser] = useState(null)
   const [ipAddress, setIpAddress] = useState(null)
+  const [showMenu, setShowMenu] = useState(false)
 
   const ENTITY_CATEGORY_ID = 1
+
+  const menuRef = useRef()
+  const helpRef = useRef()
 
   useEffect(() => {
     fetchDuel()
@@ -24,6 +28,29 @@ export default function Home() {
     checkUser()
     fetchIp()
   }, [duelLimit])
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false)
+      }
+      if (helpRef.current && !helpRef.current.contains(event.target)) {
+        setShowHelp(false)
+      }
+    }
+    function handleEsc(event) {
+      if (event.key === 'Escape') {
+        setShowMenu(false)
+        setShowHelp(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEsc)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEsc)
+    }
+  }, [])
 
   const checkUser = async () => {
     const {
@@ -42,18 +69,18 @@ export default function Home() {
     }
   }
 
- const fetchDuel = async () => {
-  setSelected(null)
-  const { data, error } = await supabase.rpc('get_duel', {
-    entity_category_input: ENTITY_CATEGORY_ID,
-    limit_rank: duelLimit,
-  })
-  if (error) {
-    console.error('Error en fetchDuel:', error)
+  const fetchDuel = async () => {
+    setSelected(null)
+    const { data, error } = await supabase.rpc('get_duel', {
+      entity_category_input: ENTITY_CATEGORY_ID,
+      limit_rank: duelLimit,
+    })
+    if (error) {
+      console.error('Error en fetchDuel:', error)
+    }
+    setDuel(data || [])
+    console.log('DUELO:', data)
   }
-  setDuel(data || [])
-  console.log('DUELO:', data)
-}
 
   const fetchRanking = async (top) => {
     const { data, error } = await supabase
@@ -72,47 +99,45 @@ export default function Home() {
     setRanking(data || [])
   }
 
-const vote = async (winnerId, loserId) => {
-  setSelected(winnerId)
+  const vote = async (winnerId, loserId) => {
+    setSelected(winnerId)
 
-  let userId = null
-  let ip = null
+    let userId = null
+    let ip = null
 
-  try {
-    const session = await supabase.auth.getSession()
-    userId = session?.data?.session?.user?.id || null
-  } catch {}
+    try {
+      const session = await supabase.auth.getSession()
+      userId = session?.data?.session?.user?.id || null
+    } catch {}
 
-  try {
-    const res = await fetch('https://api.ipify.org?format=json')
-    const data = await res.json()
-    ip = data.ip
-  } catch {}
+    try {
+      const res = await fetch('https://api.ipify.org?format=json')
+      const data = await res.json()
+      ip = data.ip
+    } catch {}
 
-  console.log('➡️ ENVIANDO A vote_and_update_elo', {
-    winner_id_input: winnerId,
-    loser_id_input: loserId,
-    user_id_input: userId,
-    ip_address_input: ip
-  })
+    console.log('➡️ ENVIANDO A vote_and_update_elo', {
+      winner_id_input: winnerId,
+      loser_id_input: loserId,
+      user_id_input: userId,
+      ip_address_input: ip
+    })
 
-  const { error } = await supabase.rpc('vote_and_update_elo', {
-    winner_id_input: winnerId,
-    loser_id_input: loserId,
-    user_id_input: userId,
-    ip_address_input: ip
-  })
+    const { error } = await supabase.rpc('vote_and_update_elo', {
+      winner_id_input: winnerId,
+      loser_id_input: loserId,
+      user_id_input: userId,
+      ip_address_input: ip
+    })
 
-  if (error) {
-    console.error('❌ ERROR al votar:', error)
-    return
+    if (error) {
+      console.error('❌ ERROR al votar:', error)
+      return
+    }
+
+    fetchDuel()
+    fetchRanking(limit)
   }
-
-  fetchDuel()
-  fetchRanking(limit)
-}
-
-
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
@@ -129,9 +154,30 @@ const vote = async (winnerId, loserId) => {
             About
           </button>
           {user ? (
-            <a href="/account" className="hover:underline">
-              My Profile
-            </a>
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="text-goat font-semibold hover:underline"
+              >
+                My Account
+              </button>
+              {showMenu && (
+                <div className="absolute right-0 mt-1 w-28 bg-white text-black rounded shadow-md z-50">
+                  <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">
+                    Profile
+                  </a>
+                  <button
+                    onClick={async () => {
+                      await supabase.auth.signOut()
+                      window.location.reload()
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <>
               <a href="/login" className="hover:underline">
@@ -148,27 +194,8 @@ const vote = async (winnerId, loserId) => {
         </nav>
       </header>
 
-      <div className="flex flex-row items-center justify-center gap-5 mt-2">
-        <div className="flex flex-col items-center">
-          <a href="/football">
-            <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 mb-1" />
-          </a>
-          <span className="text-goat font-semibold text-[10px] uppercase">Football</span>
-        </div>
-        <div className="flex flex-col items-center">
-          <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 mb-1 opacity-60 cursor-default" />
-          <span className="text-goat font-semibold text-[10px] uppercase">Basketball</span>
-          <span className="text-[10px] text-white/50 mt-0.5 italic">Coming soon</span>
-        </div>
-        <div className="flex flex-col items-center">
-          <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 mb-1 opacity-60 cursor-default" />
-          <span className="text-goat font-semibold text-[10px] uppercase">Tennis</span>
-          <span className="text-[10px] text-white/50 mt-0.5 italic">Coming soon</span>
-        </div>
-      </div>
-
       {showHelp && (
-        <div className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
+        <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
           <p className="mb-2 font-semibold text-goat">⚽ What is Vote4GOAT?</p>
           <p className="mb-2">
             Everyone has an opinion on who’s the greatest of all time — but what if we could let the world decide, one vote at a time?
@@ -181,7 +208,7 @@ const vote = async (winnerId, loserId) => {
           </p>
           <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT list.</p>
         </div>
-      )}
+      )
 
       <h1 className="text-3xl font-extrabold mt-4 mb-2 text-goat text-center">WHO IS THE GOAT?</h1>
 
