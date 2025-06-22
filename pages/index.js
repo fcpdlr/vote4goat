@@ -42,17 +42,18 @@ export default function Home() {
     }
   }
 
-  const fetchDuel = async () => {
-    setSelected(null)
-    const { data, error } = await supabase.rpc('get_duel', {
-      entity_category_input: ENTITY_CATEGORY_ID,
-      limit_rank: duelLimit,
-    })
-    if (error) {
-      console.error('Error en fetchDuel:', error)
-    }
-    setDuel(data || [])
+ const fetchDuel = async () => {
+  setSelected(null)
+  const { data, error } = await supabase.rpc('get_duel', {
+    entity_category_input: ENTITY_CATEGORY_ID,
+    limit_rank: duelLimit,
+  })
+  if (error) {
+    console.error('Error en fetchDuel:', error)
   }
+  setDuel(data || [])
+  console.log('DUELO:', data)
+}
 
   const fetchRanking = async (top) => {
     const { data, error } = await supabase
