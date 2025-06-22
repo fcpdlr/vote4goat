@@ -218,26 +218,57 @@ try {
       }
       <h1 className="text-3xl font-extrabold mt-4 mb-2 text-goat text-center">WHO IS THE GOAT?</h1>
 
-      <div className="flex justify-center space-x-4 mb-4">
-        <button
-          className={`px-3 py-1 rounded-full text-sm ${duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'}`}
-          onClick={() => setDuelLimit(null)}
-        >
-          All Players
-        </button>
-        <button
-          className={`px-3 py-1 rounded-full text-sm ${duelLimit === 100 ? 'bg-goat text-white' : 'bg-white text-black'}`}
-          onClick={() => setDuelLimit(100)}
-        >
-          Top 100
-        </button>
-        <button
-          className={`px-3 py-1 rounded-full text-sm ${duelLimit === 50 ? 'bg-goat text-white' : 'bg-white text-black'}`}
-          onClick={() => setDuelLimit(50)}
-        >
-          Top 50
-        </button>
-      </div>
+<div className="flex justify-center space-x-4 mb-4">
+  <button
+    className={`px-3 py-1 rounded-full text-sm ${
+      duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'
+    }`}
+    onClick={() => setDuelLimit(null)}
+  >
+    All Players
+  </button>
+
+  <button
+    className={`px-3 py-1 rounded-full text-sm ${
+      !user
+        ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+        : duelLimit === 100
+        ? 'bg-goat text-white'
+        : 'bg-white text-black'
+    }`}
+    onClick={() => {
+      if (!user) {
+        alert('Please log in to use this filter.')
+        return
+      }
+      setDuelLimit(100)
+    }}
+    disabled={!user}
+  >
+    Top 100
+  </button>
+
+  <button
+    className={`px-3 py-1 rounded-full text-sm ${
+      !user
+        ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+        : duelLimit === 50
+        ? 'bg-goat text-white'
+        : 'bg-white text-black'
+    }`}
+    onClick={() => {
+      if (!user) {
+        alert('Please log in to use this filter.')
+        return
+      }
+      setDuelLimit(50)
+    }}
+    disabled={!user}
+  >
+    Top 50
+  </button>
+</div>
+
 
       {duel.length === 2 && (
         <section className="flex flex-col items-center justify-center py-4">
