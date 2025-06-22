@@ -148,12 +148,18 @@ try {
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
       <header className="flex items-center justify-between px-3 py-2">
-        <a href="/" className="flex items-center gap-1">
-          <img src="/logo.png" alt="logo" className="h-8 w-8 sm:h-10 sm:w-10" />
-          <span className="text-base sm:text-xl font-bold leading-none">
-            Vote<span className="text-goat">4</span>GOAT
-          </span>
-        </a>
+<div className="flex items-center gap-2">
+  <a href="/football" title="Football">
+    <img src="/icon-football.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
+  </a>
+  <a href="/basketball" title="Basketball">
+    <img src="/icon-basketball.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
+  </a>
+  <a href="/tennis" title="Tennis">
+    <img src="/icon-tennis.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
+  </a>
+</div>
+
 
         <nav className="flex items-center gap-3 text-xs sm:text-sm">
           <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">
@@ -228,47 +234,53 @@ try {
     All Players
   </button>
 
-  <button
-    className={`px-3 py-1 rounded-full text-sm ${
-      !user
-        ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-        : duelLimit === 100
-        ? 'bg-goat text-white'
-        : 'bg-white text-black'
-    }`}
-    onClick={() => {
-      if (!user) {
-        alert('Please log in to use this filter.')
-        return
-      }
-      setDuelLimit(100)
-    }}
-    disabled={!user}
+  <span
     title={!user ? 'Please log in to use this filter' : ''}
+    className="inline-block"
   >
-    Top 100
-  </button>
+    <button
+      className={`px-3 py-1 rounded-full text-sm ${
+        !user
+          ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+          : duelLimit === 100
+          ? 'bg-goat text-white'
+          : 'bg-white text-black'
+      }`}
+      onClick={() => {
+        if (!user) {
+          alert('Please log in to use this filter.')
+          return
+        }
+        setDuelLimit(100)
+      }}
+    >
+      Top 100
+    </button>
+  </span>
 
-  <button
-    className={`px-3 py-1 rounded-full text-sm ${
-      !user
-        ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-        : duelLimit === 50
-        ? 'bg-goat text-white'
-        : 'bg-white text-black'
-    }`}
-    onClick={() => {
-      if (!user) {
-        alert('Please log in to use this filter.')
-        return
-      }
-      setDuelLimit(50)
-    }}
-    disabled={!user}
+  <span
     title={!user ? 'Please log in to use this filter' : ''}
+    className="inline-block"
   >
-    Top 50
-  </button>
+    <button
+      className={`px-3 py-1 rounded-full text-sm ${
+        !user
+          ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+          : duelLimit === 50
+          ? 'bg-goat text-white'
+          : 'bg-white text-black'
+      }`}
+      onClick={() => {
+        if (!user) {
+          alert('Please log in to use this filter.')
+          return
+        }
+        setDuelLimit(50)
+      }}
+    >
+      Top 50
+    </button>
+  </span>
 </div>
 
       {duel.length === 2 && (
