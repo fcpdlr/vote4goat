@@ -147,64 +147,75 @@ try {
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
-      <header className="flex items-center justify-between px-3 py-2">
-<div className="flex items-center gap-2">
-  <a href="/football" title="Football">
-    <img src="/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
-  </a>
-  <a href="/basketball" title="Basketball">
-    <img src="/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
-  </a>
-  <a href="/tennis" title="Tennis">
-    <img src="/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
-  </a>
-</div>
+     <header className="flex items-center justify-between px-3 py-2">
+  {/* Izquierda: Logo principal + deportes */}
+  <div className="flex items-center gap-4">
+    <a href="/" className="flex items-center gap-1">
+      <img src="/logo.png" alt="logo" className="h-8 w-8 sm:h-10 sm:w-10" />
+      <span className="text-base sm:text-xl font-bold leading-none">
+        Vote<span className="text-goat">4</span>GOAT
+      </span>
+    </a>
+    <div className="flex items-center gap-2 ml-4">
+      <a href="/football" title="Football">
+        <img src="/football_logo.png" alt="Football" className="h-6 w-6 sm:h-8 sm:w-8" />
+      </a>
+      <a href="/basketball" title="Basketball">
+        <img src="/basketball_logo.png" alt="Basketball" className="h-6 w-6 sm:h-8 sm:w-8" />
+      </a>
+      <a href="/tennis" title="Tennis">
+        <img src="/tennis_logo.png" alt="Tennis" className="h-6 w-6 sm:h-8 sm:w-8" />
+      </a>
+    </div>
+  </div>
 
+  {/* Derecha: Menú */}
+  <nav className="flex items-center gap-3 text-xs sm:text-sm">
+    <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">
+      About
+    </button>
 
-        <nav className="flex items-center gap-3 text-xs sm:text-sm">
-          <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">
-            About
-          </button>
-          {user ? (
-            <div className="relative" ref={menuRef}>
-              <button
-                onClick={() => setShowMenu(!showMenu)}
-                className="text-goat font-semibold hover:underline"
-              >
-                My Account
-              </button>
-              {showMenu && (
-                <div className="absolute right-0 mt-1 w-28 bg-white text-black rounded shadow-md z-50">
-                  <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">
-                    Profile
-                  </a>
-                  <button
-                    onClick={async () => {
-                      await supabase.auth.signOut()
-                      window.location.reload()
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <>
-              <a href="/login" className="hover:underline">
-                Log In
-              </a>
-              <a
-                href="/signup"
-                className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105"
-              >
-                Sign Up
-              </a>
-            </>
-          )}
-        </nav>
-      </header>
+    {user ? (
+      <div className="relative" ref={menuRef}>
+        <button
+          onClick={() => setShowMenu(!showMenu)}
+          className="text-goat font-semibold hover:underline"
+        >
+          My Account
+        </button>
+        {showMenu && (
+          <div className="absolute right-0 mt-1 w-28 bg-white text-black rounded shadow-md z-50">
+            <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">
+              Profile
+            </a>
+            <button
+              onClick={async () => {
+                await supabase.auth.signOut()
+                window.location.reload()
+              }}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+    ) : (
+      <>
+        <a href="/login" className="hover:underline">
+          Log In
+        </a>
+        <a
+          href="/signup"
+          className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105"
+        >
+          Sign Up
+        </a>
+      </>
+    )}
+  </nav>
+</header>
+
 
       {showHelp && (
         <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
