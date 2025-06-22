@@ -171,13 +171,13 @@ export default function Home() {
 
         <div className="flex justify-center gap-4 mt-2 mb-2">
           <a href="/football" title="Football">
-            <img src="/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
+            <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
           </a>
           <div title="Coming Soon" className="opacity-40 cursor-not-allowed">
-            <img src="/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
+            <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
           </div>
           <div title="Coming Soon" className="opacity-40 cursor-not-allowed">
-            <img src="/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
+            <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
           </div>
         </div>
 
