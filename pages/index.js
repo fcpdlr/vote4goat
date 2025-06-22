@@ -227,52 +227,7 @@ return (
 )
 
 
-  {/* Derecha: Menú */}
-  <nav className="flex items-center gap-3 text-xs sm:text-sm">
-    <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">
-      About
-    </button>
 
-    {user ? (
-      <div className="relative" ref={menuRef}>
-        <button
-          onClick={() => setShowMenu(!showMenu)}
-          className="text-goat font-semibold hover:underline"
-        >
-          My Account
-        </button>
-        {showMenu && (
-          <div className="absolute right-0 mt-1 w-28 bg-white text-black rounded shadow-md z-50">
-            <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">
-              Profile
-            </a>
-            <button
-              onClick={async () => {
-                await supabase.auth.signOut()
-                window.location.reload()
-              }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-            >
-              Logout
-            </button>
-          </div>
-        )}
-      </div>
-    ) : (
-      <>
-        <a href="/login" className="hover:underline">
-          Log In
-        </a>
-        <a
-          href="/signup"
-          className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105"
-        >
-          Sign Up
-        </a>
-      </>
-    )}
-  </nav>
-</header>
 
       {showHelp && (
         <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
