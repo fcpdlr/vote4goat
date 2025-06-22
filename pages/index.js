@@ -102,13 +102,19 @@ export default function Home() {
   const vote = async (winnerId, loserId) => {
     setSelected(winnerId)
 
-    let userId = null
-    let ip = null
+let userId = null
+let ip = null
 
-    try {
-      const session = await supabase.auth.getSession()
-      userId = session?.data?.session?.user?.id || null
-    } catch {}
+try {
+  const {
+    data: { user }
+  } = await supabase.auth.getUser()
+  userId = user?.id || null
+  console.log('🧑‍💻 USER ID DETECTADO:', userId)
+} catch (err) {
+  console.error('⚠️ Error al obtener el user ID:', err)
+}
+
 
     try {
       const res = await fetch('https://api.ipify.org?format=json')
