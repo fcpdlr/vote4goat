@@ -278,7 +278,7 @@ try {
     )}
   </nav>
 </header>
-
+}
 
       {showHelp && (
         <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
