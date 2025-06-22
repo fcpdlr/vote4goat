@@ -150,13 +150,13 @@ try {
       <header className="flex items-center justify-between px-3 py-2">
 <div className="flex items-center gap-2">
   <a href="/football" title="Football">
-    <img src="/icon-football.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
+    <img src="/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
   </a>
   <a href="/basketball" title="Basketball">
-    <img src="/icon-basketball.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
+    <img src="/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
   </a>
   <a href="/tennis" title="Tennis">
-    <img src="/icon-tennis.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
+    <img src="/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
   </a>
 </div>
 
