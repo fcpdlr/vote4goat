@@ -76,53 +76,42 @@ const vote = async (winnerId, loserId) => {
   setSelected(winnerId)
 
   let userId = null
-  let ipAddress = null
+  let ip = null
 
   try {
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession()
-    if (sessionError) {
-      console.warn('Error obteniendo sesión:', sessionError)
-    }
-    userId = session?.user?.id || null
-  } catch (err) {
-    console.warn('Error obteniendo sesión:', err)
-  }
+    const session = await supabase.auth.getSession()
+    userId = session?.data?.session?.user?.id || null
+  } catch {}
 
   try {
     const res = await fetch('https://api.ipify.org?format=json')
-    const json = await res.json()
-    ipAddress = json.ip
-  } catch (err) {
-    console.warn('Error obteniendo IP:', err)
-  }
+    const data = await res.json()
+    ip = data.ip
+  } catch {}
 
-console.log('VOTANDO CON:', {
-  winner_id_input: winnerId,
-  loser_id_input: loserId,
-  user_id_input: userId,
-  ip_address_input: ipAddress,
-})
+  console.log('➡️ ENVIANDO A vote_and_update_elo', {
+    winner_id_input: winnerId,
+    loser_id_input: loserId,
+    user_id_input: userId,
+    ip_address_input: ip
+  })
 
-const { error: voteError } = await supabase.rpc('vote_and_update_elo', {
-  winner_id_input: winnerId,
-  loser_id_input: loserId,
-  user_id_input: userId,
-  ip_address_input: ipAddress,
-})
+  const { error } = await supabase.rpc('vote_and_update_elo', {
+    winner_id_input: winnerId,
+    loser_id_input: loserId,
+    user_id_input: userId,
+    ip_address_input: ip
+  })
 
-
-
-  if (voteError) {
-    console.error('Error al votar:', voteError)
+  if (error) {
+    console.error('❌ ERROR al votar:', error)
     return
   }
 
   fetchDuel()
   fetchRanking(limit)
 }
+
 
 
   return (
