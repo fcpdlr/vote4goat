@@ -30,13 +30,14 @@ export default function AccountPage() {
 
     setProfile(profileData)
 
-    const { data: voteData } = await supabase
-      .from('votes_new')
-      .select(`created_at, winner:entity_rankings!winner_ranking_id (entities (name)), loser:entity_rankings!loser_ranking_id (entities (name))`)
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
+   const { data: voteData, error: voteError } = await supabase
+  .rpc('get_vote_history_by_user', { user_id_input: user.id })
 
-    setVotes(voteData || [])
+if (voteError) {
+  console.error('Error fetching vote history:', voteError)
+}
+setVotes(voteData || [])
+
   }
 
   const toggleVisibility = async () => {
@@ -108,8 +109,9 @@ export default function AccountPage() {
             {votes.map((vote, index) => (
               <tr key={index} className="border-b border-white/10 hover:bg-white/5">
                 <td className="py-2 px-2">{new Date(vote.created_at).toLocaleDateString()}</td>
-                <td className="py-2 px-2 font-semibold text-goat">{vote.winner.entities.name}</td>
-                <td className="py-2 px-2 text-white/80">{vote.loser.entities.name}</td>
+                <td className="py-2 px-2 font-semibold text-goat">{vote.winner_name}</td>
+                <td className="py-2 px-2 text-white/80">{vote.loser_name}</td>
+
               </tr>
             ))}
             {votes.length === 0 && (
