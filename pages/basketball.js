@@ -1,5 +1,4 @@
-// pages/basketball.js
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -12,92 +11,198 @@ export default function Basketball() {
   const [ranking, setRanking] = useState([])
   const [limit, setLimit] = useState(10)
   const [selected, setSelected] = useState(null)
+  const [showHelp, setShowHelp] = useState(false)
+  const [duelLimit, setDuelLimit] = useState(null)
+  const [user, setUser] = useState(null)
+  const [ipAddress, setIpAddress] = useState(null)
+  const [showMenu, setShowMenu] = useState(false)
+
+  const ENTITY_CATEGORY_ID = 2
+  const menuRef = useRef()
+  const helpRef = useRef()
 
   useEffect(() => {
+    checkUser()
+  }, [])
+
+  const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user || user.email !== 'fernando.pdelarosa@gmail.com') {
+      window.location.href = '/'
+      return
+    }
+    setUser(user)
     fetchDuel()
     fetchRanking(limit)
+    fetchIp()
+  }
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false)
+      }
+      if (helpRef.current && !helpRef.current.contains(event.target)) {
+        setShowHelp(false)
+      }
+    }
+    function handleEsc(event) {
+      if (event.key === 'Escape') {
+        setShowMenu(false)
+        setShowHelp(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEsc)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEsc)
+    }
   }, [])
+
+  const fetchIp = async () => {
+    try {
+      const res = await fetch('https://api.ipify.org?format=json')
+      const data = await res.json()
+      setIpAddress(data.ip)
+    } catch (e) {
+      console.warn('No se pudo obtener la IP:', e)
+    }
+  }
 
   const fetchDuel = async () => {
     setSelected(null)
-    const { data } = await supabase.rpc('get_duel_basketball')
-    setDuel(data)
+    const { data, error } = await supabase.rpc('get_duel', {
+      entity_category_input: ENTITY_CATEGORY_ID,
+      limit_rank: duelLimit,
+    })
+    if (error) console.error('Error en fetchDuel:', error)
+    setDuel(data || [])
   }
 
   const fetchRanking = async (top) => {
-    const { data } = await supabase
-      .from('basketball_players')
-      .select('*')
-      .order('rating', { ascending: false })
+    const { data, error } = await supabase
+      .from('entity_rankings')
+      .select('id, elo_rating, id, entities (name, name_line1, name_line2, name_line3, image_url)')
+      .eq('entity_category_id', ENTITY_CATEGORY_ID)
+      .order('elo_rating', { ascending: false })
       .limit(top)
-    setRanking(data)
+
+    if (error) console.error('Error en fetchRanking:', error)
+    setRanking(data || [])
   }
 
   const vote = async (winnerId, loserId) => {
     setSelected(winnerId)
-    await supabase.rpc('vote_and_update_elo_basketball', {
+    let userId = null
+    let ip = null
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      userId = user?.id || null
+    } catch (err) {
+      console.error('Error al obtener el user ID:', err)
+    }
+
+    try {
+      const res = await fetch('https://api.ipify.org?format=json')
+      const data = await res.json()
+      ip = data.ip
+    } catch {}
+
+    const { error } = await supabase.rpc('vote_and_update_elo', {
       winner_id_input: winnerId,
-      loser_id_input: loserId
+      loser_id_input: loserId,
+      user_id_input: userId,
+      ip_address_input: ip
     })
+
+    if (error) {
+      console.error('ERROR al votar:', error)
+      return
+    }
+
     fetchDuel()
     fetchRanking(limit)
   }
 
   return (
-    <main className="min-h-screen bg-background px-4 py-8 text-center text-white font-sans">
-      <header className="flex flex-col items-center justify-center pt-4 pb-6 gap-6">
-        <div className="flex flex-col items-center">
-          <img src="/logo.png" alt="logo" className="h-20 w-20 mb-1" />
-          <span className="text-2xl font-bold">Vote<span className="text-goat">4</span>GOAT</span>
+    <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
+      <header className="flex items-center justify-between px-3 py-2">
+        <div className="flex items-center gap-2">
+          <span className="text-xl sm:text-2xl font-bold text-white">Vote4GOAT</span>
         </div>
-        <div className="flex flex-row items-center justify-center gap-6">
-          <a href="/football" className="flex flex-col items-center">
-            <img src="/icons/football_logo.png" className="h-10 w-10 mb-1" />
-            <span className="text-goat text-xs font-semibold uppercase">Football</span>
-          </a>
-          <a href="/basketball" className="flex flex-col items-center">
-            <img src="/icons/basketball_logo.png" className="h-10 w-10 mb-1" />
-            <span className="text-goat text-xs font-semibold uppercase">Basketball</span>
-          </a>
-          <a href="/tennis" className="flex flex-col items-center">
-            <img src="/icons/tennis_logo.png" className="h-10 w-10 mb-1" />
-            <span className="text-goat text-xs font-semibold uppercase">Tennis</span>
-          </a>
-        </div>
+        <nav className="flex items-center gap-3 text-xs sm:text-sm">
+          <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">
+            About
+          </button>
+          {user ? (
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="text-goat font-semibold hover:underline"
+              >
+                My Account
+              </button>
+              {showMenu && (
+                <div className="absolute right-0 mt-1 w-28 bg-white text-black rounded shadow-md z-50">
+                  <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">
+                    Profile
+                  </a>
+                  <button
+                    onClick={async () => {
+                      await supabase.auth.signOut()
+                      window.location.reload()
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : null}
+        </nav>
       </header>
 
-      <h1 className="text-4xl font-extrabold mt-10 mb-6 text-goat">WHO IS THE GOAT?</h1>
-
       {duel.length === 2 && (
-        <section className="flex flex-col items-center justify-center px-4 pt-4 pb-10 relative min-h-[60vh]">
-          <div className="flex flex-row items-center justify-center gap-4 relative">
-            <PlayerCard
-              player={duel[0]}
-              onVote={() => vote(duel[0].id, duel[1].id)}
-              selected={selected === duel[0].id}
-            />
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-goat text-white text-xl font-bold w-10 h-10 flex items-center justify-center rounded-full shadow-lg z-10">
-              VS
+        <section className="flex flex-col items-center justify-center py-4">
+          <div className="relative flex flex-row items-center justify-center gap-6 h-40">
+            <button onClick={() => vote(duel[0].id, duel[1].id)} className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative">
+              <img
+                src={duel[0].image_url}
+                alt={duel[0].name_line2 || duel[0].name_line1}
+                className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === duel[0].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
+              />
+            </button>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+              <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">VS</div>
             </div>
-            <PlayerCard
-              player={duel[1]}
-              onVote={() => vote(duel[1].id, duel[0].id)}
-              selected={selected === duel[1].id}
-            />
+            <button onClick={() => vote(duel[1].id, duel[0].id)} className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative">
+              <img
+                src={duel[1].image_url}
+                alt={duel[1].name_line2 || duel[1].name_line1}
+                className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === duel[1].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
+              />
+            </button>
           </div>
-          <button
-            onClick={() => document.getElementById('ranking-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="mt-6 text-white underline text-sm"
-          >
-            RANKING ↓
-          </button>
+          <div className="flex flex-row justify-center gap-6 mt-2">
+            {[duel[0], duel[1]].map((player) => (
+              <div key={player.id} className="flex flex-col items-center w-44 space-y-1 leading-none">
+                <div className="text-xs font-medium tracking-wide text-white h-4">
+                  {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
+                </div>
+                <div className="text-xl font-extrabold text-goat h-6">{player.name_line2}</div>
+                <div className="text-xs font-medium text-white h-4">
+                  {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
       )}
 
       <div id="ranking-section" className="bg-background text-white px-6 py-12 mt-8 rounded-t-3xl">
-        <div className="text-center text-sm mb-2">
-          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline">↑ VOTE</button>
-        </div>
         <h2 className="text-2xl font-bold mb-6 text-center">RANKING</h2>
         <div className="overflow-x-auto">
           <table className="mx-auto w-full text-sm">
@@ -120,9 +225,18 @@ export default function Basketball() {
                     : ''
                 return (
                   <tr key={player.id} className={`border-t border-goat/30 hover:bg-white/5 transition ${rowStyle}`}>
-                    <td className="px-4 py-2">{i + 1}</td>
-                    <td className="px-4 py-2 text-white font-semibold text-center">{player.name}</td>
-                    <td className="px-4 py-2">{Math.round(player.rating)}</td>
+                    <td className="pl-2 pr-1 py-2 text-xs sm:text-sm">{i + 1}</td>
+                    <td className="pl-1 pr-2 py-2 text-white font-semibold text-left w-full">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={player.entities.image_url}
+                          alt={player.entities.name}
+                          className="w-6 h-6 rounded-full object-cover shrink-0"
+                        />
+                        <span className="truncate text-sm sm:text-base max-w-[200px] sm:max-w-[280px]">{player.entities.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-2 py-2 text-right text-xs sm:text-sm">{Math.round(player.elo_rating)}</td>
                   </tr>
                 )
               })}
@@ -144,36 +258,5 @@ export default function Basketball() {
         )}
       </div>
     </main>
-  )
-}
-
-function PlayerCard({ player, onVote, selected }) {
-  return (
-    <button onClick={onVote} className="cursor-pointer transition focus:outline-none">
-      <div className="flex flex-col items-center justify-start w-44 h-72">
-        <div className="w-40 h-40 rounded-xl overflow-hidden border mx-auto transition duration-200 ease-in-out hover:brightness-110">
-          <img
-            src={player.image_url}
-            alt={player.name}
-            className={`w-full h-full object-cover ${selected ? 'ring-4 ring-goat' : ''}`}
-          />
-        </div>
-        <div className="flex flex-col items-center justify-center w-full h-[96px] mt-2 space-y-1">
-          {player.name_line1 && (
-            <div className="text-xs font-medium tracking-wide text-white leading-none">
-              {player.name_line1}
-            </div>
-          )}
-          <div className="text-xl font-extrabold text-goat leading-none">
-            {player.name_line2}
-          </div>
-          {player.name_line3 && (
-            <div className="text-xs font-medium text-white leading-none">
-              {player.name_line3}
-            </div>
-          )}
-        </div>
-      </div>
-    </button>
   )
 }
