@@ -291,16 +291,17 @@ export default function Home() {
                   return (
                     <tr key={player.id} className={`border-t border-goat/30 hover:bg-white/5 transition ${rowStyle}`}>
                       <td className="px-4 py-2">{i + 1}</td>
-                      <td className="px-4 py-2 text-white font-semibold text-left">
-  <div className="flex items-center gap-2">
+<td className="px-4 py-2 text-white font-semibold text-left">
+  <div className="flex items-center gap-2 sm:ml-0 ml-[-8px]">
     <img
       src={player.entities.image_url}
       alt={player.entities.name}
       className="w-6 h-6 rounded-full object-cover shrink-0"
     />
-    <span className="truncate max-w-[160px]">{player.entities.name}</span>
+    <span className="truncate max-w-[160px] sm:max-w-[200px]">{player.entities.name}</span>
   </div>
 </td>
+
 
                       <td className="px-4 py-2">{Math.round(player.elo_rating)}</td>
                     </tr>
