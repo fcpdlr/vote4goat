@@ -193,7 +193,7 @@ export default function Basketball() {
                   {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
                 </div>
                 <div className="text-xl font-extrabold text-goat h-6">{player.name_line2}</div>
-                <div className="text-xs font-medium text-white h-4">
+                <div className="text-xl font-extrabold text-goat h-6">
                   {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
                 </div>
               </div>
