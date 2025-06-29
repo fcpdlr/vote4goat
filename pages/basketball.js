@@ -165,6 +165,20 @@ export default function Basketball() {
         </nav>
       </header>
 
+      <div className="flex justify-center gap-4 mt-2 mb-2">
+        <a href="/football" title="Football">
+          <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
+        </a>
+        <a href="/basketball" title="Basketball">
+          <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
+        </a>
+        <div title="Coming Soon" className="opacity-40 cursor-not-allowed">
+          <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
+        </div>
+      </div>
+
+      <h1 className="text-3xl font-extrabold mt-4 mb-2 text-goat text-center">WHO IS THE GOAT?</h1>
+
       {duel.length === 2 && (
         <section className="flex flex-col items-center justify-center py-4">
           <div className="relative flex flex-row items-center justify-center gap-6 h-40">
