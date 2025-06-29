@@ -6,16 +6,18 @@
     "build": "next build",
     "start": "next start"
   },
- "dependencies": {
-  "@supabase/supabase-js": "^2.0.0",
-  "next": "13.4.12",
-  "react": "18.2.0",
-  "react-dom": "18.2.0",
-  "tailwindcss": "^3.4.0",
-  "@vercel/analytics": "^1.0.4",
-  "@dnd-kit/core": "^10.0.0",
-  "@dnd-kit/sortable": "^10.0.0",
-  "@dnd-kit/utilities": "^10.0.0"
-}
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0",
+    "autoprefixer": "^10.4.13",
+    "i18n-iso-countries": "^7.3.0",
+    "next": "13.4.12",
+    "postcss": "^8.4.21",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tailwindcss": "^3.4.0",
+    "@vercel/analytics": "^1.0.4",
+    "@dnd-kit/core": "^10.0.0",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^10.0.0"
   }
 }
