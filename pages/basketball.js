@@ -228,13 +228,10 @@ export default function Home() {
         {duel.length === 2 && (
           <section className="flex flex-col items-center justify-center py-4">
             <div className="relative flex flex-row items-center justify-center gap-6 h-40">
-            {duel.map((player, index) => (
+{duel.map((player) => (
   <button
     key={player.id}
-    onClick={() => vote(
-      index === 0 ? player.id : duel[0].id,
-      index === 1 ? player.id : duel[1].id
-    )}
+    onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
     className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative"
   >
     <img
@@ -244,6 +241,7 @@ export default function Home() {
     />
   </button>
 ))}
+
 
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
                 <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">VS</div>
