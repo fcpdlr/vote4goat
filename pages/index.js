@@ -248,17 +248,16 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="flex flex-row justify-center gap-6 mt-2">
-              {[duel[0], duel[1]].map((player) => (
-                <div key={player.id} className="flex flex-col items-center w-44 space-y-1 leading-none">
-                  <div className="text-xs font-medium tracking-wide text-white h-4">
-                    {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
-                  </div>
-                  <div className="text-xl font-extrabold text-goat h-6">{player.name_line2}</div>
-                  <div className="text-xs font-medium text-white h-4">
-                    {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
-                  </div>
-                </div>
+          <div className="flex flex-col items-center w-44 space-y-1 leading-none">
+  <div className="text-xs font-medium tracking-wide text-white h-4">
+    {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
+  </div>
+  <div className="text-xl font-extrabold text-goat h-6">{player.name_line2}</div>
+  <div className="text-xl font-extrabold text-goat h-6">
+    {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
+  </div>
+</div>
+
               ))}
             </div>
           </section>
