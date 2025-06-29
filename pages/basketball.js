@@ -169,17 +169,18 @@ export default function Home() {
           </nav>
         </header>
 
-        <div className="flex justify-center gap-4 mt-2 mb-2">
-          <a href="/football" title="Football">
-            <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
-          </a>
-          <div title="Coming Soon" className="opacity-40 cursor-not-allowed">
-            <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
-          </div>
-          <div title="Coming Soon" className="opacity-40 cursor-not-allowed">
-            <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
-          </div>
-        </div>
+ <div className="flex justify-center gap-4 mt-2 mb-2">
+  <a href="/football" title="Football">
+    <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
+  </a>
+  <a href="/basketball" title="Basketball">
+    <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
+  </a>
+  <div title="Coming Soon" className="opacity-40 cursor-not-allowed">
+    <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
+  </div>
+</div>
+
 
         {showHelp && (
           <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
