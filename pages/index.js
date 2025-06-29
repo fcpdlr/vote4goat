@@ -195,14 +195,14 @@ export default function Home() {
 
         <div className="flex justify-center space-x-4 mb-4">
           <button
-            className={px-3 py-1 rounded-full text-sm ${duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'}}
+            className={`px-3 py-1 rounded-full text-sm ${duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'}`}
             onClick={() => setDuelLimit(null)}
           >
             All Players
           </button>
           <span title={!user ? 'Please log in to use this filter' : ''} className="inline-block">
             <button
-              className={px-3 py-1 rounded-full text-sm ${!user ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : duelLimit === 100 ? 'bg-goat text-white' : 'bg-white text-black'}}
+              className={`px-3 py-1 rounded-full text-sm ${!user ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : duelLimit === 100 ? 'bg-goat text-white' : 'bg-white text-black'}`}
               onClick={() => {
                 if (!user) return alert('Please log in to use this filter.')
                 setDuelLimit(100)
@@ -213,7 +213,7 @@ export default function Home() {
           </span>
           <span title={!user ? 'Please log in to use this filter' : ''} className="inline-block">
             <button
-              className={px-3 py-1 rounded-full text-sm ${!user ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : duelLimit === 50 ? 'bg-goat text-white' : 'bg-white text-black'}}
+              className={`px-3 py-1 rounded-full text-sm ${!user ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : duelLimit === 50 ? 'bg-goat text-white' : 'bg-white text-black'}`}
               onClick={() => {
                 if (!user) return alert('Please log in to use this filter.')
                 setDuelLimit(50)
@@ -227,29 +227,29 @@ export default function Home() {
         {duel.length === 2 && (
           <section className="flex flex-col items-center justify-center py-4">
             <div className="relative flex flex-row items-center justify-center gap-6 h-40">
-              <button onClick={() => vote(duel[0].id, duel[1].id)} className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative">
-                <img
-                  src={duel[0].image_url}
-                  alt={duel[0].name_line2 || duel[0].name_line1}
-                  className={w-full h-full object-cover transition duration-300 ease-in-out ${selected === duel[0].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}}
-                />
-              </button>
-
+              {duel.map((player, index) => (
+                <button
+                  key={player.id}
+                  onClick={() => vote(
+                    index === 0 ? player.id : duel[0].id,
+                    index === 1 ? player.id : duel[1].id
+                  )}
+                  className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative"
+                >
+                  <img
+                    src={player.image_url}
+                    alt={player.name_line2 || player.name_line1}
+                    className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === player.id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
+                  />
+                </button>
+              ))}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
                 <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">VS</div>
               </div>
-
-              <button onClick={() => vote(duel[1].id, duel[0].id)} className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative">
-                <img
-                  src={duel[1].image_url}
-                  alt={duel[1].name_line2 || duel[1].name_line1}
-                  className={w-full h-full object-cover transition duration-300 ease-in-out ${selected === duel[1].id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}}
-                />
-              </button>
             </div>
 
             <div className="flex flex-row justify-center gap-6 mt-2">
-              {[duel[0], duel[1]].map((player) => (
+              {duel.map((player) => (
                 <div key={player.id} className="flex flex-col items-center w-44 space-y-1 leading-none">
                   <div className="text-xs font-medium tracking-wide text-white h-4">
                     {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
@@ -289,21 +289,20 @@ export default function Home() {
                       ? 'bg-goat/5 text-goat/80'
                       : ''
                   return (
-              <tr key={player.id} className={border-t border-goat/30 hover:bg-white/5 transition ${rowStyle}}>
-  <td className="pl-2 pr-1 py-2 text-xs sm:text-sm">{i + 1}</td>
-  <td className="pl-1 pr-2 py-2 text-white font-semibold text-left w-full">
-    <div className="flex items-center gap-2">
-      <img
-        src={player.entities.image_url}
-        alt={player.entities.name}
-        className="w-6 h-6 rounded-full object-cover shrink-0"
-      />
-      <span className="truncate text-sm sm:text-base max-w-[200px] sm:max-w-[280px]">{player.entities.name}</span>
-    </div>
-  </td>
-  <td className="px-2 py-2 text-right text-xs sm:text-sm">{Math.round(player.elo_rating)}</td>
-</tr>
-
+                    <tr key={player.id} className={`border-t border-goat/30 hover:bg-white/5 transition ${rowStyle}`}>
+                      <td className="pl-2 pr-1 py-2 text-xs sm:text-sm">{i + 1}</td>
+                      <td className="pl-1 pr-2 py-2 text-white font-semibold text-left w-full">
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={player.entities.image_url}
+                            alt={player.entities.name}
+                            className="w-6 h-6 rounded-full object-cover shrink-0"
+                          />
+                          <span className="truncate text-sm sm:text-base max-w-[200px] sm:max-w-[280px]">{player.entities.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-2 py-2 text-right text-xs sm:text-sm">{Math.round(player.elo_rating)}</td>
+                    </tr>
                   )
                 })}
               </tbody>
