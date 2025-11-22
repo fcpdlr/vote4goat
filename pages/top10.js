@@ -22,6 +22,9 @@ export default function Top10Page() {
   const [message, setMessage] = useState(null)
   const [error, setError] = useState(null)
 
+  const [results, setResults] = useState([]) // resultados agregados
+  const [isLoadingResults, setIsLoadingResults] = useState(false)
+
   // 1) Cargar IP una vez (para registrar submissions)
   useEffect(() => {
     const fetchIp = async () => {
@@ -108,6 +111,34 @@ export default function Top10Page() {
     }
 
     fetchCandidates()
+  }, [selectedCategoryId])
+
+  // 4) Cargar resultados agregados (Global Top 10) al cambiar de categoría
+  useEffect(() => {
+    if (!selectedCategoryId) return
+
+    const fetchResults = async () => {
+      setIsLoadingResults(true)
+
+      // Ajusta el nombre de la vista si usas otro (p.ej. top10_results)
+      const { data, error } = await supabase
+        .from('top10_results_ordered')
+        .select('entity_id, name, points, votes_count, top10_category_id')
+        .eq('top10_category_id', selectedCategoryId)
+        .order('points', { ascending: false })
+        .limit(10)
+
+      if (error) {
+        console.error('Error al cargar resultados Top 10:', error)
+        setIsLoadingResults(false)
+        return
+      }
+
+      setResults(data || [])
+      setIsLoadingResults(false)
+    }
+
+    fetchResults()
   }, [selectedCategoryId])
 
   // IDs ya usados en el Top10 actual
@@ -365,6 +396,46 @@ export default function Top10Page() {
       >
         {isSubmitting ? 'Submitting...' : 'Submit Top 10'}
       </button>
+
+      {/* Resultados agregados globales */}
+      <section className="mt-10 max-w-xl">
+        <h2 className="text-lg font-semibold mb-3">Global Top 10 (all votes)</h2>
+
+        {isLoadingResults ? (
+          <p className="text-sm text-gray-300">Loading global ranking...</p>
+        ) : results.length === 0 ? (
+          <p className="text-sm text-gray-300">
+            No votes yet for this category.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-goat">
+                  <th className="text-left px-2 py-1">#</th>
+                  <th className="text-left px-2 py-1">Player</th>
+                  <th className="text-right px-2 py-1">Points</th>
+                  <th className="text-right px-2 py-1">Votes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.map((row, idx) => (
+                  <tr key={row.entity_id} className="border-t border-white/10">
+                    <td className="px-2 py-1">{idx + 1}</td>
+                    <td className="px-2 py-1">{row.name}</td>
+                    <td className="px-2 py-1 text-right">
+                      {Math.round(row.points)}
+                    </td>
+                    <td className="px-2 py-1 text-right">
+                      {row.votes_count}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
     </main>
   )
 }
