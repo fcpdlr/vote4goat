@@ -28,6 +28,8 @@ export default function Top10CategoryPage() {
   const [showHelp, setShowHelp] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
 
+  const [showInspiration, setShowInspiration] = useState(false)
+
   const menuRef = useRef(null)
   const helpRef = useRef(null)
 
@@ -153,10 +155,13 @@ export default function Top10CategoryPage() {
     .filter(Boolean)
     .map(s => s.id)
 
+  const availableCandidates = candidates.filter(
+    c => !selectedIds.includes(c.id)
+  )
+
   // Candidatos que matchean el search y no están ya elegidos
-  const filteredCandidates = candidates.filter(c =>
-    c.name.toLowerCase().includes(search.toLowerCase()) &&
-    !selectedIds.includes(c.id)
+  const filteredCandidates = availableCandidates.filter(c =>
+    c.name.toLowerCase().includes(search.toLowerCase())
   )
 
   const handleAddCandidate = candidate => {
@@ -291,10 +296,18 @@ export default function Top10CategoryPage() {
   // Clases del “card” interior (sin fondos, solo layout)
   const getSlotClasses = (hasPlayer) => {
     if (!hasPlayer) return ''
-    return 'flex-1 flex items-center justify-between px-3 py-1 rounded-md cursor-move'
+    return 'flex-1 flex items-center'
   }
 
-  // Color del texto del botón de cerrar según fila (para que contraste)
+  const getPlayerTextClasses = (index) => {
+    const pos = index + 1
+    if (pos <= 3) {
+      // Simulamos small caps: mayúsculas, más grandes en top 3
+      return 'text-base sm:text-lg tracking-wide uppercase text-black font-semibold'
+    }
+    return 'text-sm sm:text-base tracking-wide uppercase'
+  }
+
   const getRemoveButtonClasses = (index) => {
     const pos = index + 1
     if (pos <= 3) {
@@ -303,13 +316,8 @@ export default function Top10CategoryPage() {
     return 'text-xs text-gray-300 hover:text-red-400 ml-2'
   }
 
-  const getPlayerTextClasses = (index) => {
-    const pos = index + 1
-    if (pos <= 3) {
-      return 'text-sm truncate text-black font-semibold'
-    }
-    return 'text-sm truncate'
-  }
+  // Inspiración: primeros 10 candidatos disponibles ordenados alfabéticamente
+  const inspirationCandidates = availableCandidates.slice(0, 10)
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
@@ -474,18 +482,46 @@ export default function Top10CategoryPage() {
                 )}
               </section>
 
-              {/* Posiciones 1–10 */}
+              {/* Your Top 10 + Inspiration */}
               <section>
                 <div className="flex items-center justify-between mb-2">
                   <h2 className="text-lg font-semibold">Your Top 10</h2>
-                  <button
-                    type="button"
-                    onClick={handleReset}
-                    className="text-xs text-gray-300 hover:text-red-400 underline"
-                  >
-                    Reset list
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowInspiration(!showInspiration)}
+                      className="text-xs text-goat hover:underline"
+                    >
+                      I need inspiration
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleReset}
+                      className="text-xs text-gray-300 hover:text-red-400 underline"
+                    >
+                      Reset list
+                    </button>
+                  </div>
                 </div>
+
+                {showInspiration && inspirationCandidates.length > 0 && (
+                  <div className="mb-4 bg-white/5 border border-white/10 rounded-lg p-3 text-xs">
+                    <p className="mb-2 text-gray-200">
+                      Try some of these:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {inspirationCandidates.map(c => (
+                        <button
+                          key={c.id}
+                          onClick={() => handleAddCandidate(c)}
+                          className="px-2 py-1 rounded-full border border-white/40 text-[11px] hover:bg-white/10"
+                        >
+                          {c.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   {slots.map((slot, index) => (
@@ -503,7 +539,9 @@ export default function Top10CategoryPage() {
                           onDragStart={e => handleDragStart(e, index)}
                           className={getSlotClasses(!!slot)}
                         >
-                          <span className={getPlayerTextClasses(index)}>{slot.name}</span>
+                          <div className="flex-1 text-center">
+                            <span className={getPlayerTextClasses(index)}>{slot.name}</span>
+                          </div>
                           <button
                             type="button"
                             onClick={() => handleRemoveSlot(index)}
@@ -554,4 +592,3 @@ export default function Top10CategoryPage() {
     </main>
   )
 }
-
