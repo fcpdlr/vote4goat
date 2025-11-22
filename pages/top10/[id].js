@@ -273,27 +273,8 @@ export default function Top10CategoryPage() {
     return 'Other'
   }
 
-  // Estilos por posición (1, 2, 3)
-  const getSlotStyles = (index, hasPlayer) => {
-    const pos = index + 1
-    const base = 'flex-1 flex items-center justify-between px-3 py-1 rounded-md cursor-move'
-
-    if (!hasPlayer) return ''
-
-    if (pos === 1) {
-      return `${base} text-black font-semibold`
-    }
-    if (pos === 2) {
-      return `${base} text-black font-semibold`
-    }
-    if (pos === 3) {
-      return `${base} text-black font-semibold`
-    }
-
-    return `${base} bg-black/60`
-  }
-
-  const getSlotInlineStyle = (index) => {
+  // Fondo de cada fila (oro/plata/bronce para 1,2,3; transparente para el resto)
+  const getRowInlineStyle = (index) => {
     const pos = index + 1
     if (pos === 1) {
       return { backgroundColor: '#f5d06f' } // dorado suave
@@ -304,7 +285,30 @@ export default function Top10CategoryPage() {
     if (pos === 3) {
       return { backgroundColor: '#d9a673' } // bronce suave
     }
-    return {}
+    return { backgroundColor: 'transparent' }
+  }
+
+  // Clases del “card” interior (sin fondos, solo layout)
+  const getSlotClasses = (hasPlayer) => {
+    if (!hasPlayer) return ''
+    return 'flex-1 flex items-center justify-between px-3 py-1 rounded-md cursor-move'
+  }
+
+  // Color del texto del botón de cerrar según fila (para que contraste)
+  const getRemoveButtonClasses = (index) => {
+    const pos = index + 1
+    if (pos <= 3) {
+      return 'text-xs text-black/70 hover:text-red-700 ml-2'
+    }
+    return 'text-xs text-gray-300 hover:text-red-400 ml-2'
+  }
+
+  const getPlayerTextClasses = (index) => {
+    const pos = index + 1
+    if (pos <= 3) {
+      return 'text-sm truncate text-black font-semibold'
+    }
+    return 'text-sm truncate'
   }
 
   return (
@@ -489,27 +493,27 @@ export default function Top10CategoryPage() {
                       key={index}
                       onDragOver={handleDragOver}
                       onDrop={e => handleDrop(e, index)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white bg-transparent"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white"
+                      style={getRowInlineStyle(index)}
                     >
                       <div className="w-6 text-sm font-bold text-goat">{index + 1}.</div>
                       {slot ? (
                         <div
                           draggable
                           onDragStart={e => handleDragStart(e, index)}
-                          className={getSlotStyles(index, !!slot)}
-                          style={getSlotInlineStyle(index)}
+                          className={getSlotClasses(!!slot)}
                         >
-                          <span className="text-sm truncate">{slot.name}</span>
+                          <span className={getPlayerTextClasses(index)}>{slot.name}</span>
                           <button
                             type="button"
                             onClick={() => handleRemoveSlot(index)}
-                            className="text-xs text-gray-800 hover:text-red-700 ml-2"
+                            className={getRemoveButtonClasses(index)}
                           >
                             ✕
                           </button>
                         </div>
                       ) : (
-                        <div className="flex-1 text-xs text-gray-400 italic">
+                        <div className="flex-1 text-xs text-gray-800/70 italic">
                           Drag a player here or select from the search.
                         </div>
                       )}
