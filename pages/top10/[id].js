@@ -29,7 +29,6 @@ export default function Top10CategoryPage() {
   const [showMenu, setShowMenu] = useState(false)
   const [showInspiration, setShowInspiration] = useState(false)
 
-
   const menuRef = useRef(null)
   const helpRef = useRef(null)
 
@@ -96,7 +95,7 @@ export default function Top10CategoryPage() {
 
       const { data, error } = await supabase
         .from('top10_categories')
-        .select('id, title, description, entity_category_id, is_active')
+        .select('id, slug, title, description, entity_category_id, is_active')
         .eq('id', id)
         .eq('is_active', true)
         .single()
@@ -189,7 +188,7 @@ export default function Top10CategoryPage() {
     setError(null)
   }
 
-  // Drag & drop
+  // Drag & drop: desde slots y desde Inspiration
   const handleDragStartSlot = (event, index) => {
     const payload = { type: 'slot', index }
     event.dataTransfer.setData('text/plain', JSON.stringify(payload))
@@ -312,6 +311,35 @@ export default function Top10CategoryPage() {
     return 'Other'
   }
 
+  // Tema por categoría
+  const getCategoryTheme = (slug) => {
+    // Por defecto (Real Madrid / genérico)
+    const defaultTheme = {
+      rowBorderClass: 'border-white',
+      inspirationBorderClass: 'border-white/20',
+    }
+
+    if (!slug) return defaultTheme
+
+    // FC Barcelona
+    if (slug === 'fc-barcelona-all-time') {
+      return {
+        rowBorderClass: 'border-[#004d98]',           // azul Barça
+        inspirationBorderClass: 'border-[#a50044]/60' // granate en inspiration
+      }
+    }
+
+    // Real Madrid
+    if (slug === 'real-madrid-all-time') {
+      return {
+        rowBorderClass: 'border-white',
+        inspirationBorderClass: 'border-white/20',
+      }
+    }
+
+    return defaultTheme
+  }
+
   // Fondo de cada fila (oro/plata/bronce para 1,2,3; transparente para el resto)
   const getRowInlineStyle = (index) => {
     const pos = index + 1
@@ -353,6 +381,8 @@ export default function Top10CategoryPage() {
     }
     return 'text-xs text-gray-300 hover:text-red-400 ml-2'
   }
+
+  const theme = getCategoryTheme(category?.slug)
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
@@ -517,112 +547,110 @@ export default function Top10CategoryPage() {
                 )}
               </section>
 
-              {/* Ranking + Inspiración en dos columnas */}
               {/* Ranking + Inspiration */}
-<section className="mt-4">
-  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-center gap-6">
-    {/* Columna izquierda: Your Top 10 (centrado) */}
-    <div className="w-full max-w-xl mx-auto">
-      <div className="flex items-center justify-between mb-2">
-        <h2 className="text-lg font-semibold">Your Top 10</h2>
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setShowInspiration(prev => !prev)}
-            className="text-xs text-goat hover:underline"
-          >
-            I need inspiration
-          </button>
-          <button
-            type="button"
-            onClick={handleReset}
-            className="text-xs text-gray-300 hover:text-red-400 underline"
-          >
-            Reset list
-          </button>
-        </div>
-      </div>
+              <section className="mt-4">
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-center gap-6">
+                  {/* Columna izquierda: Your Top 10 (centrado) */}
+                  <div className="w-full max-w-xl mx-auto">
+                    <div className="flex items-center justify-between mb-2">
+                      <h2 className="text-lg font-semibold">Your Top 10</h2>
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setShowInspiration(prev => !prev)}
+                          className="text-xs text-goat hover:underline"
+                        >
+                          I need inspiration
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleReset}
+                          className="text-xs text-gray-300 hover:text-red-400 underline"
+                        >
+                          Reset list
+                        </button>
+                      </div>
+                    </div>
 
-      <div className="space-y-2">
-        {slots.map((slot, index) => (
-          <div
-            key={index}
-            onDragOver={handleDragOver}
-            onDrop={e => handleDrop(e, index)}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white"
-            style={getRowInlineStyle(index)}
-          >
-            <div className="w-6 text-sm font-bold text-goat">{index + 1}.</div>
-            {slot ? (
-              <div
-                draggable
-                onDragStart={e => handleDragStartSlot(e, index)}
-                className={getSlotClasses(!!slot)}
-              >
-                <div className="flex-1 text-center">
-                  <span
-                    className={getPlayerTextClasses(index)}
-                    style={getPlayerTextStyle()}
-                  >
-                    {slot.name}
-                  </span>
+                    <div className="space-y-2">
+                      {slots.map((slot, index) => (
+                        <div
+                          key={index}
+                          onDragOver={handleDragOver}
+                          onDrop={e => handleDrop(e, index)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${theme.rowBorderClass}`}
+                          style={getRowInlineStyle(index)}
+                        >
+                          <div className="w-6 text-sm font-bold text-goat">{index + 1}.</div>
+                          {slot ? (
+                            <div
+                              draggable
+                              onDragStart={e => handleDragStartSlot(e, index)}
+                              className={getSlotClasses(!!slot)}
+                            >
+                              <div className="flex-1 text-center">
+                                <span
+                                  className={getPlayerTextClasses(index)}
+                                  style={getPlayerTextStyle()}
+                                >
+                                  {slot.name}
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveSlot(index)}
+                                className={getRemoveButtonClasses(index)}
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex-1 text-xs text-gray-800/70 italic">
+                              Drag a player here or select from the search.
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Columna derecha: Inspiration (solo si pulsa el botón) */}
+                  {showInspiration && (
+                    <div className="w-full lg:w-56 lg:ml-6">
+                      <div className="mb-1 text-xs font-semibold text-goat uppercase tracking-wide text-right lg:text-left">
+                        Inspiration
+                      </div>
+                      <p className="text-[11px] text-gray-300 mb-2 text-right lg:text-left">
+                        Drag &amp; drop into a position, or click to add.
+                      </p>
+                      <div className="max-h-[520px] overflow-y-auto space-y-2">
+                        {availableCandidates.length === 0 ? (
+                          <p className="text-[11px] text-gray-400 italic">
+                            All players from this category are already in your Top 10.
+                          </p>
+                        ) : (
+                          availableCandidates.map(c => (
+                            <div
+                              key={c.id}
+                              draggable
+                              onDragStart={e => handleDragStartCandidate(e, c)}
+                              onClick={() => handleAddCandidate(c)}
+                              className={`cursor-grab active:cursor-grabbing px-2 py-2 rounded-md border ${theme.inspirationBorderClass} text-xs sm:text-sm hover:bg-white/10 flex items-center justify-center text-center`}
+                            >
+                              <span
+                                className="tracking-wide uppercase"
+                                style={{ fontVariant: 'small-caps' }}
+                              >
+                                {c.name}
+                              </span>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveSlot(index)}
-                  className={getRemoveButtonClasses(index)}
-                >
-                  ✕
-                </button>
-              </div>
-            ) : (
-              <div className="flex-1 text-xs text-gray-800/70 italic">
-                Drag a player here or select from the search.
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* Columna derecha: Inspiration (solo si pulsa el botón) */}
-    {showInspiration && (
-      <div className="w-full lg:w-56 lg:ml-6">
-        <div className="mb-1 text-xs font-semibold text-goat uppercase tracking-wide text-right lg:text-left">
-          Inspiration
-        </div>
-        <p className="text-[11px] text-gray-300 mb-2 text-right lg:text-left">
-          Drag &amp; drop into a position, or click to add.
-        </p>
-        <div className="max-h-[520px] overflow-y-auto space-y-2">
-          {availableCandidates.length === 0 ? (
-            <p className="text-[11px] text-gray-400 italic">
-              All players from this category are already in your Top 10.
-            </p>
-          ) : (
-            availableCandidates.map(c => (
-              <div
-                key={c.id}
-                draggable
-                onDragStart={e => handleDragStartCandidate(e, c)}
-                onClick={() => handleAddCandidate(c)}
-                className="cursor-grab active:cursor-grabbing px-2 py-2 rounded-md border border-white/20 text-xs sm:text-sm hover:bg-white/10 flex items-center justify-center text-center"
-              >
-                <span
-                  className="tracking-wide uppercase"
-                  style={{ fontVariant: 'small-caps' }}
-                >
-                  {c.name}
-                </span>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-    )}
-  </div>
-</section>
-
+              </section>
 
               {/* Mensajes y botón enviar */}
               <section className="pt-4 text-center max-w-xl mx-auto">
