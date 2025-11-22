@@ -28,8 +28,6 @@ export default function Top10CategoryPage() {
   const [showHelp, setShowHelp] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
 
-  const [showInspiration, setShowInspiration] = useState(false)
-
   const menuRef = useRef(null)
   const helpRef = useRef(null)
 
@@ -189,24 +187,58 @@ export default function Top10CategoryPage() {
     setError(null)
   }
 
-  // Drag & drop entre posiciones 1-10 (HTML5 nativo)
-  const handleDragStart = (event, index) => {
-    event.dataTransfer.setData('text/plain', String(index))
+  // Drag & drop
+  const handleDragStartSlot = (event, index) => {
+    const payload = { type: 'slot', index }
+    event.dataTransfer.setData('text/plain', JSON.stringify(payload))
+  }
+
+  const handleDragStartCandidate = (event, candidate) => {
+    const payload = { type: 'candidate', id: candidate.id }
+    event.dataTransfer.setData('text/plain', JSON.stringify(payload))
   }
 
   const handleDrop = (event, targetIndex) => {
     event.preventDefault()
-    const fromIndexRaw = event.dataTransfer.getData('text/plain')
-    if (!fromIndexRaw) return
-    const fromIndex = parseInt(fromIndexRaw, 10)
-    if (Number.isNaN(fromIndex)) return
-    if (fromIndex === targetIndex) return
+    const raw = event.dataTransfer.getData('text/plain')
+    if (!raw) return
 
-    const newSlots = [...slots]
-    const temp = newSlots[fromIndex]
-    newSlots[fromIndex] = newSlots[targetIndex]
-    newSlots[targetIndex] = temp
-    setSlots(newSlots)
+    let data
+    try {
+      data = JSON.parse(raw)
+    } catch {
+      return
+    }
+
+    // Reordenar slots
+    if (data.type === 'slot') {
+      const fromIndex = data.index
+      if (fromIndex === targetIndex) return
+      const newSlots = [...slots]
+      const temp = newSlots[fromIndex]
+      newSlots[fromIndex] = newSlots[targetIndex]
+      newSlots[targetIndex] = temp
+      setSlots(newSlots)
+      return
+    }
+
+    // Arrastrar desde inspiración
+    if (data.type === 'candidate') {
+      const candidate = candidates.find(c => c.id === data.id)
+      if (!candidate) return
+
+      const newSlots = [...slots]
+
+      // Evitar duplicados: limpia si ese candidato ya estaba en algún sitio
+      for (let i = 0; i < newSlots.length; i++) {
+        if (newSlots[i]?.id === candidate.id) {
+          newSlots[i] = null
+        }
+      }
+
+      newSlots[targetIndex] = candidate
+      setSlots(newSlots)
+    }
   }
 
   const handleDragOver = event => {
@@ -299,14 +331,18 @@ export default function Top10CategoryPage() {
     return 'flex-1 flex items-center'
   }
 
+  // Texto en “falsa mayúscula”: uppercase + small-caps
   const getPlayerTextClasses = (index) => {
     const pos = index + 1
     if (pos <= 3) {
-      // Simulamos small caps: mayúsculas, más grandes en top 3
-      return 'text-base sm:text-lg tracking-wide uppercase text-black font-semibold'
+      return 'text-base sm:text-lg tracking-wide uppercase font-semibold'
     }
     return 'text-sm sm:text-base tracking-wide uppercase'
   }
+
+  const getPlayerTextStyle = () => ({
+    fontVariant: 'small-caps',
+  })
 
   const getRemoveButtonClasses = (index) => {
     const pos = index + 1
@@ -315,9 +351,6 @@ export default function Top10CategoryPage() {
     }
     return 'text-xs text-gray-300 hover:text-red-400 ml-2'
   }
-
-  // Inspiración: primeros 10 candidatos disponibles ordenados alfabéticamente
-  const inspirationCandidates = availableCandidates.slice(0, 10)
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
@@ -403,9 +436,9 @@ export default function Top10CategoryPage() {
         </div>
       )}
 
-      {/* CONTENIDO CENTRADO */}
+      {/* CONTENIDO */}
       <div className="flex-1 mt-4 mb-8">
-        <div className="max-w-xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <button
             onClick={() => router.push('/top10')}
             className="text-xs text-gray-300 underline mb-3"
@@ -430,14 +463,14 @@ export default function Top10CategoryPage() {
                   {category.title}
                 </h1>
                 {category.description && (
-                  <p className="text-xs sm:text-sm text-gray-300 max-w-xl mx-auto">
+                  <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mx-auto">
                     {category.description}
                   </p>
                 )}
               </div>
 
-              {/* Buscador + sugerencias */}
-              <section className="mb-6">
+              {/* Buscador */}
+              <section className="mb-6 max-w-xl mx-auto">
                 <div className="flex items-center justify-between mb-2">
                   <h2 className="text-lg font-semibold">Add players</h2>
                   <span className="text-xs text-gray-300">
@@ -463,7 +496,7 @@ export default function Top10CategoryPage() {
                             No matches found.
                           </div>
                         ) : (
-                          filteredCandidates.slice(0, 12).map(c => (
+                          filteredCandidates.slice(0, 20).map(c => (
                             <button
                               key={c.id}
                               onClick={() => handleAddCandidate(c)}
@@ -482,86 +515,104 @@ export default function Top10CategoryPage() {
                 )}
               </section>
 
-              {/* Your Top 10 + Inspiration */}
-              <section>
-                <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-lg font-semibold">Your Top 10</h2>
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setShowInspiration(!showInspiration)}
-                      className="text-xs text-goat hover:underline"
-                    >
-                      I need inspiration
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleReset}
-                      className="text-xs text-gray-300 hover:text-red-400 underline"
-                    >
-                      Reset list
-                    </button>
-                  </div>
-                </div>
+              {/* Ranking + Inspiración en dos columnas */}
+              <section className="mt-4">
+                <div className="flex flex-col lg:flex-row gap-6">
+                  {/* Columna izquierda: Your Top 10 */}
+                  <div className="flex-1 min-w-[0] max-w-xl mx-auto lg:mx-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <h2 className="text-lg font-semibold">Your Top 10</h2>
+                      <button
+                        type="button"
+                        onClick={handleReset}
+                        className="text-xs text-gray-300 hover:text-red-400 underline"
+                      >
+                        Reset list
+                      </button>
+                    </div>
 
-                {showInspiration && inspirationCandidates.length > 0 && (
-                  <div className="mb-4 bg-white/5 border border-white/10 rounded-lg p-3 text-xs">
-                    <p className="mb-2 text-gray-200">
-                      Try some of these:
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {inspirationCandidates.map(c => (
-                        <button
-                          key={c.id}
-                          onClick={() => handleAddCandidate(c)}
-                          className="px-2 py-1 rounded-full border border-white/40 text-[11px] hover:bg-white/10"
+                    <div className="space-y-2">
+                      {slots.map((slot, index) => (
+                        <div
+                          key={index}
+                          onDragOver={handleDragOver}
+                          onDrop={e => handleDrop(e, index)}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white"
+                          style={getRowInlineStyle(index)}
                         >
-                          {c.name}
-                        </button>
+                          <div className="w-6 text-sm font-bold text-goat">{index + 1}.</div>
+                          {slot ? (
+                            <div
+                              draggable
+                              onDragStart={e => handleDragStartSlot(e, index)}
+                              className={getSlotClasses(!!slot)}
+                            >
+                              <div className="flex-1 text-center">
+                                <span
+                                  className={getPlayerTextClasses(index)}
+                                  style={getPlayerTextStyle()}
+                                >
+                                  {slot.name}
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveSlot(index)}
+                                className={getRemoveButtonClasses(index)}
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex-1 text-xs text-gray-800/70 italic">
+                              Drag a player here or select from the search.
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>
-                )}
 
-                <div className="space-y-2">
-                  {slots.map((slot, index) => (
-                    <div
-                      key={index}
-                      onDragOver={handleDragOver}
-                      onDrop={e => handleDrop(e, index)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white"
-                      style={getRowInlineStyle(index)}
-                    >
-                      <div className="w-6 text-sm font-bold text-goat">{index + 1}.</div>
-                      {slot ? (
-                        <div
-                          draggable
-                          onDragStart={e => handleDragStart(e, index)}
-                          className={getSlotClasses(!!slot)}
-                        >
-                          <div className="flex-1 text-center">
-                            <span className={getPlayerTextClasses(index)}>{slot.name}</span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveSlot(index)}
-                            className={getRemoveButtonClasses(index)}
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex-1 text-xs text-gray-800/70 italic">
-                          Drag a player here or select from the search.
-                        </div>
-                      )}
+                  {/* Columna derecha: Inspiration (todos los disponibles) */}
+                  <div className="w-full lg:w-72">
+                    <div className="bg-white/5 border border-white/10 rounded-lg p-3 h-full max-h-[520px] flex flex-col">
+                      <h3 className="text-sm font-semibold mb-1 text-goat">
+                        Inspiration
+                      </h3>
+                      <p className="text-[11px] text-gray-300 mb-2">
+                        Drag & drop into a position, or click to add to the next free spot.
+                      </p>
+                      <div className="flex-1 overflow-y-auto space-y-2">
+                        {availableCandidates.length === 0 ? (
+                          <p className="text-[11px] text-gray-400 italic">
+                            All players from this category are already in your Top 10.
+                          </p>
+                        ) : (
+                          availableCandidates.map(c => (
+                            <div
+                              key={c.id}
+                              draggable
+                              onDragStart={e => handleDragStartCandidate(e, c)}
+                              onClick={() => handleAddCandidate(c)}
+                              className="cursor-grab active:cursor-grabbing px-2 py-2 rounded-md border border-white/20 text-xs sm:text-sm hover:bg-white/10 flex items-center justify-center text-center"
+                            >
+                              <span
+                                className="tracking-wide uppercase"
+                                style={{ fontVariant: 'small-caps' }}
+                              >
+                                {c.name}
+                              </span>
+                            </div>
+                          ))
+                        )}
+                      </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </section>
 
               {/* Mensajes y botón enviar */}
-              <section className="pt-4 text-center">
+              <section className="pt-4 text-center max-w-xl mx-auto">
                 {error && (
                   <div className="mb-3 text-sm text-red-400">
                     {error}
