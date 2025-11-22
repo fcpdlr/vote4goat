@@ -27,6 +27,8 @@ export default function Top10CategoryPage() {
   const [user, setUser] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
+  const [showInspiration, setShowInspiration] = useState(false)
+
 
   const menuRef = useRef(null)
   const helpRef = useRef(null)
@@ -516,100 +518,111 @@ export default function Top10CategoryPage() {
               </section>
 
               {/* Ranking + Inspiración en dos columnas */}
-              <section className="mt-4">
-                <div className="flex flex-col lg:flex-row gap-6">
-                  {/* Columna izquierda: Your Top 10 */}
-                  <div className="flex-1 min-w-[0] max-w-xl mx-auto lg:mx-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <h2 className="text-lg font-semibold">Your Top 10</h2>
-                      <button
-                        type="button"
-                        onClick={handleReset}
-                        className="text-xs text-gray-300 hover:text-red-400 underline"
-                      >
-                        Reset list
-                      </button>
-                    </div>
+              {/* Ranking + Inspiration */}
+<section className="mt-4">
+  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-center gap-6">
+    {/* Columna izquierda: Your Top 10 (centrado) */}
+    <div className="w-full max-w-xl mx-auto">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-lg font-semibold">Your Top 10</h2>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setShowInspiration(prev => !prev)}
+            className="text-xs text-goat hover:underline"
+          >
+            I need inspiration
+          </button>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="text-xs text-gray-300 hover:text-red-400 underline"
+          >
+            Reset list
+          </button>
+        </div>
+      </div>
 
-                    <div className="space-y-2">
-                      {slots.map((slot, index) => (
-                        <div
-                          key={index}
-                          onDragOver={handleDragOver}
-                          onDrop={e => handleDrop(e, index)}
-                          className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white"
-                          style={getRowInlineStyle(index)}
-                        >
-                          <div className="w-6 text-sm font-bold text-goat">{index + 1}.</div>
-                          {slot ? (
-                            <div
-                              draggable
-                              onDragStart={e => handleDragStartSlot(e, index)}
-                              className={getSlotClasses(!!slot)}
-                            >
-                              <div className="flex-1 text-center">
-                                <span
-                                  className={getPlayerTextClasses(index)}
-                                  style={getPlayerTextStyle()}
-                                >
-                                  {slot.name}
-                                </span>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveSlot(index)}
-                                className={getRemoveButtonClasses(index)}
-                              >
-                                ✕
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="flex-1 text-xs text-gray-800/70 italic">
-                              Drag a player here or select from the search.
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Columna derecha: Inspiration (todos los disponibles) */}
-                  <div className="w-full lg:w-72">
-                    <div className="bg-white/5 border border-white/10 rounded-lg p-3 h-full max-h-[520px] flex flex-col">
-                      <h3 className="text-sm font-semibold mb-1 text-goat">
-                        Inspiration
-                      </h3>
-                      <p className="text-[11px] text-gray-300 mb-2">
-                        Drag & drop into a position, or click to add to the next free spot.
-                      </p>
-                      <div className="flex-1 overflow-y-auto space-y-2">
-                        {availableCandidates.length === 0 ? (
-                          <p className="text-[11px] text-gray-400 italic">
-                            All players from this category are already in your Top 10.
-                          </p>
-                        ) : (
-                          availableCandidates.map(c => (
-                            <div
-                              key={c.id}
-                              draggable
-                              onDragStart={e => handleDragStartCandidate(e, c)}
-                              onClick={() => handleAddCandidate(c)}
-                              className="cursor-grab active:cursor-grabbing px-2 py-2 rounded-md border border-white/20 text-xs sm:text-sm hover:bg-white/10 flex items-center justify-center text-center"
-                            >
-                              <span
-                                className="tracking-wide uppercase"
-                                style={{ fontVariant: 'small-caps' }}
-                              >
-                                {c.name}
-                              </span>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  </div>
+      <div className="space-y-2">
+        {slots.map((slot, index) => (
+          <div
+            key={index}
+            onDragOver={handleDragOver}
+            onDrop={e => handleDrop(e, index)}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white"
+            style={getRowInlineStyle(index)}
+          >
+            <div className="w-6 text-sm font-bold text-goat">{index + 1}.</div>
+            {slot ? (
+              <div
+                draggable
+                onDragStart={e => handleDragStartSlot(e, index)}
+                className={getSlotClasses(!!slot)}
+              >
+                <div className="flex-1 text-center">
+                  <span
+                    className={getPlayerTextClasses(index)}
+                    style={getPlayerTextStyle()}
+                  >
+                    {slot.name}
+                  </span>
                 </div>
-              </section>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveSlot(index)}
+                  className={getRemoveButtonClasses(index)}
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <div className="flex-1 text-xs text-gray-800/70 italic">
+                Drag a player here or select from the search.
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Columna derecha: Inspiration (solo si pulsa el botón) */}
+    {showInspiration && (
+      <div className="w-full lg:w-56 lg:ml-6">
+        <div className="mb-1 text-xs font-semibold text-goat uppercase tracking-wide text-right lg:text-left">
+          Inspiration
+        </div>
+        <p className="text-[11px] text-gray-300 mb-2 text-right lg:text-left">
+          Drag &amp; drop into a position, or click to add.
+        </p>
+        <div className="max-h-[520px] overflow-y-auto space-y-2">
+          {availableCandidates.length === 0 ? (
+            <p className="text-[11px] text-gray-400 italic">
+              All players from this category are already in your Top 10.
+            </p>
+          ) : (
+            availableCandidates.map(c => (
+              <div
+                key={c.id}
+                draggable
+                onDragStart={e => handleDragStartCandidate(e, c)}
+                onClick={() => handleAddCandidate(c)}
+                className="cursor-grab active:cursor-grabbing px-2 py-2 rounded-md border border-white/20 text-xs sm:text-sm hover:bg-white/10 flex items-center justify-center text-center"
+              >
+                <span
+                  className="tracking-wide uppercase"
+                  style={{ fontVariant: 'small-caps' }}
+                >
+                  {c.name}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
 
               {/* Mensajes y botón enviar */}
               <section className="pt-4 text-center max-w-xl mx-auto">
