@@ -112,16 +112,18 @@ export default function Top10Home() {
     }
 
     // Países
-    if (
-      s.startsWith('brazil-') ||
-      s.startsWith('argentina-') ||
-      s.startsWith('france-') ||
-      s.startsWith('germany-') ||
-      s.startsWith('spain-') ||
-      s.startsWith('italy-')
-    ) {
-      return 'country'
-    }
+  if (
+    s.startsWith('brazil-') ||
+    s.startsWith('argentina-') ||
+    s.startsWith('france-') ||
+    s.startsWith('germany-') ||
+    s.startsWith('spain-') ||
+    s.startsWith('italy-') ||
+    s.startsWith('england-')
+  ) {
+    return 'country'
+  }
+
 
     // Lo demás lo consideramos "position" / otros tipos
     return 'position'
