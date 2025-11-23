@@ -148,8 +148,8 @@ export default function Top10IndexPage() {
     if (!items || items.length === 0) return null
 
     return (
-      <section className="mb-8">
-        <div className="flex items-baseline justify-between mb-2">
+      <section className="mb-10">
+        <div className="mb-3 text-center">
           <h2 className="text-lg sm:text-xl font-bold text-goat">
             {title}
           </h2>
@@ -157,26 +157,21 @@ export default function Top10IndexPage() {
             {items.length} {items.length === 1 ? 'category' : 'categories'}
           </span>
         </div>
-        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center">
           {items.map(cat => (
             <a
               key={cat.id}
               href={`/top10/${cat.id}`}
-              className="group block rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-goat/80 transition px-3 py-3 sm:px-4 sm:py-4"
+              className="group block w-full max-w-xs rounded-2xl border border-white/15 bg-white/[0.04] hover:bg-white/[0.10] hover:border-goat/80 transition px-4 py-4 h-32 flex flex-col items-center justify-center text-center"
             >
-              <div className="flex items-center justify-between gap-2 mb-1">
+              <div className="flex items-center justify-center gap-2 mb-2">
                 <h3 className="text-sm sm:text-base font-semibold text-white group-hover:text-goat line-clamp-2">
                   {cat.title}
                 </h3>
-                <span className="text-[10px] px-2 py-[2px] rounded-full bg-black/40 border border-white/10 text-gray-200 whitespace-nowrap">
-                  {sportLabel(cat.entity_category_id)}
-                </span>
               </div>
-              {cat.description && (
-                <p className="text-[11px] sm:text-xs text-gray-300 line-clamp-2">
-                  {cat.description}
-                </p>
-              )}
+              <span className="mt-1 inline-flex items-center justify-center text-[10px] px-2 py-[3px] rounded-full bg-black/40 border border-white/15 text-gray-200">
+                {sportLabel(cat.entity_category_id)}
+              </span>
             </a>
           ))}
         </div>
@@ -213,15 +208,15 @@ export default function Top10IndexPage() {
                   <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">
                     Profile
                   </a>
-                  <button
-                    onClick={async () => {
-                      await supabase.auth.signOut()
-                      window.location.reload()
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                  >
-                    Logout
-                  </button>
+                    <button
+                      onClick={async () => {
+                        await supabase.auth.signOut()
+                        window.location.reload()
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
                 </div>
               )}
             </div>
@@ -269,15 +264,14 @@ export default function Top10IndexPage() {
       )}
 
       {/* CONTENIDO PRINCIPAL */}
-      <div className="flex-1 mt-4 mb-10">
+      <div className="flex-1 mt-6 mb-10">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-6">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-goat mb-1">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-goat mb-2">
               Top 10 Categories
             </h1>
             <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mx-auto">
-              Pick your all-time Top 10 for clubs and national teams, then see the global
-              community ranking for each category.
+              Choose a club or national team and build your all-time Top 10.
             </p>
           </div>
 
