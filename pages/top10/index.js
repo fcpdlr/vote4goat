@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/router'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -7,9 +6,52 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
-export default function Top10Home() {
-  const router = useRouter()
+// Clasifica categorías según el slug
+const classifyCategory = (slug) => {
+  if (!slug) return 'other'
+  const s = slug.toLowerCase()
 
+  // Clubs conocidos
+  if (
+    s.includes('real-madrid') ||
+    s.includes('fc-barcelona') ||
+    s.includes('barcelona-all-time') ||
+    s.includes('bayern') ||
+    s.includes('manchester-united') ||
+    s.includes('liverpool') ||
+    s.includes('ac-milan') ||
+    s.includes('milan-all-time') ||
+    s.includes('boca') ||
+    s.includes('river')
+  ) {
+    return 'club'
+  }
+
+  // Selecciones / países conocidos
+  if (
+    s.startsWith('brazil-') ||
+    s.startsWith('argentina-') ||
+    s.startsWith('france-') ||
+    s.startsWith('germany-') ||
+    s.startsWith('spain-') ||
+    s.startsWith('italy-') ||
+    s.startsWith('england-')
+  ) {
+    return 'country'
+  }
+
+  // Todo lo demás, por defecto lo consideramos "position/other"
+  return 'position'
+}
+
+const sportLabel = (entityCategoryId) => {
+  if (entityCategoryId === 1) return 'Football'
+  if (entityCategoryId === 2) return 'Basketball'
+  if (entityCategoryId === 3) return 'Tennis'
+  return 'Other'
+}
+
+export default function Top10IndexPage() {
   const [categories, setCategories] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -21,7 +63,7 @@ export default function Top10Home() {
   const menuRef = useRef(null)
   const helpRef = useRef(null)
 
-  // Usuario
+  // Usuario para el header
   useEffect(() => {
     const checkUser = async () => {
       try {
@@ -58,7 +100,7 @@ export default function Top10Home() {
     }
   }, [])
 
-  // Cargar categorías Top10
+  // Cargar categorías Top 10
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoading(true)
@@ -68,11 +110,10 @@ export default function Top10Home() {
         .from('top10_categories')
         .select('id, slug, title, description, entity_category_id, is_active')
         .eq('is_active', true)
-        .order('entity_category_id', { ascending: true })
         .order('title', { ascending: true })
 
       if (error) {
-        console.error('Error al cargar categorías Top 10:', error)
+        console.error('Error al cargar categorías Top10:', error)
         setError('Error loading Top 10 categories.')
         setIsLoading(false)
         return
@@ -85,102 +126,58 @@ export default function Top10Home() {
     fetchCategories()
   }, [])
 
-  const sportLabel = (entityCategoryId) => {
-    if (entityCategoryId === 1) return 'Football'
-    if (entityCategoryId === 2) return 'Basketball'
-    if (entityCategoryId === 3) return 'Tennis'
-    return 'Other'
-  }
-
-  // Clasificar por tipo: club / país / posición
-  const classifyCategory = (slug) => {
-    if (!slug) return 'other'
-    const s = slug.toLowerCase()
-
-    // Clubs
-    if (
-      s.includes('real-madrid') ||
-      s.includes('fc-barcelona') ||
-      s.includes('bayern') ||
-      s.includes('manchester-united') ||
-      s.includes('liverpool') ||
-      s.includes('ac-milan') ||
-      s.includes('boca-juniors') ||
-      s.includes('river-plate')
-    ) {
-      return 'club'
-    }
-
-    // Países
-  if (
-    s.startsWith('brazil-') ||
-    s.startsWith('argentina-') ||
-    s.startsWith('france-') ||
-    s.startsWith('germany-') ||
-    s.startsWith('spain-') ||
-    s.startsWith('italy-') ||
-    s.startsWith('england-')
-  ) {
-    return 'country'
-  }
-
-
-    // Lo demás lo consideramos "position" / otros tipos
-    return 'position'
-  }
-
-  const byClub = categories.filter(c => classifyCategory(c.slug) === 'club')
-  const byCountry = categories.filter(c => classifyCategory(c.slug) === 'country')
-  const byPosition = categories.filter(c => classifyCategory(c.slug) === 'position')
-
-  const CategoryCard = ({ category }) => (
-    <button
-      onClick={() => router.push(`/top10/${category.id}`)}
-      className="w-full text-left bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-3 transition flex flex-col gap-1"
-    >
-      <div className="text-[10px] uppercase tracking-wide text-goat">
-        {sportLabel(category.entity_category_id)}
-      </div>
-      <div className="text-sm sm:text-base font-semibold">
-        {category.title}
-      </div>
-      {category.description && (
-        <div className="text-[11px] text-gray-300 line-clamp-2">
-          {category.description}
-        </div>
-      )}
-    </button>
+  // Agrupar por tipo
+  const grouped = categories.reduce(
+    (acc, cat) => {
+      const type = classifyCategory(cat.slug)
+      if (type === 'club') acc.clubs.push(cat)
+      else if (type === 'country') acc.countries.push(cat)
+      else if (type === 'position') acc.positions.push(cat)
+      else acc.positions.push(cat) // fallback: meter en positions/other
+      return acc
+    },
+    { clubs: [], countries: [], positions: [] }
   )
 
-  const Section = ({ title, items, subtitle }) => {
-    if (!items || items.length === 0) {
-      // Si quieres que siempre aparezcan los bloques aunque estén vacíos:
-      return (
-        <section className="mt-6">
-          <div className="flex items-baseline justify-between mb-2">
-            <h2 className="text-lg font-bold text-goat">{title}</h2>
-            {subtitle && <span className="text-[11px] text-gray-300">{subtitle}</span>}
-          </div>
-          <p className="text-xs text-gray-400 italic">
-            Coming soon.
-          </p>
-        </section>
-      )
-    }
+  // Ordenar dentro de cada grupo por título
+  grouped.clubs.sort((a, b) => a.title.localeCompare(b.title))
+  grouped.countries.sort((a, b) => a.title.localeCompare(b.title))
+  grouped.positions.sort((a, b) => a.title.localeCompare(b.title))
+
+  const Section = ({ title, items }) => {
+    if (!items || items.length === 0) return null
 
     return (
-      <section className="mt-6">
+      <section className="mb-8">
         <div className="flex items-baseline justify-between mb-2">
-          <h2 className="text-lg font-bold text-goat">{title}</h2>
-          {subtitle && (
-            <span className="text-[11px] text-gray-300">
-              {items.length} categories
-            </span>
-          )}
+          <h2 className="text-lg sm:text-xl font-bold text-goat">
+            {title}
+          </h2>
+          <span className="text-xs text-gray-300">
+            {items.length} {items.length === 1 ? 'category' : 'categories'}
+          </span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {items.map(cat => (
-            <CategoryCard key={cat.id} category={cat} />
+            <a
+              key={cat.id}
+              href={`/top10/${cat.id}`}
+              className="group block rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-goat/80 transition px-3 py-3 sm:px-4 sm:py-4"
+            >
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <h3 className="text-sm sm:text-base font-semibold text-white group-hover:text-goat line-clamp-2">
+                  {cat.title}
+                </h3>
+                <span className="text-[10px] px-2 py-[2px] rounded-full bg-black/40 border border-white/10 text-gray-200 whitespace-nowrap">
+                  {sportLabel(cat.entity_category_id)}
+                </span>
+              </div>
+              {cat.description && (
+                <p className="text-[11px] sm:text-xs text-gray-300 line-clamp-2">
+                  {cat.description}
+                </p>
+              )}
+            </a>
           ))}
         </div>
       </section>
@@ -189,14 +186,17 @@ export default function Top10Home() {
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
-      {/* HEADER - igual que en home */}
+      {/* HEADER (igual que en home) */}
       <header className="flex items-center justify-between px-3 py-2">
         <div className="flex items-center gap-2">
-          <span className="text-xl sm:text-2xl font-bold text-white cursor-pointer" onClick={() => router.push('/')}>
+          <a href="/" className="text-xl sm:text-2xl font-bold text-white">
             Vote4GOAT
-          </span>
+          </a>
         </div>
         <nav className="flex items-center gap-3 text-xs sm:text-sm">
+          <a href="/top10" className="hover:underline text-goat font-semibold">
+            Top 10s
+          </a>
           <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">
             About
           </button>
@@ -261,27 +261,23 @@ export default function Top10Home() {
             the world decide, one vote at a time?
           </p>
           <p className="mb-2">
-            Vote4GOAT is a simple, fun and addicting way to settle the debate. Two players appear
-            on screen. You choose the one you think is greater. Your vote updates their score using
-            a ranking system based on Elo — the same method used in chess and competitive gaming.
+            Vote4GOAT started with 1vs1 duels and now adds Top 10 lists for clubs and national
+            teams. Build your own rankings and see how they compare with the community.
           </p>
-          <p className="mb-2">
-            The more people vote, the more accurate the ranking becomes. No stats, no explanations
-            — just pure instinct and opinion.
-          </p>
-          <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT list.</p>
+          <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT lists.</p>
         </div>
       )}
 
-      {/* CONTENIDO */}
-      <div className="flex-1 mt-4 mb-8">
+      {/* CONTENIDO PRINCIPAL */}
+      <div className="flex-1 mt-4 mb-10">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-4">
+          <div className="text-center mb-6">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-goat mb-1">
-              Top 10s
+              Top 10 Categories
             </h1>
-            <p className="text-xs sm:text-sm text-gray-300">
-              Choose a category and build your all-time Top 10.
+            <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mx-auto">
+              Pick your all-time Top 10 for clubs and national teams, then see the global
+              community ranking for each category.
             </p>
           </div>
 
@@ -289,23 +285,15 @@ export default function Top10Home() {
             <p className="text-sm text-gray-300 text-center">Loading categories...</p>
           ) : error ? (
             <p className="text-sm text-red-400 text-center">{error}</p>
+          ) : categories.length === 0 ? (
+            <p className="text-sm text-gray-300 text-center">
+              No Top 10 categories available yet.
+            </p>
           ) : (
             <>
-              <Section
-                title="By club"
-                items={byClub}
-                subtitle="Club legends and all-time teams"
-              />
-              <Section
-                title="By country"
-                items={byCountry}
-                subtitle="National teams and international legends"
-              />
-              <Section
-                title="By position"
-                items={byPosition}
-                subtitle="Positions, roles and special themes"
-              />
+              <Section title="By club" items={grouped.clubs} />
+              <Section title="By country" items={grouped.countries} />
+              <Section title="By position / other" items={grouped.positions} />
             </>
           )}
         </div>
