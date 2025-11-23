@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/router'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -6,10 +7,13 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
-export default function Top10IndexPage() {
+export default function Top10Home() {
+  const router = useRouter()
+
   const [categories, setCategories] = useState([])
-  const [isLoadingCategories, setIsLoadingCategories] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+
   const [user, setUser] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
@@ -17,7 +21,7 @@ export default function Top10IndexPage() {
   const menuRef = useRef(null)
   const helpRef = useRef(null)
 
-  // Obtener usuario logado
+  // Usuario
   useEffect(() => {
     const checkUser = async () => {
       try {
@@ -54,28 +58,28 @@ export default function Top10IndexPage() {
     }
   }, [])
 
-  // Cargar categorías de Top10
+  // Cargar categorías Top10
   useEffect(() => {
     const fetchCategories = async () => {
-      setIsLoadingCategories(true)
+      setIsLoading(true)
       setError(null)
 
       const { data, error } = await supabase
         .from('top10_categories')
-        .select('id, title, description, entity_category_id, slug, is_active')
+        .select('id, slug, title, description, entity_category_id, is_active')
         .eq('is_active', true)
         .order('entity_category_id', { ascending: true })
-        .order('id', { ascending: true })
+        .order('title', { ascending: true })
 
       if (error) {
-        console.error('Error al cargar categorías Top10:', error)
+        console.error('Error al cargar categorías Top 10:', error)
         setError('Error loading Top 10 categories.')
-        setIsLoadingCategories(false)
+        setIsLoading(false)
         return
       }
 
       setCategories(data || [])
-      setIsLoadingCategories(false)
+      setIsLoading(false)
     }
 
     fetchCategories()
@@ -88,12 +92,107 @@ export default function Top10IndexPage() {
     return 'Other'
   }
 
+  // Clasificar por tipo: club / país / posición
+  const classifyCategory = (slug) => {
+    if (!slug) return 'other'
+    const s = slug.toLowerCase()
+
+    // Clubs
+    if (
+      s.includes('real-madrid') ||
+      s.includes('fc-barcelona') ||
+      s.includes('bayern') ||
+      s.includes('manchester-united') ||
+      s.includes('liverpool') ||
+      s.includes('ac-milan') ||
+      s.includes('boca-juniors') ||
+      s.includes('river-plate')
+    ) {
+      return 'club'
+    }
+
+    // Países
+    if (
+      s.startsWith('brazil-') ||
+      s.startsWith('argentina-') ||
+      s.startsWith('france-') ||
+      s.startsWith('germany-') ||
+      s.startsWith('spain-') ||
+      s.startsWith('italy-')
+    ) {
+      return 'country'
+    }
+
+    // Lo demás lo consideramos "position" / otros tipos
+    return 'position'
+  }
+
+  const byClub = categories.filter(c => classifyCategory(c.slug) === 'club')
+  const byCountry = categories.filter(c => classifyCategory(c.slug) === 'country')
+  const byPosition = categories.filter(c => classifyCategory(c.slug) === 'position')
+
+  const CategoryCard = ({ category }) => (
+    <button
+      onClick={() => router.push(`/top10/${category.id}`)}
+      className="w-full text-left bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-3 transition flex flex-col gap-1"
+    >
+      <div className="text-[10px] uppercase tracking-wide text-goat">
+        {sportLabel(category.entity_category_id)}
+      </div>
+      <div className="text-sm sm:text-base font-semibold">
+        {category.title}
+      </div>
+      {category.description && (
+        <div className="text-[11px] text-gray-300 line-clamp-2">
+          {category.description}
+        </div>
+      )}
+    </button>
+  )
+
+  const Section = ({ title, items, subtitle }) => {
+    if (!items || items.length === 0) {
+      // Si quieres que siempre aparezcan los bloques aunque estén vacíos:
+      return (
+        <section className="mt-6">
+          <div className="flex items-baseline justify-between mb-2">
+            <h2 className="text-lg font-bold text-goat">{title}</h2>
+            {subtitle && <span className="text-[11px] text-gray-300">{subtitle}</span>}
+          </div>
+          <p className="text-xs text-gray-400 italic">
+            Coming soon.
+          </p>
+        </section>
+      )
+    }
+
+    return (
+      <section className="mt-6">
+        <div className="flex items-baseline justify-between mb-2">
+          <h2 className="text-lg font-bold text-goat">{title}</h2>
+          {subtitle && (
+            <span className="text-[11px] text-gray-300">
+              {items.length} categories
+            </span>
+          )}
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {items.map(cat => (
+            <CategoryCard key={cat.id} category={cat} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
-      {/* HEADER - mismo que en la home */}
+      {/* HEADER - igual que en home */}
       <header className="flex items-center justify-between px-3 py-2">
         <div className="flex items-center gap-2">
-          <span className="text-xl sm:text-2xl font-bold text-white">Vote4GOAT</span>
+          <span className="text-xl sm:text-2xl font-bold text-white cursor-pointer" onClick={() => router.push('/')}>
+            Vote4GOAT
+          </span>
         </div>
         <nav className="flex items-center gap-3 text-xs sm:text-sm">
           <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">
@@ -135,7 +234,7 @@ export default function Top10IndexPage() {
         </nav>
       </header>
 
-      {/* ICONOS DE DEPORTES (mismo que en home) */}
+      {/* ICONOS DE DEPORTE */}
       <div className="flex justify-center gap-4 mt-2 mb-2">
         <a href="/football" title="Football">
           <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
@@ -172,52 +271,42 @@ export default function Top10IndexPage() {
         </div>
       )}
 
-      {/* CONTENIDO PRINCIPAL */}
+      {/* CONTENIDO */}
       <div className="flex-1 mt-4 mb-8">
-        <h1 className="text-3xl font-extrabold mb-4 text-goat text-center">
-          TOP 10 RANKINGS
-        </h1>
-        <p className="text-center text-sm text-gray-300 mb-6 max-w-2xl mx-auto">
-          Choose a category and build your own Top 10. Then see how your ranking compares to the
-          global consensus.
-        </p>
-
-        {error && (
-          <p className="text-center text-sm text-red-400 mb-4">{error}</p>
-        )}
-
-        {isLoadingCategories ? (
-          <p className="text-center text-sm text-gray-300">Loading Top 10 categories...</p>
-        ) : categories.length === 0 ? (
-          <p className="text-center text-sm text-gray-300">
-            No Top 10 categories available yet.
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
-            {categories.map(cat => (
-              <a
-                key={cat.id}
-                href={`/top10/${cat.id}`}
-                className="block bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition shadow-sm"
-              >
-                <div className="text-xs uppercase tracking-wide text-goat mb-1">
-                  {sportLabel(cat.entity_category_id)}
-                </div>
-                <h2 className="text-sm sm:text-base font-semibold mb-1">
-                  {cat.title}
-                </h2>
-                {cat.description && (
-                  <p className="text-xs text-gray-300 line-clamp-3">
-                    {cat.description}
-                  </p>
-                )}
-                <div className="mt-3 text-xs text-goat font-semibold">
-                  Build your Top 10 →
-                </div>
-              </a>
-            ))}
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-4">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-goat mb-1">
+              Top 10s
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-300">
+              Choose a category and build your all-time Top 10.
+            </p>
           </div>
-        )}
+
+          {isLoading ? (
+            <p className="text-sm text-gray-300 text-center">Loading categories...</p>
+          ) : error ? (
+            <p className="text-sm text-red-400 text-center">{error}</p>
+          ) : (
+            <>
+              <Section
+                title="By club"
+                items={byClub}
+                subtitle="Club legends and all-time teams"
+              />
+              <Section
+                title="By country"
+                items={byCountry}
+                subtitle="National teams and international legends"
+              />
+              <Section
+                title="By position"
+                items={byPosition}
+                subtitle="Positions, roles and special themes"
+              />
+            </>
+          )}
+        </div>
       </div>
     </main>
   )
