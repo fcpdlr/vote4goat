@@ -51,6 +51,158 @@ const sportLabel = (entityCategoryId) => {
   return 'Other'
 }
 
+// Tema visual por categoría (fondo del cuadro, colores de texto, etc.)
+const getCategoryTheme = (slug) => {
+  const base = {
+    cardClass: 'bg-white/[0.04] hover:bg-white/[0.10] border-white/15',
+    titleClass: 'text-white group-hover:text-goat',
+    badgeClass: 'bg-black/40 border-white/15 text-gray-200',
+  }
+
+  if (!slug) return base
+  const s = slug.toLowerCase()
+
+  // Clubs
+  if (s.includes('real-madrid')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-white via-gray-100 to-gray-300 border-gray-300 hover:border-goat',
+      titleClass: 'text-black group-hover:text-goat',
+      badgeClass: 'bg-black/40 border-black/30 text-white',
+    }
+  }
+
+  if (s.includes('fc-barcelona') || s.includes('barcelona-all-time')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-[#004d98] via-[#004d98] to-[#a50044] border-[#a50044]/80 hover:border-white',
+      titleClass: 'text-white group-hover:text-yellow-300',
+      badgeClass: 'bg-black/40 border-white/30 text-gray-100',
+    }
+  }
+
+  if (s.includes('bayern')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-[#dc052d] via-[#b80024] to-[#750014] border-[#ffb3c2]/40 hover:border-white',
+      titleClass: 'text-white group-hover:text-yellow-200',
+      badgeClass: 'bg-black/40 border-white/30 text-gray-100',
+    }
+  }
+
+  if (s.includes('manchester-united')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-[#da291c] via-[#a00012] to-black border-[#fbe122]/40 hover:border-white',
+      titleClass: 'text-white group-hover:text-[#fbe122]',
+      badgeClass: 'bg-black/50 border-white/30 text-gray-100',
+    }
+  }
+
+  if (s.includes('liverpool')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-[#c8102e] via-[#8b0018] to-[#111827] border-[#f6e3e7]/40 hover:border-white',
+      titleClass: 'text-white group-hover:text-[#f6e3e7]',
+      badgeClass: 'bg-black/50 border-white/30 text-gray-100',
+    }
+  }
+
+  if (s.includes('ac-milan') || s.includes('milan-all-time')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-black via-[#111827] to-[#a0001e] border-[#ffccd5]/40 hover:border-white',
+      titleClass: 'text-white group-hover:text-red-200',
+      badgeClass: 'bg-black/60 border-white/30 text-gray-100',
+    }
+  }
+
+  if (s.includes('boca')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-[#0033a0] via-[#0033a0] to-[#ffcc00] border-[#ffcc00]/60 hover:border-white',
+      titleClass: 'text-white group-hover:text-[#ffcc00]',
+      badgeClass: 'bg-black/50 border-white/30 text-gray-100',
+    }
+  }
+
+  if (s.includes('river')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-white via-[#f3f4f6] to-[#e11d48] border-[#fecaca]/60 hover:border-white',
+      titleClass: 'text-black group-hover:text-[#e11d48]',
+      badgeClass: 'bg-black/30 border-black/20 text-white',
+    }
+  }
+
+  // Selecciones
+  if (s.startsWith('brazil-')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-[#ffdf00] via-[#ffdf00] to-[#009c3b] border-[#fde68a]/70 hover:border-white',
+      titleClass: 'text-black group-hover:text-[#14532d]',
+      badgeClass: 'bg-black/30 border-black/20 text-white',
+    }
+  }
+
+  if (s.startsWith('argentina-')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-[#75aadb] via-[#75aadb] to-white border-[#bfdbfe]/70 hover:border-white',
+      titleClass: 'text-black group-hover:text-[#0f172a]',
+      badgeClass: 'bg-black/20 border-black/20 text-white',
+    }
+  }
+
+  if (s.startsWith('france-')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-[#0055a4] via-[#003366] to-[#e51b23] border-[#bfdbfe]/70 hover:border-white',
+      titleClass: 'text-white group-hover:text-[#fffbeb]',
+      badgeClass: 'bg-black/40 border-white/30 text-gray-100',
+    }
+  }
+
+  if (s.startsWith('germany-')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-black via-[#111827] to-white border-[#e5e7eb]/60 hover:border-white',
+      titleClass: 'text-white group-hover:text-black',
+      badgeClass: 'bg-black/50 border-white/30 text-gray-100',
+    }
+  }
+
+  if (s.startsWith('spain-')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-[#aa151b] via-[#aa151b] to-[#f1bf00] border-[#fecaca]/70 hover:border-white',
+      titleClass: 'text-white group-hover:text-yellow-200',
+      badgeClass: 'bg-black/50 border-white/30 text-gray-100',
+    }
+  }
+
+  if (s.startsWith('italy-')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-[#0072ce] via-[#0072ce] to-white border-[#bfdbfe]/70 hover:border-white',
+      titleClass: 'text-white group-hover:text-[#fefce8]',
+      badgeClass: 'bg-black/40 border-white/30 text-gray-100',
+    }
+  }
+
+  if (s.startsWith('england-')) {
+    return {
+      cardClass:
+        'bg-gradient-to-br from-white via-[#f3f4f6] to-[#c8102e] border-[#fecaca]/70 hover:border-white',
+      titleClass: 'text-black group-hover:text-[#c8102e]',
+      badgeClass: 'bg-black/30 border-black/20 text-white',
+    }
+  }
+
+  // Por defecto
+  return base
+}
+
 export default function Top10IndexPage() {
   const [categories, setCategories] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -133,7 +285,7 @@ export default function Top10IndexPage() {
       if (type === 'club') acc.clubs.push(cat)
       else if (type === 'country') acc.countries.push(cat)
       else if (type === 'position') acc.positions.push(cat)
-      else acc.positions.push(cat) // fallback: meter en positions/other
+      else acc.positions.push(cat)
       return acc
     },
     { clubs: [], countries: [], positions: [] }
@@ -158,22 +310,38 @@ export default function Top10IndexPage() {
           </span>
         </div>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center">
-          {items.map(cat => (
-            <a
-              key={cat.id}
-              href={`/top10/${cat.id}`}
-              className="group block w-full max-w-xs rounded-2xl border border-white/15 bg-white/[0.04] hover:bg-white/[0.10] hover:border-goat/80 transition px-4 py-4 h-32 flex flex-col items-center justify-center text-center"
-            >
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <h3 className="text-sm sm:text-base font-semibold text-white group-hover:text-goat line-clamp-2">
-                  {cat.title}
-                </h3>
-              </div>
-              <span className="mt-1 inline-flex items-center justify-center text-[10px] px-2 py-[3px] rounded-full bg-black/40 border border-white/15 text-gray-200">
-                {sportLabel(cat.entity_category_id)}
-              </span>
-            </a>
-          ))}
+          {items.map(cat => {
+            const theme = getCategoryTheme(cat.slug)
+            return (
+              <a
+                key={cat.id}
+                href={`/top10/${cat.id}`}
+                className={
+                  'group block w-full max-w-xs rounded-2xl border transition px-4 py-4 h-32 flex flex-col items-center justify-center text-center ' +
+                  theme.cardClass
+                }
+              >
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <h3
+                    className={
+                      'text-sm sm:text-base font-semibold line-clamp-2 ' +
+                      theme.titleClass
+                    }
+                  >
+                    {cat.title}
+                  </h3>
+                </div>
+                <span
+                  className={
+                    'mt-1 inline-flex items-center justify-center text-[10px] px-2 py-[3px] rounded-full ' +
+                    theme.badgeClass
+                  }
+                >
+                  {sportLabel(cat.entity_category_id)}
+                </span>
+              </a>
+            )
+          })}
         </div>
       </section>
     )
@@ -208,15 +376,15 @@ export default function Top10IndexPage() {
                   <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">
                     Profile
                   </a>
-                    <button
-                      onClick={async () => {
-                        await supabase.auth.signOut()
-                        window.location.reload()
-                      }}
-                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                    >
-                      Logout
-                    </button>
+                  <button
+                    onClick={async () => {
+                      await supabase.auth.signOut()
+                      window.location.reload()
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
                 </div>
               )}
             </div>
