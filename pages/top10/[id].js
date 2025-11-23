@@ -246,63 +246,71 @@ export default function Top10CategoryPage() {
     event.preventDefault()
   }
 
-  const handleSubmit = async () => {
-    setMessage(null)
-    setError(null)
+ const handleSubmit = async () => {
+  setMessage(null)
+  setError(null)
 
-    if (slots.some(s => s === null)) {
-      setError('Please fill all 10 positions before submitting.')
-      return
-    }
-
-    if (!id) {
-      setError('No Top 10 category selected.')
-      return
-    }
-
-    setIsSubmitting(true)
-
-    const entityIds = slots.map(s => s.id)
-
-    // Usuario actual
-    let userId = null
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      userId = user?.id ?? null
-    } catch (err) {
-      console.error('Error al obtener el usuario:', err)
-    }
-
-    // IP (si no la tenemos, reintentar)
-    let ip = ipAddress
-    if (!ip) {
-      try {
-        const res = await fetch('https://api.ipify.org?format=json')
-        const data = await res.json()
-        ip = data.ip
-        setIpAddress(data.ip)
-      } catch (e) {
-        console.warn('No se pudo obtener IP en submit:', e)
-      }
-    }
-
-    const { error: rpcError } = await supabase.rpc('submit_top10', {
-      p_top10_category_id: Number(id),
-      p_entity_ids: entityIds,
-      p_user_id: userId,
-      p_ip_address: ip,
-    })
-
-    if (rpcError) {
-      console.error('Error al enviar Top 10:', rpcError)
-      setError('Error submitting your Top 10. Please try again.')
-      setIsSubmitting(false)
-      return
-    }
-
-    setIsSubmitting(false)
-    setMessage('Your Top 10 has been submitted. Thank you!')
+  if (slots.some(s => s === null)) {
+    setError('Please fill all 10 positions before submitting.')
+    return
   }
+
+  if (!id) {
+    setError('No Top 10 category selected.')
+    return
+  }
+
+  setIsSubmitting(true)
+
+  const entityIds = slots.map(s => s.id)
+
+  // Usuario actual
+  let userId = null
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    userId = user?.id ?? null
+  } catch (err) {
+    console.error('Error al obtener el usuario:', err)
+  }
+
+  // IP (si no la tenemos, reintentar)
+  let ip = ipAddress
+  if (!ip) {
+    try {
+      const res = await fetch('https://api.ipify.org?format=json')
+      const data = await res.json()
+      ip = data.ip
+      setIpAddress(data.ip)
+    } catch (e) {
+      console.warn('No se pudo obtener IP en submit:', e)
+    }
+  }
+
+  const { error: rpcError } = await supabase.rpc('submit_top10', {
+    p_top10_category_id: Number(id),
+    p_entity_ids: entityIds,
+    p_user_id: userId,
+    p_ip_address: ip,
+  })
+
+  if (rpcError) {
+    console.error('RPC error submit_top10:', rpcError)
+    // Mostrar el mensaje real que viene de Supabase
+    const msg =
+      rpcError.message ||
+      rpcError.details ||
+      rpcError.hint ||
+      'Unknown error from database.'
+
+    setError(`Technical error: ${msg}`)
+    setIsSubmitting(false)
+    return
+  }
+
+  setIsSubmitting(false)
+  setMessage('Your Top 10 has been submitted. Thank you!')
+}
+
 
   const sportLabel = (entityCategoryId) => {
     if (entityCategoryId === 1) return 'Football'
