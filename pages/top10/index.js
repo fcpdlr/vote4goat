@@ -300,59 +300,59 @@ export default function Top10IndexPage() {
     if (!items || items.length === 0) return null
 
     return (
-  <section className="mb-12">
-    <div className="mb-4 text-center space-y-1">
-      <h2 className="text-lg sm:text-xl font-bold text-goat">
-        {title}
-      </h2>
-      <span className="text-[11px] uppercase tracking-[0.18em] text-gray-400">
-        {items.length} {items.length === 1 ? 'category' : 'categories'}
-      </span>
-      <div className="mx-auto mt-2 h-px w-16 bg-gradient-to-r from-transparent via-goat to-transparent opacity-70" />
-    </div>
-    <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center">
-      {items.map(cat => {
-        const theme = getCategoryTheme(cat.slug)
-        return (
-          <a
-            key={cat.id}
-            href={`/top10/${cat.id}`}
-            className={
-              'group block w-full max-w-xs rounded-2xl border transition px-4 py-4 h-32 flex flex-col items-center justify-center text-center ' +
-              theme.cardClass +
-              ' transform hover:-translate-y-1 hover:shadow-lg hover:shadow-black/40'
-            }
-          >
-            <div className="flex items-center justify-center gap-2 mb-2 px-2">
-              <h3
+      <section className="mb-12">
+        <div className="mb-4 text-center space-y-1">
+          <h2 className="text-lg sm:text-xl font-bold text-goat">
+            {title}
+          </h2>
+          <span className="text-[11px] uppercase tracking-[0.18em] text-gray-400">
+            {items.length} {items.length === 1 ? 'category' : 'categories'}
+          </span>
+          <div className="mx-auto mt-2 h-px w-16 bg-gradient-to-r from-transparent via-goat to-transparent opacity-70" />
+        </div>
+        <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center">
+          {items.map(cat => {
+            const theme = getCategoryTheme(cat.slug)
+            return (
+              <a
+                key={cat.id}
+                href={`/top10/${cat.id}`}
                 className={
-                  'text-sm sm:text-base font-semibold line-clamp-2 ' +
-                  theme.titleClass
+                  'group block w-full max-w-xs rounded-2xl border transition px-4 py-4 h-32 flex flex-col items-center justify-center text-center ' +
+                  theme.cardClass +
+                  ' transform hover:-translate-y-1 hover:shadow-lg hover:shadow-black/40'
                 }
-                style={{ fontVariant: 'small-caps' }}
               >
-                {cat.title}
-              </h3>
-            </div>
-            <span
-              className={
-                'mt-1 inline-flex items-center justify-center text-[10px] px-2 py-[3px] rounded-full ' +
-                theme.badgeClass
-              }
-            >
-              {sportLabel(cat.entity_category_id)}
-            </span>
-          </a>
-        )
-      })}
-    </div>
-  </section>
-)
-
+                <div className="flex items-center justify-center gap-2 mb-2 px-2">
+                  <h3
+                    className={
+                      'text-sm sm:text-base font-semibold line-clamp-2 ' +
+                      theme.titleClass
+                    }
+                    style={{ fontVariant: 'small-caps' }}
+                  >
+                    {cat.title}
+                  </h3>
+                </div>
+                <span
+                  className={
+                    'mt-1 inline-flex items-center justify-center text-[10px] px-2 py-[3px] rounded-full ' +
+                    theme.badgeClass
+                  }
+                >
+                  {sportLabel(cat.entity_category_id)}
+                </span>
+              </a>
+            )
+          })}
+        </div>
+      </section>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
-      {/* HEADER (igual que en home) */}
+      {/* HEADER */}
       <header className="flex items-center justify-between px-3 py-2">
         <div className="flex items-center gap-2">
           <a href="/" className="text-xl sm:text-2xl font-bold text-white">
@@ -438,17 +438,16 @@ export default function Top10IndexPage() {
       <div className="flex-1 mt-6 mb-10">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8 space-y-2">
-  <p className="text-[11px] tracking-[0.2em] uppercase text-gray-400">
-    Top 10 mode
-  </p>
-  <h1 className="text-2xl sm:text-3xl font-extrabold text-goat">
-    Build your all-time rankings
-  </h1>
-  <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mx-auto">
-    Pick a club or national team and drag your Top&nbsp;10 from 1 to 10. Then see how your list compares with the community.
-  </p>
-</div>
-
+            <p className="text-[11px] tracking-[0.2em] uppercase text-gray-400">
+              Top 10 mode
+            </p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-goat">
+              Build your all-time rankings
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mx-auto">
+              Pick a club or national team and drag your Top&nbsp;10 from 1 to 10. Then see how your list compares with the community.
+            </p>
+          </div>
 
           {isLoading ? (
             <p className="text-sm text-gray-300 text-center">Loading categories...</p>
