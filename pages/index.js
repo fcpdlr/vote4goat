@@ -94,36 +94,38 @@ export default function Home() {
   }
 
   const vote = async (winnerId, loserId) => {
-    if (voting) return
-    setSelected(winnerId)
-    setVoting(true)
+  if (voting) return
+  setSelected(winnerId)
+  setVoting(true)
 
-    let userId = null
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      userId = user?.id || null
-    } catch (err) {
-      console.error('Error getting user ID:', err)
-    }
-
-    const { error } = await supabase.rpc('vote_and_update_elo', {
-      winner_id_input: winnerId,
-      loser_id_input: loserId,
-      user_id_input: userId,
-      ip_address_input: ipAddress
-    })
-
-    if (error) {
-      console.error('ERROR voting:', error)
-      setVoting(false)
-      setSelected(null)
-      return
-    }
-
-    await fetchDuel()
-    await fetchRanking(limit)
-    setVoting(false)
+  let userId = null
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    userId = user?.id || null
+  } catch (err) {
+    console.error('Error getting user ID:', err)
   }
+
+  const { error } = await supabase.rpc('vote_and_update_elo', {
+    winner_id_input: winnerId,
+    loser_id_input: loserId,
+    user_id_input: userId,
+    ip_address_input: ipAddress
+  })
+
+  if (error) {
+    console.error('ERROR voting:', error)
+    setVoting(false)
+    setSelected(null)
+    return
+  }
+
+  // Espera 800ms para que se vea la animación antes de cargar el siguiente duelo
+  await new Promise(resolve => setTimeout(resolve, 800))
+  await fetchDuel()
+  await fetchRanking(limit)
+  setVoting(false)
+}
 
   return (
     <>
@@ -255,41 +257,53 @@ export default function Home() {
 
         {/* Duelo — estilo mockup: cards con gradiente y nombre encima de la foto */}
         {duel.length === 2 && (
-          <section className="flex flex-col items-center justify-center py-4">
-            <div className="relative flex flex-row items-center justify-center gap-4">
-              {duel.map((player) => (
-                <button
-                  key={player.id}
-                  onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
-                  disabled={voting}
-                  className={`relative w-40 h-44 rounded-2xl overflow-hidden border border-white/10 transition focus:outline-none ${voting ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-110 hover:border-goat/50'} ${selected === player.id ? 'ring-4 ring-goat shadow-[0_0_24px_rgba(255,165,0,0.6)]' : ''}`}
-                >
-                  <img
-                    src={player.image_url}
-                    alt={player.name_line2 || player.name_line1}
-                    className="w-full h-full object-cover"
-                  />
-                  
-                 
-                  {/* nombre encima de la foto */}
-                  <div className="absolute bottom-0 left-0 right-0 p-3 text-left">
-                    {player.name_line1 && (
-                      <p className="text-white/60 text-xs font-medium leading-none mb-0.5 truncate">
-                        {player.name_line1}
-                      </p>
-                    )}
-                    <p className="text-goat text-base font-black leading-tight truncate">
-                      {player.name_line2}
-                    </p>
-                    {player.name_line3 && (
-                      <p className="text-goat text-base font-black leading-tight truncate">
-                        {player.name_line3}
-                      </p>
-                    )}
-                  </div>
-                </button>
-              ))}
+  <section className="flex flex-col items-center justify-center py-4">
+    <div className="relative flex flex-row items-center justify-center gap-6 h-40">
+      {duel.map((player) => {
+        const isWinner = selected === player.id
+        const isLoser = selected !== null && selected !== player.id
+        return (
+          <button
+            key={player.id}
+            onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
+            disabled={voting}
+            className={`
+              w-40 h-40 rounded-xl overflow-hidden border transition-all duration-500 focus:outline-none relative
+              ${!selected && !voting ? 'hover:brightness-110' : ''}
+              ${voting && !selected ? 'opacity-50 cursor-not-allowed' : ''}
+              ${isWinner ? 'scale-110 ring-4 ring-goat shadow-[0_0_28px_rgba(255,165,0,0.9)] brightness-110 cursor-not-allowed' : ''}
+              ${isLoser ? 'scale-90 opacity-30 brightness-50 cursor-not-allowed' : ''}
+            `}
+          >
+            <img
+              src={player.image_url}
+              alt={player.name_line2 || player.name_line1}
+              className="w-full h-full object-cover"
+            />
+          </button>
+        )
+      })}
 
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+        <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">VS</div>
+      </div>
+    </div>
+
+    <div className="flex flex-row justify-center gap-6 mt-2">
+      {duel.map((player) => (
+        <div key={player.id} className="flex flex-col items-center w-44 space-y-1 leading-none">
+          <div className="text-xs font-medium tracking-wide text-white h-4">
+            {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
+          </div>
+          <div className="text-xl font-extrabold text-goat h-6">{player.name_line2}</div>
+          <div className="text-xl font-extrabold text-goat h-6">
+            {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
                 <div className="bg-goat text-black text-sm font-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg">
                   VS
