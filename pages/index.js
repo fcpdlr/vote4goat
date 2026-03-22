@@ -9,14 +9,16 @@ const supabase = createClient(
 export default function Home() {
   const [duel, setDuel] = useState([])
   const [ranking, setRanking] = useState([])
-  const [limit, setLimit] = useState(10)
+  const [limit, setLimit] = useState(20)
   const [selected, setSelected] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
+  const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [duelLimit, setDuelLimit] = useState(null)
   const [user, setUser] = useState(null)
   const [ipAddress, setIpAddress] = useState(null)
   const [showMenu, setShowMenu] = useState(false)
   const [voting, setVoting] = useState(false)
+  const [topElo, setTopElo] = useState(1)
 
   const ENTITY_CATEGORY_ID = 1
   const menuRef = useRef()
@@ -24,7 +26,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchDuel()
-    fetchRanking(limit)
+    fetchRanking(20)
     checkUser()
     fetchIp()
   }, [duelLimit])
@@ -63,7 +65,7 @@ export default function Home() {
       const data = await res.json()
       setIpAddress(data.ip)
     } catch (e) {
-      console.warn('No se pudo obtener la IP:', e)
+      console.warn('Could not get IP:', e)
     }
   }
 
@@ -73,20 +75,22 @@ export default function Home() {
       entity_category_input: ENTITY_CATEGORY_ID,
       limit_rank: duelLimit,
     })
-    if (error) console.error('Error en fetchDuel:', error)
+    if (error) console.error('Error in fetchDuel:', error)
     setDuel(data || [])
   }
 
   const fetchRanking = async (top) => {
     const { data, error } = await supabase
       .from('entity_rankings')
-      .select('id, elo_rating, id, entities (name, name_line1, name_line2, name_line3, image_url)')
+      .select('id, elo_rating, entities (name, name_line1, name_line2, name_line3, image_url)')
       .eq('entity_category_id', ENTITY_CATEGORY_ID)
       .order('elo_rating', { ascending: false })
       .limit(top)
 
-    if (error) console.error('Error en fetchRanking:', error)
-    setRanking(data || [])
+    if (error) console.error('Error in fetchRanking:', error)
+    const results = data || []
+    setRanking(results)
+    if (results.length > 0) setTopElo(results[0].elo_rating)
   }
 
   const vote = async (winnerId, loserId) => {
@@ -95,12 +99,11 @@ export default function Home() {
     setVoting(true)
 
     let userId = null
-
     try {
       const { data: { user } } = await supabase.auth.getUser()
       userId = user?.id || null
     } catch (err) {
-      console.error('Error al obtener el user ID:', err)
+      console.error('Error getting user ID:', err)
     }
 
     const { error } = await supabase.rpc('vote_and_update_elo', {
@@ -111,7 +114,7 @@ export default function Home() {
     })
 
     if (error) {
-      console.error('ERROR al votar:', error)
+      console.error('ERROR voting:', error)
       setVoting(false)
       setSelected(null)
       return
@@ -191,7 +194,33 @@ export default function Home() {
           </div>
         )}
 
-        <h1 className="text-3xl font-extrabold mt-4 mb-2 text-goat text-center">WHO IS THE GOAT?</h1>
+        <h1 className="text-3xl font-extrabold mt-4 mb-1 text-goat text-center">WHO IS THE GOAT?</h1>
+        <p className="text-center text-white/40 text-xs mb-3">Vote. The world decides.</p>
+
+        {/* How it works — collapsible */}
+        <div className="max-w-xl mx-auto w-full mb-4 px-1">
+          <button
+            onClick={() => setShowHowItWorks(!showHowItWorks)}
+            className="w-full flex items-center justify-between px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/50 hover:text-white/70 transition"
+          >
+            <span>How it works?</span>
+            <span className={`transition-transform duration-200 ${showHowItWorks ? 'rotate-180' : ''}`}>▾</span>
+          </button>
+          {showHowItWorks && (
+            <div className="mt-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 flex justify-around gap-2">
+              {[
+                { icon: '👁', label: 'Two players appear' },
+                { icon: '👆', label: 'You vote for the best' },
+                { icon: '📈', label: 'The ranking updates' },
+              ].map((step, i) => (
+                <div key={i} className="flex flex-col items-center gap-1 flex-1 text-center">
+                  <div className="text-xl">{step.icon}</div>
+                  <p className="text-xs text-white/50 leading-tight">{step.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="flex justify-center space-x-4 mb-4">
           <button
@@ -274,7 +303,8 @@ export default function Home() {
                 <tr>
                   <th className="px-4 py-2 text-goat text-left">RANK</th>
                   <th className="px-4 py-2 text-goat text-center">PLAYER</th>
-                  <th className="px-4 py-2 text-goat text-left">POINTS</th>
+                  <th className="px-4 py-2 text-goat text-left hidden sm:table-cell">SCORE</th>
+                  <th className="px-4 py-2 text-goat text-left"></th>
                 </tr>
               </thead>
               <tbody>
@@ -287,6 +317,8 @@ export default function Home() {
                       : i === 2
                       ? 'bg-goat/5 text-goat/80'
                       : ''
+                  const barPct = Math.round((player.elo_rating / topElo) * 100)
+                  const barColor = i === 0 ? 'bg-goat' : i === 1 ? 'bg-white/40' : i === 2 ? 'bg-amber-700/60' : 'bg-white/20'
                   return (
                     <tr key={player.id} className={`border-t border-goat/30 hover:bg-white/5 transition ${rowStyle}`}>
                       <td className="pl-2 pr-1 py-2 text-xs sm:text-sm">{i + 1}</td>
@@ -297,10 +329,18 @@ export default function Home() {
                             alt={player.entities.name}
                             className="w-6 h-6 rounded-full object-cover shrink-0"
                           />
-                          <span className="truncate text-sm sm:text-base max-w-[200px] sm:max-w-[280px]">{player.entities.name}</span>
+                          <span className="truncate text-sm sm:text-base max-w-[160px] sm:max-w-[260px]">{player.entities.name}</span>
                         </div>
                       </td>
-                      <td className="px-2 py-2 text-right text-xs sm:text-sm">{Math.round(player.elo_rating)}</td>
+                      <td className="px-2 py-2 text-right text-xs sm:text-sm hidden sm:table-cell">{Math.round(player.elo_rating)}</td>
+                      <td className="px-2 py-2 w-20 sm:w-28">
+                        <div className="w-full bg-white/10 rounded-full h-1.5">
+                          <div
+                            className={`h-1.5 rounded-full ${barColor}`}
+                            style={{ width: `${barPct}%` }}
+                          />
+                        </div>
+                      </td>
                     </tr>
                   )
                 })}
@@ -308,11 +348,11 @@ export default function Home() {
             </table>
           </div>
 
-          {ranking.length >= limit && limit < 50 && (
+          {ranking.length >= limit && limit < 100 && (
             <button
-              className="mt-6 text-blue-600 underline text-sm"
+              className="mt-6 text-goat underline text-sm mx-auto block"
               onClick={() => {
-                const newLimit = limit + 10
+                const newLimit = limit + 20
                 setLimit(newLimit)
                 fetchRanking(newLimit)
               }}
