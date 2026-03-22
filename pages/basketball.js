@@ -96,7 +96,7 @@ export default function Home() {
     } catch (err) {
       console.error('Error getting user ID:', err)
     }
-    const { error } = await supabase.rpc('vote_and_update_basketball_elo', {
+    const { error } = await supabase.rpc('vote_and_update_elo_basketball', {
       winner_id_input: winnerId,
       loser_id_input: loserId,
       ip_address_input: ipAddress
