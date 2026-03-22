@@ -269,8 +269,8 @@ export default function Home() {
                     alt={player.name_line2 || player.name_line1}
                     className="w-full h-full object-cover"
                   />
-                  {/* gradiente oscuro sobre la imagen */}
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                  
+                 
                   {/* nombre encima de la foto */}
                   <div className="absolute bottom-0 left-0 right-0 p-3 text-left">
                     {player.name_line1 && (
