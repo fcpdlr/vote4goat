@@ -16,6 +16,7 @@ export default function Home() {
   const [user, setUser] = useState(null)
   const [ipAddress, setIpAddress] = useState(null)
   const [showMenu, setShowMenu] = useState(false)
+  const [voting, setVoting] = useState(false)
 
   const ENTITY_CATEGORY_ID = 1
   const menuRef = useRef()
@@ -89,9 +90,11 @@ export default function Home() {
   }
 
   const vote = async (winnerId, loserId) => {
+    if (voting) return
     setSelected(winnerId)
+    setVoting(true)
+
     let userId = null
-    let ip = null
 
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -100,26 +103,23 @@ export default function Home() {
       console.error('Error al obtener el user ID:', err)
     }
 
-    try {
-      const res = await fetch('https://api.ipify.org?format=json')
-      const data = await res.json()
-      ip = data.ip
-    } catch {}
-
     const { error } = await supabase.rpc('vote_and_update_elo', {
       winner_id_input: winnerId,
       loser_id_input: loserId,
       user_id_input: userId,
-      ip_address_input: ip
+      ip_address_input: ipAddress
     })
 
     if (error) {
       console.error('ERROR al votar:', error)
+      setVoting(false)
+      setSelected(null)
       return
     }
 
-    fetchDuel()
-    fetchRanking(limit)
+    await fetchDuel()
+    await fetchRanking(limit)
+    setVoting(false)
   }
 
   return (
@@ -169,23 +169,22 @@ export default function Home() {
           </nav>
         </header>
 
-  <div className="flex justify-center gap-4 mt-2 mb-2">
-  <a href="/football" title="Football">
-    <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
-  </a>
-  <a href="/basketball" title="Basketball">
-    <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
-  </a>
-  <div title="Coming Soon" className="opacity-40 cursor-not-allowed">
-    <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
-  </div>
-</div>
-
+        <div className="flex justify-center gap-4 mt-2 mb-2">
+          <a href="/football" title="Football">
+            <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
+          </a>
+          <a href="/basketball" title="Basketball">
+            <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
+          </a>
+          <div title="Coming Soon" className="opacity-40 cursor-not-allowed">
+            <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
+          </div>
+        </div>
 
         {showHelp && (
           <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
             <p className="mb-2 font-semibold text-goat">⚽ What is Vote4GOAT?</p>
-            <p className="mb-2">Everyone has an opinion on who’s the greatest of all time — but what if we could let the world decide, one vote at a time?</p>
+            <p className="mb-2">Everyone has an opinion on who's the greatest of all time — but what if we could let the world decide, one vote at a time?</p>
             <p className="mb-2">Vote4GOAT is a simple, fun and addicting way to settle the debate. Two players appear on screen. You choose the one you think is greater. Your vote updates their score using a ranking system based on Elo — the same method used in chess and competitive gaming.</p>
             <p className="mb-2">The more people vote, the more accurate the ranking becomes. No stats, no explanations — just pure instinct and opinion.</p>
             <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT list.</p>
@@ -228,19 +227,20 @@ export default function Home() {
         {duel.length === 2 && (
           <section className="flex flex-col items-center justify-center py-4">
             <div className="relative flex flex-row items-center justify-center gap-6 h-40">
-           {duel.map((player) => (
-  <button
-    key={player.id}
-    onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
-    className="w-40 h-40 rounded-xl overflow-hidden border transition hover:brightness-110 focus:outline-none relative"
-  >
-    <img
-      src={player.image_url}
-      alt={player.name_line2 || player.name_line1}
-      className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === player.id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
-    />
-  </button>
-))}
+              {duel.map((player) => (
+                <button
+                  key={player.id}
+                  onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
+                  disabled={voting}
+                  className={`w-40 h-40 rounded-xl overflow-hidden border transition focus:outline-none relative ${voting ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-110'}`}
+                >
+                  <img
+                    src={player.image_url}
+                    alt={player.name_line2 || player.name_line1}
+                    className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === player.id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
+                  />
+                </button>
+              ))}
 
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
                 <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">VS</div>
