@@ -314,77 +314,77 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="mx-auto w-full text-sm">
-              <thead>
-                <tr>
-                  <th className="px-2 py-2 text-goat text-left text-xs">#</th>
-                  <th className="px-2 py-2 text-goat text-left text-xs">PLAYER</th>
-                  <th className="px-2 py-2 text-goat text-right text-xs hidden sm:table-cell">PTS</th>
-                  <th className="px-2 py-2 text-goat text-left text-xs w-20 sm:w-28"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {ranking.map((player, i) => {
-                  const rowStyle =
-                    i === 0 ? 'bg-goat/10 font-bold' :
-                    i === 1 ? 'bg-white/5 font-semibold' :
-                    i === 2 ? 'bg-white/5' : ''
-                  const nameColor =
-                    i === 0 ? 'text-goat' :
-                    i === 1 ? 'text-white/90' :
-                    i === 2 ? 'text-white/80' : 'text-white/70'
-                  const barPct = Math.round((player.elo_rating / topElo) * 100)
-                  const barColor =
-                    i === 0 ? 'bg-goat' :
-                    i === 1 ? 'bg-white/50' :
-                    i === 2 ? 'bg-amber-600/70' : 'bg-white/20'
-                  const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
+<div className="flex justify-center">
+  <table className="w-full max-w-md text-sm">
+    <thead>
+      <tr>
+        <th className="px-2 py-2 text-goat text-left text-xs w-8">#</th>
+        <th className="px-2 py-2 text-goat text-center text-xs">PLAYER</th>
+        <th className="px-2 py-2 text-goat text-right text-xs hidden sm:table-cell w-16">PTS</th>
+        <th className="px-2 py-2 text-xs w-20 sm:w-28"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {ranking.map((player, i) => {
+        const rowStyle =
+          i === 0 ? 'bg-goat/10 font-bold' :
+          i === 1 ? 'bg-white/5 font-semibold' :
+          i === 2 ? 'bg-white/5' : ''
+        const nameColor =
+          i === 0 ? 'text-goat' :
+          i === 1 ? 'text-white/90' :
+          i === 2 ? 'text-white/80' : 'text-white/70'
+        const barPct = Math.round((player.elo_rating / topElo) * 100)
+        const barColor =
+          i === 0 ? 'bg-goat' :
+          i === 1 ? 'bg-white/50' :
+          i === 2 ? 'bg-amber-600/70' : 'bg-white/20'
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
 
-                  return (
-                    <tr key={player.id} className={`border-t border-white/5 hover:bg-white/5 transition ${rowStyle}`}>
-                      <td className="pl-2 pr-1 py-2.5 text-xs text-white/40 w-8">
-                        {medal || i + 1}
-                      </td>
-                      <td className="pl-1 pr-2 py-2.5 w-full">
-                        <div className="flex items-center gap-2">
-                          <img
-                            src={player.entities.image_url}
-                            alt={player.entities.name}
-                            className="w-7 h-7 rounded-full object-cover shrink-0 border border-white/10"
-                          />
-                          <span className={`truncate text-sm font-semibold max-w-[150px] sm:max-w-[260px] ${nameColor}`}>
-                            {player.entities.name}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-2 py-2.5 text-right text-xs text-white/40 hidden sm:table-cell">
-                        {Math.round(player.elo_rating)}
-                      </td>
-                      <td className="px-2 py-2.5 w-20 sm:w-28">
-                        <div className="w-full bg-white/10 rounded-full h-1.5">
-                          <div className={`h-1.5 rounded-full ${barColor}`} style={{ width: `${barPct}%` }} />
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+        return (
+          <tr key={player.id} className={`border-t border-white/5 hover:bg-white/5 transition ${rowStyle}`}>
+            <td className="pl-2 pr-1 py-2.5 text-xs text-white/40 w-8">
+              {medal || i + 1}
+            </td>
+            <td className="pl-1 pr-2 py-2.5">
+              <div className="flex items-center justify-center gap-2">
+                <img
+                  src={player.entities.image_url}
+                  alt={player.entities.name}
+                  className="w-7 h-7 rounded-full object-cover shrink-0 border border-white/10"
+                />
+                <span className={`truncate text-sm font-semibold max-w-[160px] ${nameColor}`}>
+                  {player.entities.name}
+                </span>
+              </div>
+            </td>
+            <td className="px-2 py-2.5 text-right text-xs text-white/40 hidden sm:table-cell w-16">
+              {Math.round(player.elo_rating)}
+            </td>
+            <td className="px-2 py-2.5 w-20 sm:w-28">
+              <div className="w-full bg-white/10 rounded-full h-1.5">
+                <div className={`h-1.5 rounded-full ${barColor}`} style={{ width: `${barPct}%` }} />
+              </div>
+            </td>
+          </tr>
+        )
+      })}
+    </tbody>
+  </table>
+</div>
 
-          {ranking.length >= limit && limit < 100 && (
-            <button
-              className="mt-6 text-goat underline text-sm mx-auto block"
-              onClick={() => {
-                const newLimit = limit + 20
-                setLimit(newLimit)
-                fetchRanking(newLimit)
-              }}
-            >
-              Show more
-            </button>
-          )}
+{ranking.length >= limit && limit < 100 && (
+  <button
+    className="mt-6 text-goat underline text-sm mx-auto block"
+    onClick={() => {
+      const newLimit = limit + 20
+      setLimit(newLimit)
+      fetchRanking(newLimit)
+    }}
+  >
+    Show more
+  </button>
+)}
         </div>
       </main>
     </>
