@@ -63,9 +63,12 @@ export default function Top10Page() {
         .from('top10_category_entities')
         .select('entity_id, entities ( name )')
         .eq('top10_category_id', selectedCategoryId)
-        .order('entities(name)', { ascending: true })
       if (error) { setError('Error loading candidates.'); setIsLoadingCandidates(false); return }
-      setCandidates((data || []).map(row => ({ id: row.entity_id, name: row.entities.name })))
+      setCandidates(
+        (data || [])
+          .map(row => ({ id: row.entity_id, name: row.entities.name }))
+          .sort((a, b) => a.name.localeCompare(b.name))
+      )
       setSlots(Array(10).fill(null))
       setSearch('')
       setIsLoadingCandidates(false)
@@ -168,7 +171,6 @@ export default function Top10Page() {
     <>
       <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 
-        {/* Header — mismo estilo que el resto */}
         <header className="flex items-center justify-between px-3 py-2">
           <span className="text-xl sm:text-2xl font-bold text-white">Vote4GOAT</span>
           <nav className="flex items-center gap-3 text-xs sm:text-sm">
@@ -188,7 +190,6 @@ export default function Top10Page() {
 
         <div className="w-full max-w-lg mx-auto flex flex-col gap-6">
 
-          {/* Selector de categoría */}
           {isLoadingCategories ? (
             <p className="text-sm text-white/40 text-center">Loading...</p>
           ) : categories.length === 0 ? (
@@ -218,7 +219,6 @@ export default function Top10Page() {
             </div>
           )}
 
-          {/* Buscador */}
           {!isLoadingCandidates && (
             <div className="relative">
               <input
@@ -251,7 +251,6 @@ export default function Top10Page() {
             </div>
           )}
 
-          {/* Slots drag & drop */}
           <div className="flex flex-col gap-1.5">
             {slots.map((slot, index) => (
               <div
@@ -289,11 +288,9 @@ export default function Top10Page() {
             ))}
           </div>
 
-          {/* Error / éxito */}
           {error && <p className="text-sm text-red-400 text-center">{error}</p>}
           {message && <p className="text-sm text-goat text-center font-semibold">{message}</p>}
 
-          {/* Botón submit */}
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || !selectedCategoryId || filledCount < 10}
@@ -308,7 +305,6 @@ export default function Top10Page() {
 
         </div>
 
-        {/* Resultados globales */}
         <div className="bg-background text-white px-4 py-8 mt-8 rounded-t-3xl">
           <div className="flex items-center justify-center gap-2 mb-6">
             <h2 className="text-2xl font-bold">GLOBAL TOP 10</h2>
