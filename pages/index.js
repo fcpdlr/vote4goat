@@ -253,92 +253,117 @@ export default function Home() {
           </span>
         </div>
 
+        {/* Duelo — estilo mockup: cards con gradiente y nombre encima de la foto */}
         {duel.length === 2 && (
           <section className="flex flex-col items-center justify-center py-4">
-            <div className="relative flex flex-row items-center justify-center gap-6 h-40">
+            <div className="relative flex flex-row items-center justify-center gap-4">
               {duel.map((player) => (
                 <button
                   key={player.id}
                   onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
                   disabled={voting}
-                  className={`w-40 h-40 rounded-xl overflow-hidden border transition focus:outline-none relative ${voting ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-110'}`}
+                  className={`relative w-40 h-44 rounded-2xl overflow-hidden border border-white/10 transition focus:outline-none ${voting ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-110 hover:border-goat/50'} ${selected === player.id ? 'ring-4 ring-goat shadow-[0_0_24px_rgba(255,165,0,0.6)]' : ''}`}
                 >
                   <img
                     src={player.image_url}
                     alt={player.name_line2 || player.name_line1}
-                    className={`w-full h-full object-cover transition duration-300 ease-in-out ${selected === player.id ? 'scale-110 ring-4 ring-goat z-10 shadow-[0_0_20px_rgba(255,165,0,0.8)]' : ''}`}
+                    className="w-full h-full object-cover"
                   />
+                  {/* gradiente oscuro sobre la imagen */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  {/* nombre encima de la foto */}
+                  <div className="absolute bottom-0 left-0 right-0 p-3 text-left">
+                    {player.name_line1 && (
+                      <p className="text-white/60 text-xs font-medium leading-none mb-0.5 truncate">
+                        {player.name_line1}
+                      </p>
+                    )}
+                    <p className="text-goat text-base font-black leading-tight truncate">
+                      {player.name_line2}
+                    </p>
+                    {player.name_line3 && (
+                      <p className="text-goat text-base font-black leading-tight truncate">
+                        {player.name_line3}
+                      </p>
+                    )}
+                  </div>
                 </button>
               ))}
 
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">VS</div>
-              </div>
-            </div>
-
-            <div className="flex flex-row justify-center gap-6 mt-2">
-              {duel.map((player) => (
-                <div key={player.id} className="flex flex-col items-center w-44 space-y-1 leading-none">
-                  <div className="text-xs font-medium tracking-wide text-white h-4">
-                    {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
-                  </div>
-                  <div className="text-xl font-extrabold text-goat h-6">{player.name_line2}</div>
-                  <div className="text-xl font-extrabold text-goat h-6">
-                    {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
-                  </div>
+                <div className="bg-goat text-black text-sm font-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg">
+                  VS
                 </div>
-              ))}
+              </div>
             </div>
           </section>
         )}
 
-        <div id="ranking-section" className="bg-background text-white px-6 py-12 mt-8 rounded-t-3xl">
-          <div className="text-center text-sm mb-2">
+        {/* Ranking */}
+        <div id="ranking-section" className="bg-background text-white px-4 py-10 mt-6 rounded-t-3xl">
+          <div className="text-center text-sm mb-4">
             <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline">↑ VOTE</button>
           </div>
-          <h2 className="text-2xl font-bold mb-6 text-center">RANKING</h2>
+
+          {/* Título con indicador live */}
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <h2 className="text-2xl font-bold">RANKING</h2>
+            <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-2.5 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-white/40 text-xs">live</span>
+            </div>
+          </div>
+
           <div className="overflow-x-auto">
             <table className="mx-auto w-full text-sm">
               <thead>
                 <tr>
-                  <th className="px-4 py-2 text-goat text-left">RANK</th>
-                  <th className="px-4 py-2 text-goat text-center">PLAYER</th>
-                  <th className="px-4 py-2 text-goat text-left hidden sm:table-cell">SCORE</th>
-                  <th className="px-4 py-2 text-goat text-left"></th>
+                  <th className="px-2 py-2 text-goat text-left text-xs">#</th>
+                  <th className="px-2 py-2 text-goat text-left text-xs">PLAYER</th>
+                  <th className="px-2 py-2 text-goat text-right text-xs hidden sm:table-cell">PTS</th>
+                  <th className="px-2 py-2 text-goat text-left text-xs w-20 sm:w-28"></th>
                 </tr>
               </thead>
               <tbody>
                 {ranking.map((player, i) => {
                   const rowStyle =
-                    i === 0
-                      ? 'bg-goat/10 font-bold text-goat'
-                      : i === 1
-                      ? 'bg-goat/5 font-semibold text-goat/90'
-                      : i === 2
-                      ? 'bg-goat/5 text-goat/80'
-                      : ''
+                    i === 0 ? 'bg-goat/10 font-bold' :
+                    i === 1 ? 'bg-white/5 font-semibold' :
+                    i === 2 ? 'bg-white/5' : ''
+                  const nameColor =
+                    i === 0 ? 'text-goat' :
+                    i === 1 ? 'text-white/90' :
+                    i === 2 ? 'text-white/80' : 'text-white/70'
                   const barPct = Math.round((player.elo_rating / topElo) * 100)
-                  const barColor = i === 0 ? 'bg-goat' : i === 1 ? 'bg-white/40' : i === 2 ? 'bg-amber-700/60' : 'bg-white/20'
+                  const barColor =
+                    i === 0 ? 'bg-goat' :
+                    i === 1 ? 'bg-white/50' :
+                    i === 2 ? 'bg-amber-600/70' : 'bg-white/20'
+                  const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
+
                   return (
-                    <tr key={player.id} className={`border-t border-goat/30 hover:bg-white/5 transition ${rowStyle}`}>
-                      <td className="pl-2 pr-1 py-2 text-xs sm:text-sm">{i + 1}</td>
-                      <td className="pl-1 pr-2 py-2 text-white font-semibold text-left w-full">
+                    <tr key={player.id} className={`border-t border-white/5 hover:bg-white/5 transition ${rowStyle}`}>
+                      <td className="pl-2 pr-1 py-2.5 text-xs text-white/40 w-8">
+                        {medal || i + 1}
+                      </td>
+                      <td className="pl-1 pr-2 py-2.5 w-full">
                         <div className="flex items-center gap-2">
                           <img
                             src={player.entities.image_url}
                             alt={player.entities.name}
-                            className="w-6 h-6 rounded-full object-cover shrink-0"
+                            className="w-7 h-7 rounded-full object-cover shrink-0 border border-white/10"
                           />
-                          <span className="truncate text-sm sm:text-base max-w-[160px] sm:max-w-[260px]">{player.entities.name}</span>
+                          <span className={`truncate text-sm font-semibold max-w-[150px] sm:max-w-[260px] ${nameColor}`}>
+                            {player.entities.name}
+                          </span>
                         </div>
                       </td>
-                      <td className="px-2 py-2 text-right text-xs sm:text-sm hidden sm:table-cell">{Math.round(player.elo_rating)}</td>
-                      <td className="px-2 py-2 w-20 sm:w-28">
+                      <td className="px-2 py-2.5 text-right text-xs text-white/40 hidden sm:table-cell">
+                        {Math.round(player.elo_rating)}
+                      </td>
+                      <td className="px-2 py-2.5 w-20 sm:w-28">
                         <div className="w-full bg-white/10 rounded-full h-1.5">
-                          <div
-                            className={`h-1.5 rounded-full ${barColor}`}
-                            style={{ width: `${barPct}%` }}
-                          />
+                          <div className={`h-1.5 rounded-full ${barColor}`} style={{ width: `${barPct}%` }} />
                         </div>
                       </td>
                     </tr>
