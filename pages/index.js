@@ -33,18 +33,11 @@ export default function Home() {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowMenu(false)
-      }
-      if (helpRef.current && !helpRef.current.contains(event.target)) {
-        setShowHelp(false)
-      }
+      if (menuRef.current && !menuRef.current.contains(event.target)) setShowMenu(false)
+      if (helpRef.current && !helpRef.current.contains(event.target)) setShowHelp(false)
     }
     function handleEsc(event) {
-      if (event.key === 'Escape') {
-        setShowMenu(false)
-        setShowHelp(false)
-      }
+      if (event.key === 'Escape') { setShowMenu(false); setShowHelp(false) }
     }
     document.addEventListener('mousedown', handleClickOutside)
     document.addEventListener('keydown', handleEsc)
@@ -86,7 +79,6 @@ export default function Home() {
       .eq('entity_category_id', ENTITY_CATEGORY_ID)
       .order('elo_rating', { ascending: false })
       .limit(top)
-
     if (error) console.error('Error in fetchRanking:', error)
     const results = data || []
     setRanking(results)
@@ -94,96 +86,64 @@ export default function Home() {
   }
 
   const vote = async (winnerId, loserId) => {
-  if (voting) return
-  setSelected(winnerId)
-  setVoting(true)
-
-  let userId = null
-  try {
-    const { data: { user } } = await supabase.auth.getUser()
-    userId = user?.id || null
-  } catch (err) {
-    console.error('Error getting user ID:', err)
-  }
-
-  const { error } = await supabase.rpc('vote_and_update_elo', {
-    winner_id_input: winnerId,
-    loser_id_input: loserId,
-    user_id_input: userId,
-    ip_address_input: ipAddress
-  })
-
-  if (error) {
-    console.error('ERROR voting:', error)
+    if (voting) return
+    setSelected(winnerId)
+    setVoting(true)
+    let userId = null
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      userId = user?.id || null
+    } catch (err) {
+      console.error('Error getting user ID:', err)
+    }
+    const { error } = await supabase.rpc('vote_and_update_elo', {
+      winner_id_input: winnerId,
+      loser_id_input: loserId,
+      user_id_input: userId,
+      ip_address_input: ipAddress
+    })
+    if (error) {
+      console.error('ERROR voting:', error)
+      setVoting(false)
+      setSelected(null)
+      return
+    }
+    await new Promise(resolve => setTimeout(resolve, 800))
+    await fetchDuel()
+    await fetchRanking(limit)
     setVoting(false)
-    setSelected(null)
-    return
   }
-
-  // Espera 800ms para que se vea la animación antes de cargar el siguiente duelo
-  await new Promise(resolve => setTimeout(resolve, 800))
-  await fetchDuel()
-  await fetchRanking(limit)
-  setVoting(false)
-}
 
   return (
     <>
       <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
         <header className="flex items-center justify-between px-3 py-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xl sm:text-2xl font-bold text-white">Vote4GOAT</span>
-          </div>
+          <span className="text-xl sm:text-2xl font-bold text-white">Vote4GOAT</span>
           <nav className="flex items-center gap-3 text-xs sm:text-sm">
-            <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">
-              About
-            </button>
+            <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">About</button>
             {user ? (
               <div className="relative" ref={menuRef}>
-                <button
-                  onClick={() => setShowMenu(!showMenu)}
-                  className="text-goat font-semibold hover:underline"
-                >
-                  My Account
-                </button>
+                <button onClick={() => setShowMenu(!showMenu)} className="text-goat font-semibold hover:underline">My Account</button>
                 {showMenu && (
                   <div className="absolute right-0 mt-1 w-28 bg-white text-black rounded shadow-md z-50">
-                    <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">
-                      Profile
-                    </a>
-                    <button
-                      onClick={async () => {
-                        await supabase.auth.signOut()
-                        window.location.reload()
-                      }}
-                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                    >
-                      Logout
-                    </button>
+                    <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">Profile</a>
+                    <button onClick={async () => { await supabase.auth.signOut(); window.location.reload() }} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Logout</button>
                   </div>
                 )}
               </div>
             ) : (
               <>
                 <a href="/login" className="hover:underline">Log In</a>
-                <a href="/signup" className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105">
-                  Sign Up
-                </a>
+                <a href="/signup" className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105">Sign Up</a>
               </>
             )}
           </nav>
         </header>
 
         <div className="flex justify-center gap-4 mt-2 mb-2">
-          <a href="/football" title="Football">
-            <img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" />
-          </a>
-          <a href="/basketball" title="Basketball">
-            <img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" />
-          </a>
-          <div title="Coming Soon" className="opacity-40 cursor-not-allowed">
-            <img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" />
-          </div>
+          <a href="/football" title="Football"><img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" /></a>
+          <a href="/basketball" title="Basketball"><img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" /></a>
+          <div title="Coming Soon" className="opacity-40 cursor-not-allowed"><img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" /></div>
         </div>
 
         {showHelp && (
@@ -199,7 +159,6 @@ export default function Home() {
         <h1 className="text-3xl font-extrabold mt-4 mb-1 text-goat text-center">WHO IS THE GOAT?</h1>
         <p className="text-center text-white/40 text-xs mb-3">Vote. The world decides.</p>
 
-        {/* How it works — collapsible */}
         <div className="max-w-xl mx-auto w-full mb-4 px-1">
           <button
             onClick={() => setShowHowItWorks(!showHowItWorks)}
@@ -225,101 +184,66 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center space-x-4 mb-4">
-          <button
-            className={`px-3 py-1 rounded-full text-sm ${duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'}`}
-            onClick={() => setDuelLimit(null)}
-          >
-            All Players
-          </button>
+          <button className={`px-3 py-1 rounded-full text-sm ${duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'}`} onClick={() => setDuelLimit(null)}>All Players</button>
           <span title={!user ? 'Please log in to use this filter' : ''} className="inline-block">
-            <button
-              className={`px-3 py-1 rounded-full text-sm ${!user ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : duelLimit === 100 ? 'bg-goat text-white' : 'bg-white text-black'}`}
-              onClick={() => {
-                if (!user) return alert('Please log in to use this filter.')
-                setDuelLimit(100)
-              }}
-            >
-              Top 100
-            </button>
+            <button className={`px-3 py-1 rounded-full text-sm ${!user ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : duelLimit === 100 ? 'bg-goat text-white' : 'bg-white text-black'}`} onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(100) }}>Top 100</button>
           </span>
           <span title={!user ? 'Please log in to use this filter' : ''} className="inline-block">
-            <button
-              className={`px-3 py-1 rounded-full text-sm ${!user ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : duelLimit === 50 ? 'bg-goat text-white' : 'bg-white text-black'}`}
-              onClick={() => {
-                if (!user) return alert('Please log in to use this filter.')
-                setDuelLimit(50)
-              }}
-            >
-              Top 50
-            </button>
+            <button className={`px-3 py-1 rounded-full text-sm ${!user ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : duelLimit === 50 ? 'bg-goat text-white' : 'bg-white text-black'}`} onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(50) }}>Top 50</button>
           </span>
         </div>
 
-        {/* Duelo — estilo mockup: cards con gradiente y nombre encima de la foto */}
         {duel.length === 2 && (
-  <section className="flex flex-col items-center justify-center py-4">
-    <div className="relative flex flex-row items-center justify-center gap-6 h-40">
-      {duel.map((player) => {
-        const isWinner = selected === player.id
-        const isLoser = selected !== null && selected !== player.id
-        return (
-          <button
-            key={player.id}
-            onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
-            disabled={voting}
-            className={`
-              w-40 h-40 rounded-xl overflow-hidden border transition-all duration-500 focus:outline-none relative
-              ${!selected && !voting ? 'hover:brightness-110' : ''}
-              ${voting && !selected ? 'opacity-50 cursor-not-allowed' : ''}
-              ${isWinner ? 'scale-110 ring-4 ring-goat shadow-[0_0_28px_rgba(255,165,0,0.9)] brightness-110 cursor-not-allowed' : ''}
-              ${isLoser ? 'scale-90 opacity-30 brightness-50 cursor-not-allowed' : ''}
-            `}
-          >
-            <img
-              src={player.image_url}
-              alt={player.name_line2 || player.name_line1}
-              className="w-full h-full object-cover"
-            />
-          </button>
-        )
-      })}
-
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-        <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">VS</div>
-      </div>
-    </div>
-
-    <div className="flex flex-row justify-center gap-6 mt-2">
-      {duel.map((player) => (
-        <div key={player.id} className="flex flex-col items-center w-44 space-y-1 leading-none">
-          <div className="text-xs font-medium tracking-wide text-white h-4">
-            {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
-          </div>
-          <div className="text-xl font-extrabold text-goat h-6">{player.name_line2}</div>
-          <div className="text-xl font-extrabold text-goat h-6">
-            {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
-          </div>
-        </div>
-      ))}
-    </div>
-  </section>
-)}
+          <section className="flex flex-col items-center justify-center py-4">
+            <div className="relative flex flex-row items-center justify-center gap-6 h-40">
+              {duel.map((player) => {
+                const isWinner = selected === player.id
+                const isLoser = selected !== null && selected !== player.id
+                return (
+                  <button
+                    key={player.id}
+                    onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
+                    disabled={voting}
+                    className={`
+                      w-40 h-40 rounded-xl overflow-hidden border transition-all duration-500 focus:outline-none relative
+                      ${!selected && !voting ? 'hover:brightness-110' : ''}
+                      ${isWinner ? 'scale-110 ring-4 ring-goat shadow-[0_0_28px_rgba(255,165,0,0.9)] brightness-110 cursor-not-allowed' : ''}
+                      ${isLoser ? 'scale-90 opacity-30 brightness-50 cursor-not-allowed' : ''}
+                    `}
+                  >
+                    <img
+                      src={player.image_url}
+                      alt={player.name_line2 || player.name_line1}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                )
+              })}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                <div className="bg-goat text-black text-sm font-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg">
-                  VS
-                </div>
+                <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">VS</div>
               </div>
+            </div>
+
+            <div className="flex flex-row justify-center gap-6 mt-2">
+              {duel.map((player) => (
+                <div key={player.id} className="flex flex-col items-center w-44 space-y-1 leading-none">
+                  <div className="text-xs font-medium tracking-wide text-white h-4">
+                    {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
+                  </div>
+                  <div className="text-xl font-extrabold text-goat h-6">{player.name_line2}</div>
+                  <div className="text-xl font-extrabold text-goat h-6">
+                    {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
         )}
 
-        {/* Ranking */}
         <div id="ranking-section" className="bg-background text-white px-4 py-10 mt-6 rounded-t-3xl">
           <div className="text-center text-sm mb-4">
             <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline">↑ VOTE</button>
           </div>
-
-          {/* Título con indicador live */}
           <div className="flex items-center justify-center gap-2 mb-6">
             <h2 className="text-2xl font-bold">RANKING</h2>
             <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-2.5 py-1">
@@ -327,78 +251,47 @@ export default function Home() {
               <span className="text-white/40 text-xs">live</span>
             </div>
           </div>
-
-<div className="flex justify-center">
-  <table className="w-full max-w-md text-sm">
-    <thead>
-      <tr>
-        <th className="px-2 py-2 text-goat text-left text-xs w-8">#</th>
-        <th className="px-2 py-2 text-goat text-center text-xs">PLAYER</th>
-        <th className="px-2 py-2 text-goat text-right text-xs hidden sm:table-cell w-16">PTS</th>
-        <th className="px-2 py-2 text-xs w-20 sm:w-28"></th>
-      </tr>
-    </thead>
-    <tbody>
-      {ranking.map((player, i) => {
-        const rowStyle =
-          i === 0 ? 'bg-goat/10 font-bold' :
-          i === 1 ? 'bg-white/5 font-semibold' :
-          i === 2 ? 'bg-white/5' : ''
-        const nameColor =
-          i === 0 ? 'text-goat' :
-          i === 1 ? 'text-white/90' :
-          i === 2 ? 'text-white/80' : 'text-white/70'
-        const barPct = Math.round((player.elo_rating / topElo) * 100)
-        const barColor =
-          i === 0 ? 'bg-goat' :
-          i === 1 ? 'bg-white/50' :
-          i === 2 ? 'bg-amber-600/70' : 'bg-white/20'
-        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
-
-        return (
-          <tr key={player.id} className={`border-t border-white/5 hover:bg-white/5 transition ${rowStyle}`}>
-            <td className="pl-2 pr-1 py-2.5 text-xs text-white/40 w-8">
-              {medal || i + 1}
-            </td>
-            <td className="pl-1 pr-2 py-2.5">
-              <div className="flex items-center justify-center gap-2">
-                <img
-                  src={player.entities.image_url}
-                  alt={player.entities.name}
-                  className="w-7 h-7 rounded-full object-cover shrink-0 border border-white/10"
-                />
-                <span className={`truncate text-sm font-semibold max-w-[160px] ${nameColor}`}>
-                  {player.entities.name}
-                </span>
-              </div>
-            </td>
-            <td className="px-2 py-2.5 text-right text-xs text-white/40 hidden sm:table-cell w-16">
-              {Math.round(player.elo_rating)}
-            </td>
-            <td className="px-2 py-2.5 w-20 sm:w-28">
-              <div className="w-full bg-white/10 rounded-full h-1.5">
-                <div className={`h-1.5 rounded-full ${barColor}`} style={{ width: `${barPct}%` }} />
-              </div>
-            </td>
-          </tr>
-        )
-      })}
-    </tbody>
-  </table>
-</div>
-
-{ranking.length >= limit && limit < 100 && (
-  <button
-    className="mt-6 text-goat underline text-sm mx-auto block"
-    onClick={() => {
-      const newLimit = limit + 20
-      setLimit(newLimit)
-      fetchRanking(newLimit)
-    }}
-  >
-    Show more
-  </button>
-)}
+          <div className="flex justify-center">
+            <table className="w-full max-w-md text-sm">
+              <thead>
+                <tr>
+                  <th className="px-2 py-2 text-goat text-left text-xs w-8">#</th>
+                  <th className="px-2 py-2 text-goat text-center text-xs">PLAYER</th>
+                  <th className="px-2 py-2 text-goat text-right text-xs hidden sm:table-cell w-16">PTS</th>
+                  <th className="px-2 py-2 text-xs w-20 sm:w-28"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {ranking.map((player, i) => {
+                  const rowStyle = i === 0 ? 'bg-goat/10 font-bold' : i === 1 ? 'bg-white/5 font-semibold' : i === 2 ? 'bg-white/5' : ''
+                  const nameColor = i === 0 ? 'text-goat' : i === 1 ? 'text-white/90' : i === 2 ? 'text-white/80' : 'text-white/70'
+                  const barPct = Math.round((player.elo_rating / topElo) * 100)
+                  const barColor = i === 0 ? 'bg-goat' : i === 1 ? 'bg-white/50' : i === 2 ? 'bg-amber-600/70' : 'bg-white/20'
+                  const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
+                  return (
+                    <tr key={player.id} className={`border-t border-white/5 hover:bg-white/5 transition ${rowStyle}`}>
+                      <td className="pl-2 pr-1 py-2.5 text-xs text-white/40 w-8">{medal || i + 1}</td>
+                      <td className="pl-1 pr-2 py-2.5">
+                        <div className="flex items-center justify-center gap-2">
+                          <img src={player.entities.image_url} alt={player.entities.name} className="w-7 h-7 rounded-full object-cover shrink-0 border border-white/10" />
+                          <span className={`truncate text-sm font-semibold max-w-[160px] ${nameColor}`}>{player.entities.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-2 py-2.5 text-right text-xs text-white/40 hidden sm:table-cell w-16">{Math.round(player.elo_rating)}</td>
+                      <td className="px-2 py-2.5 w-20 sm:w-28">
+                        <div className="w-full bg-white/10 rounded-full h-1.5">
+                          <div className={`h-1.5 rounded-full ${barColor}`} style={{ width: `${barPct}%` }} />
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+          {ranking.length >= limit && limit < 100 && (
+            <button className="mt-6 text-goat underline text-sm mx-auto block" onClick={() => { const newLimit = limit + 20; setLimit(newLimit); fetchRanking(newLimit) }}>Show more</button>
+          )}
         </div>
       </main>
     </>
