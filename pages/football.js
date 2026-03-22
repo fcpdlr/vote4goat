@@ -86,38 +86,34 @@ export default function Home() {
   }
 
   const vote = async (winnerId, loserId) => {
-  if (voting) return
-  setSelected(winnerId)
-  setVoting(true)
-
-  let userId = null
-  try {
-    const { data: { user } } = await supabase.auth.getUser()
-    userId = user?.id || null
-  } catch (err) {
-    console.error('Error getting user ID:', err)
-  }
-
-  const { error } = await supabase.rpc('vote_and_update_elo', {
-    winner_id_input: winnerId,
-    loser_id_input: loserId,
-    user_id_input: userId,
-    ip_address_input: ipAddress
-  })
-
-  if (error) {
-    console.error('ERROR voting:', error)
+    if (voting) return
+    setSelected(winnerId)
+    setVoting(true)
+    let userId = null
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      userId = user?.id || null
+    } catch (err) {
+      console.error('Error getting user ID:', err)
+    }
+    const { error } = await supabase.rpc('vote_and_update_elo', {
+      winner_id_input: winnerId,
+      loser_id_input: loserId,
+      user_id_input: userId,
+      ip_address_input: ipAddress
+    })
+    if (error) {
+      console.error('ERROR voting:', error)
+      setVoting(false)
+      setSelected(null)
+      return
+    }
+    await new Promise(resolve => setTimeout(resolve, 800))
+    await fetchDuel()
+    await fetchRanking(limit)
     setVoting(false)
-    setSelected(null)
-    return
   }
 
-  // Espera 800ms para que se vea la animación antes de cargar el siguiente duelo
-  await new Promise(resolve => setTimeout(resolve, 800))
-  await fetchDuel()
-  await fetchRanking(limit)
-  setVoting(false)
-}
   return (
     <>
       <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
@@ -164,10 +160,7 @@ export default function Home() {
         <p className="text-center text-white/40 text-xs mb-3">Vote. The world decides.</p>
 
         <div className="max-w-xl mx-auto w-full mb-4 px-1">
-          <button
-            onClick={() => setShowHowItWorks(!showHowItWorks)}
-            className="w-full flex items-center justify-between px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/50 hover:text-white/70 transition"
-          >
+          <button onClick={() => setShowHowItWorks(!showHowItWorks)} className="w-full flex items-center justify-between px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/50 hover:text-white/70 transition">
             <span>How it works?</span>
             <span className={`transition-transform duration-200 ${showHowItWorks ? 'rotate-180' : ''}`}>▾</span>
           </button>
@@ -187,66 +180,55 @@ export default function Home() {
           )}
         </div>
 
-        <div className="flex justify-center space-x-4 mb-4">
-          <button className={`px-3 py-1 rounded-full text-sm ${duelLimit === null ? 'bg-goat text-white' : 'bg-white text-black'}`} onClick={() => setDuelLimit(null)}>All Players</button>
-          <span title={!user ? 'Please log in to use this filter' : ''} className="inline-block">
-            <button className={`px-3 py-1 rounded-full text-sm ${!user ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : duelLimit === 100 ? 'bg-goat text-white' : 'bg-white text-black'}`} onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(100) }}>Top 100</button>
-          </span>
-          <span title={!user ? 'Please log in to use this filter' : ''} className="inline-block">
-            <button className={`px-3 py-1 rounded-full text-sm ${!user ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : duelLimit === 50 ? 'bg-goat text-white' : 'bg-white text-black'}`} onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(50) }}>Top 50</button>
-          </span>
+        <div className="flex justify-center space-x-3 mb-4">
+          <button className={`px-3 py-1 rounded-full text-sm border transition ${duelLimit === null ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`} onClick={() => setDuelLimit(null)}>All Players</button>
+          <button className={`px-3 py-1 rounded-full text-sm border transition ${!user ? 'border-white/10 text-white/20 cursor-not-allowed' : duelLimit === 100 ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`} onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(100) }} title={!user ? 'Please log in to use this filter' : ''}>Top 100</button>
+          <button className={`px-3 py-1 rounded-full text-sm border transition ${!user ? 'border-white/10 text-white/20 cursor-not-allowed' : duelLimit === 50 ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`} onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(50) }} title={!user ? 'Please log in to use this filter' : ''}>Top 50</button>
         </div>
 
         {duel.length === 2 && (
-  <section className="flex flex-col items-center justify-center py-4">
-    <div className="relative flex flex-row items-center justify-center gap-6 h-40">
-      {duel.map((player) => {
-        const isWinner = selected === player.id
-        const isLoser = selected !== null && selected !== player.id
-        return (
-          <button
-            key={player.id}
-            onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
-            disabled={voting}
-            className={`
-              w-40 h-40 rounded-xl overflow-hidden border transition-all duration-500 focus:outline-none relative
-              ${!selected && !voting ? 'hover:brightness-110' : ''}
-              ${voting && !selected ? 'opacity-50 cursor-not-allowed' : ''}
-              ${isWinner ? 'scale-110 ring-4 ring-goat shadow-[0_0_28px_rgba(255,165,0,0.9)] brightness-110 cursor-not-allowed' : ''}
-              ${isLoser ? 'scale-90 opacity-30 brightness-50 cursor-not-allowed' : ''}
-            `}
-          >
-            <img
-              src={player.image_url}
-              alt={player.name_line2 || player.name_line1}
-              className="w-full h-full object-cover"
-            />
-          </button>
-        )
-      })}
+          <section className="flex flex-col items-center justify-center py-4">
+            <div className="relative flex flex-row items-center justify-center gap-6">
+              {duel.map((player) => {
+                const isWinner = selected === player.id
+                const isLoser = selected !== null && selected !== player.id
+                return (
+                  <button
+                    key={player.id}
+                    onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
+                    disabled={voting}
+                    className={`
+                      w-40 h-40 sm:w-56 sm:h-56 rounded-2xl overflow-hidden border border-white/10 transition-all duration-500 focus:outline-none relative
+                      ${!selected && !voting ? 'hover:brightness-110 hover:border-white/30' : ''}
+                      ${isWinner ? 'scale-110 ring-4 ring-goat shadow-[0_0_32px_rgba(255,165,0,0.8)] brightness-110 cursor-not-allowed' : ''}
+                      ${isLoser ? 'scale-90 opacity-25 brightness-50 cursor-not-allowed' : ''}
+                    `}
+                  >
+                    <img src={player.image_url} alt={player.name_line2 || player.name_line1} className="w-full h-full object-cover" />
+                  </button>
+                )
+              })}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                <div className="bg-goat text-black text-base font-black w-11 h-11 sm:w-14 sm:h-14 flex items-center justify-center rounded-full shadow-lg">VS</div>
+              </div>
+            </div>
+            <div className="flex flex-row justify-center gap-6 mt-3">
+              {duel.map((player) => (
+                <div key={player.id} className="flex flex-col items-center w-40 sm:w-56 space-y-0.5 leading-none">
+                  <div className="text-xs font-medium tracking-wide text-white/50 h-4">
+                    {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
+                  </div>
+                  <div className="text-lg sm:text-xl font-extrabold text-goat">{player.name_line2}</div>
+                  <div className="text-lg sm:text-xl font-extrabold text-goat">
+                    {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-        <div className="bg-goat text-white text-xl font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-lg">VS</div>
-      </div>
-    </div>
-
-    <div className="flex flex-row justify-center gap-6 mt-2">
-      {duel.map((player) => (
-        <div key={player.id} className="flex flex-col items-center w-44 space-y-1 leading-none">
-          <div className="text-xs font-medium tracking-wide text-white h-4">
-            {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
-          </div>
-          <div className="text-xl font-extrabold text-goat h-6">{player.name_line2}</div>
-          <div className="text-xl font-extrabold text-goat h-6">
-            {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
-          </div>
-        </div>
-      ))}
-    </div>
-  </section>
-)}
-
-        <div id="ranking-section" className="bg-background text-white px-4 py-10 mt-6 rounded-t-3xl">
+        <div id="ranking-section" className="bg-background text-white px-4 py-8 mt-4 rounded-t-3xl">
           <div className="text-center text-sm mb-4">
             <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline">↑ VOTE</button>
           </div>
@@ -272,7 +254,7 @@ export default function Home() {
                   const rowStyle = i === 0 ? 'bg-goat/10 font-bold' : i === 1 ? 'bg-white/5 font-semibold' : i === 2 ? 'bg-white/5' : ''
                   const nameColor = i === 0 ? 'text-goat' : i === 1 ? 'text-white/90' : i === 2 ? 'text-white/80' : 'text-white/70'
                   const barPct = Math.round((player.elo_rating / topElo) * 100)
-                  const barColor = i === 0 ? 'bg-goat' : i === 1 ? 'bg-white/50' : i === 2 ? 'bg-amber-600/70' : 'bg-white/20'
+                  const barColor = i === 0 ? 'bg-goat' : i === 1 ? 'bg-gray-400' : i === 2 ? 'bg-amber-700' : 'bg-white/20'
                   const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
                   return (
                     <tr key={player.id} className={`border-t border-white/5 hover:bg-white/5 transition ${rowStyle}`}>
