@@ -212,7 +212,7 @@ export default function Home() {
                   <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">🏀 Basketball</span>
                   <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">🎾 Tennis — soon</span>
                 </div>
-                
+                <a
                   href={getDvelsHref()}
                   className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
                 >
