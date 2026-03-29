@@ -113,7 +113,7 @@ export default function Rank4IndexPage() {
             questions.map(q => {
               const open = isOpen(q)
               return (
-                
+                <a
                   key={q.id}
                   href={open ? `/rank4/${q.id}` : `/rank4/${q.id}/results`}
                   className="block bg-white/5 border border-white/10 rounded-2xl p-5 hover:border-goat/40 hover:bg-white/[0.07] transition"
