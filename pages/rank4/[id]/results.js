@@ -182,7 +182,7 @@ export default function Rank4ResultsPage() {
 
               {/* Share + actions */}
               <div className="flex flex-col gap-3">
-                
+                <a
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -192,7 +192,7 @@ export default function Rank4ResultsPage() {
                   Share on X
                 </a>
                 {isOpen(question) && (
-                  
+                  <a
                     href={`/rank4/${id}`}
                     className="w-full py-3 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
                   >
