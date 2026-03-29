@@ -7,29 +7,17 @@ const supabase = createClient(
 )
 
 export default function Home() {
-  const [duel, setDuel] = useState([])
-  const [ranking, setRanking] = useState([])
-  const [limit, setLimit] = useState(20)
-  const [selected, setSelected] = useState(null)
-  const [showHelp, setShowHelp] = useState(false)
-  const [showHowItWorks, setShowHowItWorks] = useState(false)
-  const [duelLimit, setDuelLimit] = useState(null)
   const [user, setUser] = useState(null)
-  const [ipAddress, setIpAddress] = useState(null)
+  const [showHelp, setShowHelp] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
-  const [voting, setVoting] = useState(false)
+  const [activeMode, setActiveMode] = useState('dvels')
+  const [activeSport, setActiveSport] = useState('all')
+  const [ranking, setRanking] = useState([])
+  const [activeRank4, setActiveRank4] = useState(null)
   const [topElo, setTopElo] = useState(1)
 
-  const ENTITY_CATEGORY_ID = 1
   const menuRef = useRef()
   const helpRef = useRef()
-
-  useEffect(() => {
-    fetchDuel()
-    fetchRanking(20)
-    checkUser()
-    fetchIp()
-  }, [duelLimit])
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -47,76 +35,69 @@ export default function Home() {
     }
   }, [])
 
-  const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    setUser(user)
-  }
-
-  const fetchIp = async () => {
-    try {
-      const res = await fetch('https://api.ipify.org?format=json')
-      const data = await res.json()
-      setIpAddress(data.ip)
-    } catch (e) {
-      console.warn('Could not get IP:', e)
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        setUser(user)
+      } catch (err) {}
     }
-  }
+    checkUser()
+  }, [])
 
-  const fetchDuel = async () => {
-    setSelected(null)
-    const { data, error } = await supabase.rpc('get_duel', {
-      entity_category_input: ENTITY_CATEGORY_ID,
-      limit_rank: duelLimit,
-    })
-    if (error) console.error('Error in fetchDuel:', error)
-    setDuel(data || [])
-  }
-
-  const fetchRanking = async (top) => {
-    const { data, error } = await supabase
-      .from('entity_rankings')
-      .select('id, elo_rating, entities (name, name_line1, name_line2, name_line3, image_url)')
-      .eq('entity_category_id', ENTITY_CATEGORY_ID)
-      .order('elo_rating', { ascending: false })
-      .limit(top)
-    if (error) console.error('Error in fetchRanking:', error)
-    const results = data || []
-    setRanking(results)
-    if (results.length > 0) setTopElo(results[0].elo_rating)
-  }
-
-  const vote = async (winnerId, loserId) => {
-    if (voting) return
-    setSelected(winnerId)
-    setVoting(true)
-    let userId = null
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      userId = user?.id || null
-    } catch (err) {
-      console.error('Error getting user ID:', err)
+  useEffect(() => {
+    const fetchRanking = async () => {
+      const categoryId = activeSport === 'basketball' ? 2 : 1
+      const { data } = await supabase
+        .from('entity_rankings')
+        .select('id, elo_rating, entities (name, image_url)')
+        .eq('entity_category_id', categoryId)
+        .order('elo_rating', { ascending: false })
+        .limit(5)
+      const results = data || []
+      setRanking(results)
+      if (results.length > 0) setTopElo(results[0].elo_rating)
     }
-    const { error } = await supabase.rpc('vote_and_update_elo', {
-      winner_id_input: winnerId,
-      loser_id_input: loserId,
-      user_id_input: userId,
-      ip_address_input: ipAddress
-    })
-    if (error) {
-      console.error('ERROR voting:', error)
-      setVoting(false)
-      setSelected(null)
-      return
+    if (activeMode === 'dvels') fetchRanking()
+  }, [activeMode, activeSport])
+
+  useEffect(() => {
+    const fetchActiveRank4 = async () => {
+      const { data } = await supabase
+        .from('rank4_questions')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+      if (data) setActiveRank4(data)
     }
-    await new Promise(resolve => setTimeout(resolve, 800))
-    await fetchDuel()
-    await fetchRanking(limit)
-    setVoting(false)
+    fetchActiveRank4()
+  }, [])
+
+  const modes = [
+    { id: 'dvels', sports: ['football', 'basketball', 'tennis'] },
+    { id: 'tops', sports: ['football'] },
+    { id: 'rank', sports: ['football'] },
+  ]
+
+  const isModeAvailable = (modeId) => {
+    if (activeSport === 'all') return true
+    const mode = modes.find(m => m.id === modeId)
+    return mode?.sports.includes(activeSport)
   }
+
+  const getDvelsHref = () => {
+    if (activeSport === 'basketball') return '/basketball'
+    return '/football'
+  }
+
+  const medal = (i) => i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
 
   return (
     <>
       <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
+
         <header className="flex items-center justify-between px-3 py-2">
           <span className="text-xl sm:text-2xl font-bold text-white">Vote4GOAT</span>
           <nav className="flex items-center gap-3 text-xs sm:text-sm">
@@ -140,178 +121,204 @@ export default function Home() {
           </nav>
         </header>
 
-        <div className="flex justify-center gap-4 mt-2 mb-2">
-          <a href="/football" title="Football"><img src="/icons/football_logo.png" alt="Football" className="h-8 w-8 sm:h-10 sm:w-10" /></a>
-          <a href="/basketball" title="Basketball"><img src="/icons/basketball_logo.png" alt="Basketball" className="h-8 w-8 sm:h-10 sm:w-10" /></a>
-          <div title="Coming Soon" className="opacity-40 cursor-not-allowed"><img src="/icons/tennis_logo.png" alt="Tennis" className="h-8 w-8 sm:h-10 sm:w-10" /></div>
-        </div>
-
         {showHelp && (
           <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
-            <p className="mb-2 font-semibold text-goat">⚽ What is Vote4GOAT?</p>
-            <p className="mb-2">Everyone has an opinion on who's the greatest of all time — but what if we could let the world decide, one vote at a time?</p>
-            <p className="mb-2">Vote4GOAT is a simple, fun and addicting way to settle the debate. Two players appear on screen. You choose the one you think is greater. Your vote updates their score using a ranking system based on Elo — the same method used in chess and competitive gaming.</p>
-            <p className="mb-2">The more people vote, the more accurate the ranking becomes. No stats, no explanations — just pure instinct and opinion.</p>
+            <p className="mb-2 font-semibold text-goat">What is Vote4GOAT?</p>
+            <p className="mb-2">Everyone has an opinion on who's the greatest of all time. Vote4GOAT lets the world decide — through duels, Top 10 lists, and weekly rankings.</p>
             <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT list.</p>
           </div>
         )}
 
-        <h1 className="text-3xl font-extrabold mt-4 mb-1 text-goat text-center">WHO IS THE GOAT?</h1>
-        <p className="text-center text-white/40 text-xs mb-3">Vote. The world decides.</p>
+        {/* HERO */}
+        <div className="text-center pt-10 pb-6 px-4">
+          <p className="text-xs tracking-widest uppercase text-white/30 mb-3">The world decides</p>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-2">
+            Who is the <span className="text-goat">GOAT?</span>
+          </h1>
+          <p className="text-sm text-white/40 max-w-sm mx-auto">Vote, rank and debate. The only place where the world settles the argument.</p>
+        </div>
 
-        <div className="max-w-xl mx-auto w-full mb-4 px-1">
-          <button
-            onClick={() => setShowHowItWorks(!showHowItWorks)}
-            className="w-full flex items-center justify-between px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/50 hover:text-white/70 transition"
-          >
-            <span>How it works?</span>
-            <span className={`transition-transform duration-200 ${showHowItWorks ? 'rotate-180' : ''}`}>▾</span>
-          </button>
-          {showHowItWorks && (
-            <div className="mt-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 flex justify-around gap-2">
-              {[
-                { icon: '👁', label: 'Two players appear' },
-                { icon: '👆', label: 'You vote for the best' },
-                { icon: '📈', label: 'The ranking updates' },
-              ].map((step, i) => (
-                <div key={i} className="flex flex-col items-center gap-1 flex-1 text-center">
-                  <div className="text-xl">{step.icon}</div>
-                  <p className="text-xs text-white/50 leading-tight">{step.label}</p>
+        {/* SPORT FILTER */}
+        <div className="flex justify-center gap-2 mb-6 flex-wrap">
+          {[
+            { id: 'all', label: 'All sports' },
+            { id: 'football', label: '⚽ Football' },
+            { id: 'basketball', label: '🏀 Basketball' },
+            { id: 'tennis', label: '🎾 Tennis' },
+          ].map(sport => (
+            <button
+              key={sport.id}
+              onClick={() => { setActiveSport(sport.id); setActiveMode('dvels') }}
+              className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                activeSport === sport.id
+                  ? 'border-goat text-goat bg-goat/5'
+                  : 'border-white/10 text-white/50 hover:border-white/20 hover:text-white/70'
+              }`}
+            >
+              {sport.label}
+            </button>
+          ))}
+        </div>
+
+        {/* MODES BAR */}
+        <div className="max-w-lg mx-auto w-full px-1 mb-6">
+          <div className="flex border border-white/10 rounded-2xl overflow-hidden">
+            {[
+              { id: 'dvels', logo: ['D','V','E','L','S'], accent: [1,4] },
+              { id: 'tops', logo: ['T','1','0','P','S'], accent: [1,2] },
+              { id: 'rank', logo: ['R','4','N','K'], accent: [1] },
+            ].map((mode, idx) => {
+              const available = isModeAvailable(mode.id)
+              const active = activeMode === mode.id
+              return (
+                <button
+                  key={mode.id}
+                  onClick={() => available && setActiveMode(mode.id)}
+                  className={`flex-1 flex flex-col items-center gap-1.5 py-4 transition relative
+                    ${active ? 'bg-white/5' : 'bg-background hover:bg-white/[0.03]'}
+                    ${!available ? 'opacity-20 cursor-not-allowed' : 'cursor-pointer'}
+                    ${idx > 0 ? 'border-l border-white/10' : ''}
+                  `}
+                >
+                  {/* Logo */}
+                  <div className="text-2xl sm:text-3xl font-black tracking-wider leading-none" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                    {mode.logo.map((letter, i) => (
+                      <span key={i} className={mode.accent.includes(i) ? 'text-goat' : 'text-white'}>
+                        {letter}
+                      </span>
+                    ))}
+                  </div>
+                  {/* Active indicator */}
+                  {active && (
+                    <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-goat rounded-full" />
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* CONTENT PANELS */}
+        <div className="max-w-lg mx-auto w-full px-1 flex-1">
+
+          {/* DVELS panel */}
+          {activeMode === 'dvels' && (
+            <div className="flex flex-col gap-4">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+                <p className="text-sm font-semibold text-white mb-1">Two players. You choose.</p>
+                <p className="text-xs text-white/40 mb-4">Vote in 1v1 duels and shape the all-time ranking. Every vote counts.</p>
+                <div className="flex gap-2 flex-wrap mb-4">
+                  <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">⚽ Football</span>
+                  <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">🏀 Basketball</span>
+                  <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">🎾 Tennis — soon</span>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Cambio 4: botones de filtro con estilo consistente */}
-        <div className="flex justify-center space-x-3 mb-4">
-          <button
-            className={`px-3 py-1 rounded-full text-sm border transition ${duelLimit === null ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`}
-            onClick={() => setDuelLimit(null)}
-          >
-            All Players
-          </button>
-          <button
-            className={`px-3 py-1 rounded-full text-sm border transition ${!user ? 'border-white/10 text-white/20 cursor-not-allowed' : duelLimit === 100 ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`}
-            onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(100) }}
-            title={!user ? 'Please log in to use this filter' : ''}
-          >
-            Top 100
-          </button>
-          <button
-            className={`px-3 py-1 rounded-full text-sm border transition ${!user ? 'border-white/10 text-white/20 cursor-not-allowed' : duelLimit === 50 ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`}
-            onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(50) }}
-            title={!user ? 'Please log in to use this filter' : ''}
-          >
-            Top 50
-          </button>
-        </div>
-
-        {/* Cambio 1: cards más grandes en desktop */}
-        {duel.length === 2 && (
-          <section className="flex flex-col items-center justify-center py-4">
-            <div className="relative flex flex-row items-center justify-center gap-6">
-              {duel.map((player) => {
-                const isWinner = selected === player.id
-                const isLoser = selected !== null && selected !== player.id
-                return (
-                  <button
-                    key={player.id}
-                    onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
-                    disabled={voting}
-                    className={`
-                      w-40 h-40 sm:w-56 sm:h-56 rounded-2xl overflow-hidden border border-white/10 transition-all duration-500 focus:outline-none relative
-                      ${!selected && !voting ? 'hover:brightness-110 hover:border-white/30' : ''}
-                      ${isWinner ? 'scale-110 ring-4 ring-goat shadow-[0_0_32px_rgba(255,165,0,0.8)] brightness-110 cursor-not-allowed' : ''}
-                      ${isLoser ? 'scale-90 opacity-25 brightness-50 cursor-not-allowed' : ''}
-                    `}
-                  >
-                    <img
-                      src={player.image_url}
-                      alt={player.name_line2 || player.name_line1}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                )
-              })}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                <div className="bg-goat text-black text-base font-black w-11 h-11 sm:w-14 sm:h-14 flex items-center justify-center rounded-full shadow-lg">VS</div>
+                
+                  href={getDvelsHref()}
+                  className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
+                >
+                  Start voting →
+                </a>
               </div>
-            </div>
 
-            {/* Cambio 2: menos espacio vacío bajo el duelo */}
-            <div className="flex flex-row justify-center gap-6 mt-3">
-              {duel.map((player) => (
-                <div key={player.id} className="flex flex-col items-center w-40 sm:w-56 space-y-0.5 leading-none">
-                  <div className="text-xs font-medium tracking-wide text-white/50 h-4">
-                    {player.name_line1 || <span className="opacity-0 pointer-events-none">-</span>}
+              {/* Mini ranking */}
+              {ranking.length > 0 && (
+                <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+                    <span className="text-xs font-semibold text-white/50 uppercase tracking-wide">
+                      Current ranking — {activeSport === 'basketball' ? 'Basketball' : 'Football'}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                      <span className="text-xs text-white/30">live</span>
+                    </div>
                   </div>
-                  <div className="text-lg sm:text-xl font-extrabold text-goat">{player.name_line2}</div>
-                  <div className="text-lg sm:text-xl font-extrabold text-goat">
-                    {player.name_line3 || <span className="opacity-0 pointer-events-none">-</span>}
+                  {ranking.map((player, i) => {
+                    const barPct = Math.round((player.elo_rating / topElo) * 100)
+                    const barColor = i === 0 ? 'bg-goat' : i === 1 ? 'bg-gray-400' : i === 2 ? 'bg-amber-700' : 'bg-white/20'
+                    return (
+                      <div key={player.id} className={`flex items-center gap-3 px-4 py-2.5 border-t border-white/5 ${i === 0 ? 'bg-goat/5' : ''}`}>
+                        <span className="text-xs w-5 text-center shrink-0 text-white/40">{medal(i) || i + 1}</span>
+                        <img src={player.entities.image_url} alt={player.entities.name} className="w-6 h-6 rounded-full object-cover shrink-0 border border-white/10" />
+                        <span className={`flex-1 text-sm font-medium truncate ${i === 0 ? 'text-goat' : 'text-white/80'}`}>{player.entities.name}</span>
+                        <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden shrink-0">
+                          <div className={`h-full rounded-full ${barColor}`} style={{ width: `${barPct}%` }} />
+                        </div>
+                      </div>
+                    )
+                  })}
+                  <div className="px-4 py-3 border-t border-white/5">
+                    <a href={getDvelsHref()} className="text-xs text-goat hover:underline">See full ranking →</a>
                   </div>
                 </div>
-              ))}
+              )}
             </div>
-          </section>
-        )}
-
-        <div id="ranking-section" className="bg-background text-white px-4 py-8 mt-4 rounded-t-3xl">
-          <div className="text-center text-sm mb-4">
-            <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-goat underline">↑ VOTE</button>
-          </div>
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <h2 className="text-2xl font-bold">RANKING</h2>
-            <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-2.5 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-white/40 text-xs">live</span>
-            </div>
-          </div>
-          <div className="flex justify-center">
-            <table className="w-full max-w-md text-sm">
-              <thead>
-                <tr>
-                  <th className="px-2 py-2 text-goat text-left text-xs w-8">#</th>
-                  <th className="px-2 py-2 text-goat text-center text-xs">PLAYER</th>
-                  <th className="px-2 py-2 text-goat text-right text-xs hidden sm:table-cell w-16">PTS</th>
-                  <th className="px-2 py-2 text-xs w-20 sm:w-28"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {ranking.map((player, i) => {
-                  const rowStyle = i === 0 ? 'bg-goat/10 font-bold' : i === 1 ? 'bg-white/5 font-semibold' : i === 2 ? 'bg-white/5' : ''
-                  const nameColor = i === 0 ? 'text-goat' : i === 1 ? 'text-white/90' : i === 2 ? 'text-white/80' : 'text-white/70'
-                  const barPct = Math.round((player.elo_rating / topElo) * 100)
-                  // Cambio 3: colores de barra consistentes con medallas
-                  const barColor = i === 0 ? 'bg-goat' : i === 1 ? 'bg-gray-400' : i === 2 ? 'bg-amber-700' : 'bg-white/20'
-                  const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
-                  return (
-                    <tr key={player.id} className={`border-t border-white/5 hover:bg-white/5 transition ${rowStyle}`}>
-                      <td className="pl-2 pr-1 py-2.5 text-xs text-white/40 w-8">{medal || i + 1}</td>
-                      <td className="pl-1 pr-2 py-2.5">
-                        <div className="flex items-center justify-center gap-2">
-                          <img src={player.entities.image_url} alt={player.entities.name} className="w-7 h-7 rounded-full object-cover shrink-0 border border-white/10" />
-                          <span className={`truncate text-sm font-semibold max-w-[160px] ${nameColor}`}>{player.entities.name}</span>
-                        </div>
-                      </td>
-                      <td className="px-2 py-2.5 text-right text-xs text-white/40 hidden sm:table-cell w-16">{Math.round(player.elo_rating)}</td>
-                      <td className="px-2 py-2.5 w-20 sm:w-28">
-                        <div className="w-full bg-white/10 rounded-full h-1.5">
-                          <div className={`h-1.5 rounded-full ${barColor}`} style={{ width: `${barPct}%` }} />
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-          {ranking.length >= limit && limit < 100 && (
-            <button className="mt-6 text-goat underline text-sm mx-auto block" onClick={() => { const newLimit = limit + 20; setLimit(newLimit); fetchRanking(newLimit) }}>Show more</button>
           )}
+
+          {/* T0PS panel */}
+          {activeMode === 'tops' && (
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+              <p className="text-sm font-semibold text-white mb-1">Build your all-time Top 10.</p>
+              <p className="text-xs text-white/40 mb-4">Pick a club or national team, drag your 10 players into order, and see how your list compares with the world.</p>
+              <div className="flex gap-2 flex-wrap mb-4">
+                <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">⚽ Football</span>
+                <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">🏀 Basketball — soon</span>
+              </div>
+              
+                href="/top10"
+                className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
+              >
+                Build your Top 10 →
+              </a>
+            </div>
+          )}
+
+          {/* R4NK panel */}
+          {activeMode === 'rank' && (
+            <div className="flex flex-col gap-4">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+                <p className="text-sm font-semibold text-white mb-1">One question. Four players. One week.</p>
+                <p className="text-xs text-white/40 mb-4">Every week a new R4NK drops. Order the 4 from best to worst. When it closes, the world's verdict is revealed.</p>
+                <div className="flex gap-2 flex-wrap mb-4">
+                  <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">⚽ Football</span>
+                  <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">🏀 Basketball — soon</span>
+                </div>
+                
+                  href="/rank4"
+                  className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
+                >
+                  See all R4NKs →
+                </a>
+              </div>
+
+              {/* R4NK activo */}
+              {activeRank4 && (
+                
+                  href={`/rank4/${activeRank4.id}`}
+                  className="block bg-white/5 border border-goat/20 rounded-2xl p-5 hover:border-goat/40 transition"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs text-goat font-semibold uppercase tracking-wide">This week</span>
+                    <span className="text-xs bg-green-900/40 text-green-400 px-2 py-0.5 rounded-full">Open</span>
+                  </div>
+                  <p className="text-base font-semibold text-white mb-3">{activeRank4.title}</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[activeRank4.option_1, activeRank4.option_2, activeRank4.option_3, activeRank4.option_4].map((opt, i) => (
+                      <div key={i} className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2">
+                        <span className="text-goat text-xs font-bold shrink-0">{i + 1}</span>
+                        <span className="text-xs text-white/60 truncate">{opt}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-goat mt-3 text-right">Vote now →</p>
+                </a>
+              )}
+            </div>
+          )}
+
         </div>
+
+        <div className="h-10" />
       </main>
     </>
   )
 }
-                    
