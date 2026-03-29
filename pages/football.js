@@ -101,14 +101,12 @@ export default function Home() {
     } catch (err) {
       console.error('Error getting user ID:', err)
     }
-
     const { error } = await supabase.rpc('vote_and_update_elo', {
       winner_id_input: winnerId,
       loser_id_input: loserId,
       user_id_input: userId,
       ip_address_input: ipAddress
     })
-
     if (error) {
       console.error('ERROR voting:', error)
       setVoting(false)
@@ -116,7 +114,6 @@ export default function Home() {
       return
     }
 
-    // Guardar el resultado para mostrarlo
     setLastVote({
       winnerName: winner?.name_line2 || winner?.name_line1 || 'Winner',
       loserName: loser?.name_line2 || loser?.name_line1 || 'Loser',
@@ -205,7 +202,6 @@ export default function Home() {
           <button className={`px-3 py-1 rounded-full text-sm border transition ${!user ? 'border-white/10 text-white/20 cursor-not-allowed' : duelLimit === 50 ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`} onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(50) }} title={!user ? 'Please log in to use this filter' : ''}>Top 50</button>
         </div>
 
-        {/* Resultado del último voto */}
         {lastVote && (
           <div className="max-w-xl mx-auto w-full mb-4 px-1">
             <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-white/5 border border-goat/20">
@@ -215,7 +211,7 @@ export default function Home() {
                   You picked <span className="text-white font-semibold">{lastVote.winnerName}</span> over <span className="text-white/50">{lastVote.loserName}</span>
                 </p>
               </div>
-              
+              <a
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareText())}`}
                 target="_blank"
                 rel="noopener noreferrer"
