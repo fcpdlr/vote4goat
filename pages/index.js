@@ -263,7 +263,7 @@ export default function Home() {
                 <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">⚽ Football</span>
                 <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">🏀 Basketball — soon</span>
               </div>
-              
+              <a
                 href="/top10"
                 className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
               >
@@ -282,7 +282,7 @@ export default function Home() {
                   <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">⚽ Football</span>
                   <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">🏀 Basketball — soon</span>
                 </div>
-                
+                <a
                   href="/rank4"
                   className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
                 >
@@ -292,7 +292,7 @@ export default function Home() {
 
               {/* R4NK activo */}
               {activeRank4 && (
-                
+                <a
                   href={`/rank4/${activeRank4.id}`}
                   className="block bg-white/5 border border-goat/20 rounded-2xl p-5 hover:border-goat/40 transition"
                 >
