@@ -19,6 +19,7 @@ export default function Home() {
   const [showMenu, setShowMenu] = useState(false)
   const [voting, setVoting] = useState(false)
   const [topElo, setTopElo] = useState(1)
+  const [lastVote, setLastVote] = useState(null)
 
   const ENTITY_CATEGORY_ID = 1
   const menuRef = useRef()
@@ -89,6 +90,10 @@ export default function Home() {
     if (voting) return
     setSelected(winnerId)
     setVoting(true)
+
+    const winner = duel.find(p => p.id === winnerId)
+    const loser = duel.find(p => p.id === loserId)
+
     let userId = null
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -96,22 +101,36 @@ export default function Home() {
     } catch (err) {
       console.error('Error getting user ID:', err)
     }
+
     const { error } = await supabase.rpc('vote_and_update_elo', {
       winner_id_input: winnerId,
       loser_id_input: loserId,
       user_id_input: userId,
       ip_address_input: ipAddress
     })
+
     if (error) {
       console.error('ERROR voting:', error)
       setVoting(false)
       setSelected(null)
       return
     }
+
+    // Guardar el resultado para mostrarlo
+    setLastVote({
+      winnerName: winner?.name_line2 || winner?.name_line1 || 'Winner',
+      loserName: loser?.name_line2 || loser?.name_line1 || 'Loser',
+    })
+
     await new Promise(resolve => setTimeout(resolve, 800))
     await fetchDuel()
     await fetchRanking(limit)
     setVoting(false)
+  }
+
+  const getShareText = () => {
+    if (!lastVote) return ''
+    return `I picked ${lastVote.winnerName} over ${lastVote.loserName} in the GOAT debate. Who do you pick? vote4goat.com`
   }
 
   return (
@@ -185,6 +204,29 @@ export default function Home() {
           <button className={`px-3 py-1 rounded-full text-sm border transition ${!user ? 'border-white/10 text-white/20 cursor-not-allowed' : duelLimit === 100 ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`} onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(100) }} title={!user ? 'Please log in to use this filter' : ''}>Top 100</button>
           <button className={`px-3 py-1 rounded-full text-sm border transition ${!user ? 'border-white/10 text-white/20 cursor-not-allowed' : duelLimit === 50 ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`} onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(50) }} title={!user ? 'Please log in to use this filter' : ''}>Top 50</button>
         </div>
+
+        {/* Resultado del último voto */}
+        {lastVote && (
+          <div className="max-w-xl mx-auto w-full mb-4 px-1">
+            <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-white/5 border border-goat/20">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-goat text-sm shrink-0">✓</span>
+                <p className="text-sm text-white/70 truncate">
+                  You picked <span className="text-white font-semibold">{lastVote.winnerName}</span> over <span className="text-white/50">{lastVote.loserName}</span>
+                </p>
+              </div>
+              
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareText())}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 bg-black border border-white/10 px-3 py-1.5 rounded-full text-xs font-medium hover:bg-white/5 transition shrink-0"
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                Share
+              </a>
+            </div>
+          </div>
+        )}
 
         {duel.length === 2 && (
           <section className="flex flex-col items-center justify-center py-4">
