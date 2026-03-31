@@ -1,5 +1,14 @@
+import Head from 'next/head'
+
 export default function LegalPage() {
   return (
+    <>
+      <Head>
+        <title>Legal | Vote4GOAT</title>
+        <meta name="robots" content="noindex" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <main ...>
     <main className="min-h-screen bg-background px-4 py-12 text-white font-sans">
       <div className="max-w-2xl mx-auto">
 
