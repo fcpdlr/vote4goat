@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import Head from 'next/head'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -393,6 +394,25 @@ export default function Top10IndexPage() {
             </div>
           ) : (
             <>
+            <Head>
+  <title>Top 10 Lists | Vote4GOAT</title>
+  <meta name="description" content="Build your all-time Top 10 by club or national team and see how it compares with the world." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://vote4goat.com/top10" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Top 10 Lists | Vote4GOAT" />
+  <meta property="og:description" content="Build your all-time Top 10 by club or national team and see how it compares with the world." />
+  <meta property="og:url" content="https://vote4goat.com/top10" />
+  <meta property="og:image" content="https://vote4goat.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Vote4GOAT" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Top 10 Lists | Vote4GOAT" />
+  <meta name="twitter:description" content="Build your all-time Top 10 by club or national team and see how it compares with the world." />
+  <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
+  <link rel="icon" href="/favicon.ico" />
+</Head>
               <a href="/login" className="hover:underline">Log In</a>
               <a href="/signup" className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105">
                 Sign Up
