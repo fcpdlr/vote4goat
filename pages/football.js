@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import Head from 'next/head'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -132,6 +133,26 @@ export default function Home() {
 
   return (
     <>
+      <Head>
+        <title>Football GOAT Ranking | Vote4GOAT</title>
+        <meta name="description" content="Vote in 1v1 duels and shape the all-time football GOAT ranking. Updated in real time with every vote." />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://vote4goat.com/football" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Football GOAT Ranking | Vote4GOAT" />
+        <meta property="og:description" content="Vote in 1v1 duels and shape the all-time football GOAT ranking. Updated in real time with every vote." />
+        <meta property="og:url" content="https://vote4goat.com/football" />
+        <meta property="og:image" content="https://vote4goat.com/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="Vote4GOAT" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Football GOAT Ranking | Vote4GOAT" />
+        <meta name="twitter:description" content="Vote in 1v1 duels and shape the all-time football GOAT ranking. Updated in real time with every vote." />
+        <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
       <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
         <header className="flex items-center justify-between px-3 py-2">
           <span className="text-xl sm:text-2xl font-bold text-white">Vote4GOAT</span>
