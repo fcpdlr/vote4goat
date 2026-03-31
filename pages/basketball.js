@@ -120,7 +120,7 @@ export default function Home() {
 
   const getShareText = () => {
     if (!lastVote) return ''
-    return `I picked ${lastVote.winnerName} over ${lastVote.loserName} in the basketball GOAT debate. Who do you pick? vote4goat.com/basketball`
+    return `My pick in the basketball GOAT debate: ${lastVote.winnerName} over ${lastVote.loserName}. Do you agree? Vote now at vote4goat.com/basketball #Vote4GOAT #GOAT #Basketball`
   }
 
   return (
@@ -190,7 +190,7 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center space-x-3 mb-4">
-          <button className={`px-3 py-1 rounded-full text-sm border transition ${duelLimit === null ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`} onClick={() => setDuelLimit(null)}>All Players</button>
+          <button className={`px-3 py-1 rounded-full text-sm border transition ${duelLimit === null ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text/white/80'}`} onClick={() => setDuelLimit(null)}>All Players</button>
           <button className={`px-3 py-1 rounded-full text-sm border transition ${!user ? 'border-white/10 text-white/20 cursor-not-allowed' : duelLimit === 100 ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`} onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(100) }} title={!user ? 'Please log in to use this filter' : ''}>Top 100</button>
           <button className={`px-3 py-1 rounded-full text-sm border transition ${!user ? 'border-white/10 text-white/20 cursor-not-allowed' : duelLimit === 50 ? 'bg-goat border-goat text-black font-semibold' : 'bg-transparent border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'}`} onClick={() => { if (!user) return alert('Please log in to use this filter.'); setDuelLimit(50) }} title={!user ? 'Please log in to use this filter' : ''}>Top 50</button>
         </div>
@@ -275,9 +275,9 @@ export default function Home() {
               <thead>
                 <tr>
                   <th className="px-2 py-2 text-goat text-left text-xs w-8">#</th>
-                  <th className="px-2 py-2 text-goat text-center text-xs">PLAYER</th>
-                  <th className="px-2 py-2 text-goat text-right text-xs hidden sm:table-cell w-16">PTS</th>
-                  <th className="px-2 py-2 text-xs w-20 sm:w-28"></th>
+                  <th className="px-2 py-2 text-goat text-left text-xs">PLAYER</th>
+                  <th className="px-2 py-2 text-goat text-right text-xs w-14">PTS</th>
+                  <th className="px-2 py-2 text-xs w-16 sm:w-28"></th>
                 </tr>
               </thead>
               <tbody>
@@ -291,13 +291,13 @@ export default function Home() {
                     <tr key={player.id} className={`border-t border-white/5 hover:bg-white/5 transition ${rowStyle}`}>
                       <td className="pl-2 pr-1 py-2.5 text-xs text-white/40 w-8">{medal || i + 1}</td>
                       <td className="pl-1 pr-2 py-2.5">
-                        <div className="flex items-center justify-center gap-2">
+                        <div className="flex items-center gap-2">
                           <img src={player.entities.image_url} alt={player.entities.name} className="w-7 h-7 rounded-full object-cover shrink-0 border border-white/10" />
-                          <span className={`truncate text-sm font-semibold max-w-[160px] ${nameColor}`}>{player.entities.name}</span>
+                          <span className={`truncate text-sm font-semibold ${nameColor}`}>{player.entities.name}</span>
                         </div>
                       </td>
-                      <td className="px-2 py-2.5 text-right text-xs text-white/40 hidden sm:table-cell w-16">{Math.round(player.elo_rating)}</td>
-                      <td className="px-2 py-2.5 w-20 sm:w-28">
+                      <td className="px-2 py-2.5 text-right text-xs text-white/40 w-14">{Math.round(player.elo_rating)}</td>
+                      <td className="px-2 py-2.5 w-16 sm:w-28">
                         <div className="w-full bg-white/10 rounded-full h-1.5">
                           <div className={`h-1.5 rounded-full ${barColor}`} style={{ width: `${barPct}%` }} />
                         </div>
