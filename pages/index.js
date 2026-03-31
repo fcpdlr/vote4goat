@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import Head from 'next/head'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -96,6 +97,26 @@ export default function Home() {
 
   return (
     <>
+      <Head>
+        <title>Vote4GOAT — The world decides who is the GOAT</title>
+        <meta name="description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://vote4goat.com" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Vote4GOAT — The world decides who is the GOAT" />
+        <meta property="og:description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
+        <meta property="og:url" content="https://vote4goat.com" />
+        <meta property="og:image" content="https://vote4goat.com/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="Vote4GOAT" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Vote4GOAT — The world decides who is the GOAT" />
+        <meta name="twitter:description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
+        <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
       <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 
         <header className="flex items-center justify-between px-3 py-2">
@@ -129,7 +150,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* HERO */}
         <div className="text-center pt-10 pb-6 px-4">
           <p className="text-xs tracking-widest uppercase text-white/30 mb-3">The world decides</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-2">
@@ -138,7 +158,6 @@ export default function Home() {
           <p className="text-sm text-white/40 max-w-sm mx-auto">Vote, rank and debate. The only place where the world settles the argument.</p>
         </div>
 
-        {/* SPORT FILTER */}
         <div className="flex justify-center gap-2 mb-6 flex-wrap">
           {[
             { id: 'all', label: 'All sports' },
@@ -160,7 +179,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* MODES BAR */}
         <div className="max-w-lg mx-auto w-full px-1 mb-6">
           <div className="flex border border-white/10 rounded-2xl overflow-hidden">
             {[
@@ -180,7 +198,6 @@ export default function Home() {
                     ${idx > 0 ? 'border-l border-white/10' : ''}
                   `}
                 >
-                  {/* Logo */}
                   <div className="text-2xl sm:text-3xl font-black tracking-wider leading-none" style={{ fontFamily: 'system-ui, sans-serif' }}>
                     {mode.logo.map((letter, i) => (
                       <span key={i} className={mode.accent.includes(i) ? 'text-goat' : 'text-white'}>
@@ -188,7 +205,6 @@ export default function Home() {
                       </span>
                     ))}
                   </div>
-                  {/* Active indicator */}
                   {active && (
                     <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-goat rounded-full" />
                   )}
@@ -198,10 +214,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* CONTENT PANELS */}
         <div className="max-w-lg mx-auto w-full px-1 flex-1">
 
-          {/* DVELS panel */}
           {activeMode === 'dvels' && (
             <div className="flex flex-col gap-4">
               <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
@@ -220,7 +234,6 @@ export default function Home() {
                 </a>
               </div>
 
-              {/* Mini ranking */}
               {ranking.length > 0 && (
                 <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
                   <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
@@ -254,7 +267,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* T0PS panel */}
           {activeMode === 'tops' && (
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
               <p className="text-sm font-semibold text-white mb-1">Build your all-time Top 10.</p>
@@ -272,7 +284,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* R4NK panel */}
           {activeMode === 'rank' && (
             <div className="flex flex-col gap-4">
               <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
@@ -290,7 +301,6 @@ export default function Home() {
                 </a>
               </div>
 
-              {/* R4NK activo */}
               {activeRank4 && (
                 <a
                   href={`/rank4/${activeRank4.id}`}
