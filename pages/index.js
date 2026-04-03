@@ -290,7 +290,7 @@ export default function Home() {
                 href={activeM.id === "dvels" ? getDvelsHref() : activeM.href}
                 className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
               >
-                {activeM.cta} ->
+                {activeM.cta} {">"}
               </a>
             </div>
           )}
@@ -321,7 +321,7 @@ export default function Home() {
                 )
               })}
               <div className="px-4 py-3 border-t border-white/5">
-                <a href={getDvelsHref()} className="text-xs text-goat hover:underline">See full ranking -></a>
+                <a href={getDvelsHref()} className="text-xs text-goat hover:underline">See full ranking {">"} </a>
               </div>
             </div>
           )}
@@ -341,7 +341,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-goat mt-3 text-right">Vote now -></p>
+              <p className="text-xs text-goat mt-3 text-right">Vote now {">"} </p>
             </a>
           )}
 
