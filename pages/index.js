@@ -94,7 +94,7 @@ if (activeSport === ‘basketball’) return ‘/basketball’
 return ‘/football’
 }
 
-const medal = (i) => i === 0 ? ‘🥇’ : i === 1 ? ‘🥈’ : i === 2 ? ‘🥉’ : null
+const medal = (i) => i === 0 ? ‘’🥇’’ : i === 1 ? ‘’🥈’’ : i === 2 ? ‘’🥉’’ : null
 
 const modes = [
 {
@@ -145,12 +145,12 @@ icon: (active) => (
 return (
 <>
 <Head>
-<title>Vote4GOAT — The world decides who is the GOAT</title>
+<title>Vote4GOAT - The world decides who is the GOAT</title>
 <meta name="description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
 <meta name="robots" content="index, follow" />
 <link rel="canonical" href="https://vote4goat.com" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Vote4GOAT — The world decides who is the GOAT" />
+<meta property="og:title" content="Vote4GOAT - The world decides who is the GOAT" />
 <meta property="og:description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
 <meta property="og:url" content="https://vote4goat.com" />
 <meta property="og:image" content="https://vote4goat.com/og-image.png" />
@@ -158,7 +158,7 @@ return (
 <meta property="og:image:height" content="630" />
 <meta property="og:site_name" content="Vote4GOAT" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Vote4GOAT — The world decides who is the GOAT" />
+<meta name="twitter:title" content="Vote4GOAT - The world decides who is the GOAT" />
 <meta name="twitter:description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
 <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
 <link rel="icon" href="/favicon.ico" />
@@ -193,8 +193,8 @@ return (
     {showHelp && (
       <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
         <p className="mb-2 font-semibold text-goat">What is Vote4GOAT?</p>
-        <p className="mb-2">Everyone has an opinion on who's the greatest of all time. Vote4GOAT lets the world decide — through duels, Top 10 lists, and weekly rankings.</p>
-        <p className="mt-4 font-semibold text-goat">🗳 Start voting. Shape the GOAT list.</p>
+        <p className="mb-2">Everyone has an opinion on who's the greatest of all time. Vote4GOAT lets the world decide - through duels, Top 10 lists, and weekly rankings.</p>
+        <p className="mt-4 font-semibold text-goat">&#x1F5F3; Start voting. Shape the GOAT list.</p>
       </div>
     )}
 
@@ -209,9 +209,9 @@ return (
     <div className="flex justify-center gap-2 mb-6 flex-wrap">
       {[
         { id: 'all', label: 'All sports' },
-        { id: 'football', label: '⚽ Football' },
-        { id: 'basketball', label: '🏀 Basketball' },
-        { id: 'tennis', label: '🎾 Tennis' },
+        { id: 'football', label: '\u26BD Football' },
+        { id: 'basketball', label: '\u{1F3C0} Basketball' },
+        { id: 'tennis', label: '\u{1F3BE} Tennis' },
       ].map(sport => (
         <button
           key={sport.id}
@@ -267,15 +267,15 @@ return (
             <p className="text-sm font-semibold text-white mb-1">Two players. You choose.</p>
             <p className="text-xs text-white/40 mb-4">Vote in 1v1 duels and shape the all-time ranking. Every vote counts.</p>
             <div className="flex gap-2 flex-wrap mb-4">
-              <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">⚽ Football</span>
-              <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">🏀 Basketball</span>
-              <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">🎾 Tennis — soon</span>
+              <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">&#x26BD; Football</span>
+              <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">&#x1F3C0; Basketball</span>
+              <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">&#x1F3BE; Tennis - soon</span>
             </div>
             <a
               href={getDvelsHref()}
               className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
             >
-              Start voting →
+              Start voting ->
             </a>
           </div>
 
@@ -283,7 +283,7 @@ return (
             <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
                 <span className="text-xs font-semibold text-white/50 uppercase tracking-wide">
-                  Current ranking — {activeSport === 'basketball' ? 'Basketball' : 'Football'}
+                  Current ranking - {activeSport === 'basketball' ? 'Basketball' : 'Football'}
                 </span>
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
@@ -305,7 +305,7 @@ return (
                 )
               })}
               <div className="px-4 py-3 border-t border-white/5">
-                <a href={getDvelsHref()} className="text-xs text-goat hover:underline">See full ranking →</a>
+                <a href={getDvelsHref()} className="text-xs text-goat hover:underline">See full ranking -></a>
               </div>
             </div>
           )}
@@ -317,14 +317,14 @@ return (
           <p className="text-sm font-semibold text-white mb-1">Build your all-time Top 10.</p>
           <p className="text-xs text-white/40 mb-4">Pick a club or national team, drag your 10 players into order, and see how your list compares with the world.</p>
           <div className="flex gap-2 flex-wrap mb-4">
-            <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">⚽ Football</span>
-            <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">🏀 Basketball — soon</span>
+            <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">&#x26BD; Football</span>
+            <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">&#127936; Basketball - soon</span>
           </div>
           <a
             href="/top10"
             className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
           >
-            Build your Top 10 →
+            Build your Top 10 ->
           </a>
         </div>
       )}
@@ -335,14 +335,14 @@ return (
             <p className="text-sm font-semibold text-white mb-1">One question. Four players. One week.</p>
             <p className="text-xs text-white/40 mb-4">Every week a new R4NK drops. Order the 4 from best to worst. When it closes, the world's verdict is revealed.</p>
             <div className="flex gap-2 flex-wrap mb-4">
-              <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">⚽ Football</span>
-              <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">🏀 Basketball — soon</span>
+              <span className="text-xs px-2 py-1 rounded-full bg-goat/10 text-goat">&#x26BD; Football</span>
+              <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-white/30">&#127936; Basketball - soon</span>
             </div>
             <a
               href="/rank4"
               className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
             >
-              See all R4NKs →
+              See all R4NKs ->
             </a>
           </div>
 
@@ -364,7 +364,7 @@ return (
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-goat mt-3 text-right">Vote now →</p>
+              <p className="text-xs text-goat mt-3 text-right">Vote now -></p>
             </a>
           )}
         </div>
