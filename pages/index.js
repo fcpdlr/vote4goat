@@ -159,7 +159,7 @@ descShort: "Two players appear. You choose the greatest. Every vote shapes the r
   href: "/rank4",
   icon: (active) => <RankIcon active={active} />,
 },
-```
+
 
 ]
 
@@ -187,7 +187,7 @@ return (
 <link rel="icon" href="/favicon.ico" />
 </Head>
 
-```
+
   <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 
     <header className="flex items-center justify-between px-3 py-2">
@@ -267,7 +267,7 @@ return (
                   </span>
                 ))}
               </div>
-```
+
 
 {active && <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-goat rounded-full" />}
 </button>
@@ -276,7 +276,7 @@ return (
 </div>
 </div>
 
-```
+
     <div className="max-w-lg mx-auto w-full px-1 flex-1">
 
       {activeM && (
@@ -353,7 +353,7 @@ return (
     <div className="h-10" />
   </main>
 </>
-```
+
 
 )
 }
