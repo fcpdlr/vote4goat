@@ -123,9 +123,8 @@ label: ["D", "V", "E", "L", "S"],
 accent: [1, 4],
 descShort: "Two players appear. You choose the greatest. Every vote shapes the ranking.",
 
-```
   tags: [
-    { label: "&#9917; Football", active: true },
+    { label: "\u26BD; Football", active: true },
     { label: "\U0001f3c0 Basketball", active: true },
     { label: "&#127934; Tennis -- soon", active: false },
   ],
