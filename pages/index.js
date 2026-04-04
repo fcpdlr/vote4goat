@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from “react”
-import { createClient } from “@supabase/supabase-js”
-import Head from “next/head”
-import { Swords } from “lucide-react”
+import { useEffect, useState, useRef } from "react"
+import { createClient } from "@supabase/supabase-js"
+import Head from "next/head"
+import { Swords } from "lucide-react"
 
 const supabase = createClient(
 process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -10,11 +10,11 @@ process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 const TopsIcon = ({ active }) => (
 <svg width="22" height="22" viewBox="0 0 88 88" fill="none">
-<rect x=“10” y=“8” width=“68” height=“11” rx=“2.5” stroke={active ? “#f5a623” : “rgba(255,255,255,0.4)”} strokeWidth=“2.5”/>
-<rect x=“10” y=“23” width=“68” height=“11” rx=“2.5” stroke={active ? “white” : “rgba(255,255,255,0.4)”} strokeWidth=“2”/>
-<rect x=“10” y=“38” width=“68” height=“11” rx=“2.5” stroke={active ? “white” : “rgba(255,255,255,0.4)”} strokeWidth=“2” opacity=“0.7”/>
-<rect x=“10” y=“53” width=“68” height=“11” rx=“2.5” stroke={active ? “white” : “rgba(255,255,255,0.4)”} strokeWidth=“2” opacity=“0.45”/>
-<rect x=“10” y=“68” width=“68” height=“11” rx=“2.5” stroke={active ? “white” : “rgba(255,255,255,0.4)”} strokeWidth=“2” opacity=“0.25”/>
+<rect x="10" y="8" width="68" height="11" rx="2.5" stroke={active ? "#f5a623" : "rgba(255,255,255,0.4)"} strokeWidth="2.5"/>
+<rect x="10" y="23" width="68" height="11" rx="2.5" stroke={active ? "white" : "rgba(255,255,255,0.4)"} strokeWidth="2"/>
+<rect x="10" y="38" width="68" height="11" rx="2.5" stroke={active ? "white" : "rgba(255,255,255,0.4)"} strokeWidth="2" opacity="0.7"/>
+<rect x="10" y="53" width="68" height="11" rx="2.5" stroke={active ? "white" : "rgba(255,255,255,0.4)"} strokeWidth="2" opacity="0.45"/>
+<rect x="10" y="68" width="68" height="11" rx="2.5" stroke={active ? "white" : "rgba(255,255,255,0.4)"} strokeWidth="2" opacity="0.25"/>
 <circle cx="28" cy="84" r="2" fill="white" opacity="0.2"/>
 <circle cx="44" cy="84" r="2" fill="white" opacity="0.2"/>
 <circle cx="60" cy="84" r="2" fill="white" opacity="0.2"/>
@@ -23,11 +23,11 @@ const TopsIcon = ({ active }) => (
 
 const RankIcon = ({ active }) => (
 <svg width="22" height="22" viewBox="0 0 88 88" fill="none">
-<rect x=“30” y=“8” width=“28” height=“13” rx=“2.5” stroke={active ? “#f5a623” : “rgba(255,255,255,0.4)”} strokeWidth=“2.5”/>
-<rect x=“20” y=“26” width=“48” height=“13” rx=“2.5” stroke={active ? “white” : “rgba(255,255,255,0.4)”} strokeWidth=“2”/>
-<rect x=“10” y=“44” width=“68” height=“13” rx=“2.5” stroke={active ? “white” : “rgba(255,255,255,0.4)”} strokeWidth=“2”/>
-<rect x=“4” y=“62” width=“80” height=“13” rx=“2.5” stroke={active ? “white” : “rgba(255,255,255,0.4)”} strokeWidth=“2”/>
-<circle cx=“44” cy=“14.5” r=“2.5” fill={active ? “#f5a623” : “rgba(255,255,255,0.4)”}/>
+<rect x="30" y="8" width="28" height="13" rx="2.5" stroke={active ? "#f5a623" : "rgba(255,255,255,0.4)"} strokeWidth="2.5"/>
+<rect x="20" y="26" width="48" height="13" rx="2.5" stroke={active ? "white" : "rgba(255,255,255,0.4)"} strokeWidth="2"/>
+<rect x="10" y="44" width="68" height="13" rx="2.5" stroke={active ? "white" : "rgba(255,255,255,0.4)"} strokeWidth="2"/>
+<rect x="4" y="62" width="80" height="13" rx="2.5" stroke={active ? "white" : "rgba(255,255,255,0.4)"} strokeWidth="2"/>
+<circle cx="44" cy="14.5" r="2.5" fill={active ? "#f5a623" : "rgba(255,255,255,0.4)"}/>
 </svg>
 )
 
@@ -35,8 +35,8 @@ export default function Home() {
 const [user, setUser] = useState(null)
 const [showHelp, setShowHelp] = useState(false)
 const [showMenu, setShowMenu] = useState(false)
-const [activeMode, setActiveMode] = useState(“dvels”)
-const [activeSport, setActiveSport] = useState(“all”)
+const [activeMode, setActiveMode] = useState("dvels")
+const [activeSport, setActiveSport] = useState("all")
 const [ranking, setRanking] = useState([])
 const [activeRank4, setActiveRank4] = useState(null)
 const [topElo, setTopElo] = useState(1)
@@ -50,13 +50,13 @@ if (menuRef.current && !menuRef.current.contains(event.target)) setShowMenu(fals
 if (helpRef.current && !helpRef.current.contains(event.target)) setShowHelp(false)
 }
 function handleEsc(event) {
-if (event.key === “Escape”) { setShowMenu(false); setShowHelp(false) }
+if (event.key === "Escape") { setShowMenu(false); setShowHelp(false) }
 }
-document.addEventListener(“mousedown”, handleClickOutside)
-document.addEventListener(“keydown”, handleEsc)
+document.addEventListener("mousedown", handleClickOutside)
+document.addEventListener("keydown", handleEsc)
 return () => {
-document.removeEventListener(“mousedown”, handleClickOutside)
-document.removeEventListener(“keydown”, handleEsc)
+document.removeEventListener("mousedown", handleClickOutside)
+document.removeEventListener("keydown", handleEsc)
 }
 }, [])
 
@@ -72,27 +72,27 @@ checkUser()
 
 useEffect(() => {
 const fetchRanking = async () => {
-const categoryId = activeSport === “basketball” ? 2 : 1
+const categoryId = activeSport === "basketball" ? 2 : 1
 const { data } = await supabase
-.from(“entity_rankings”)
-.select(“id, elo_rating, entities (name, image_url)”)
-.eq(“entity_category_id”, categoryId)
-.order(“elo_rating”, { ascending: false })
+.from("entity_rankings")
+.select("id, elo_rating, entities (name, image_url)")
+.eq("entity_category_id", categoryId)
+.order("elo_rating", { ascending: false })
 .limit(5)
 const results = data || []
 setRanking(results)
 if (results.length > 0) setTopElo(results[0].elo_rating)
 }
-if (activeMode === “dvels”) fetchRanking()
+if (activeMode === "dvels") fetchRanking()
 }, [activeMode, activeSport])
 
 useEffect(() => {
 const fetchActiveRank4 = async () => {
 const { data } = await supabase
-.from(“rank4_questions”)
-.select(”*”)
-.eq(“is_active”, true)
-.order(“created_at”, { ascending: false })
+.from("rank4_questions")
+.select("*")
+.eq("is_active", true)
+.order("created_at", { ascending: false })
 .limit(1)
 .single()
 if (data) setActiveRank4(data)
@@ -101,27 +101,27 @@ fetchActiveRank4()
 }, [])
 
 const modesConfig = [
-{ id: “dvels”, sports: [“football”, “basketball”, “tennis”] },
-{ id: “tops”, sports: [“football”] },
-{ id: “rank”, sports: [“football”] },
+{ id: "dvels", sports: ["football", "basketball", "tennis"] },
+{ id: "tops", sports: ["football"] },
+{ id: "rank", sports: ["football"] },
 ]
 
 const isModeAvailable = (modeId) => {
-if (activeSport === “all”) return true
+if (activeSport === "all") return true
 const mode = modesConfig.find(m => m.id === modeId)
 return mode?.sports.includes(activeSport)
 }
 
-const getDvelsHref = () => activeSport === “basketball” ? “/basketball” : “/football”
+const getDvelsHref = () => activeSport === "basketball" ? "/basketball" : "/football"
 
 const medal = (i) => i === 0 ? String.fromCodePoint(0x1F947) : i === 1 ? String.fromCodePoint(0x1F948) : i === 2 ? String.fromCodePoint(0x1F949) : null
 
 const modes = [
 {
-id: “dvels”,
-label: [“D”, “V”, “E”, “L”, “S”],
+id: "dvels",
+label: ["D", "V", "E", "L", "S"],
 accent: [1, 4],
-descShort: “Two players appear. You choose the greatest. Every vote shapes the ranking.”,
+descShort: "Two players appear. You choose the greatest. Every vote shapes the ranking.",
 
 ```
   tags: [
