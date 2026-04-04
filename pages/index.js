@@ -124,9 +124,9 @@ accent: [1, 4],
 descShort: "Two players appear. You choose the greatest. Every vote shapes the ranking.",
 
   tags: [
-    { label: "\u26BD; Football", active: true },
+    { label: "\u26BD Football", active: true },
     { label: "\U0001f3c0 Basketball", active: true },
-    { label: "&#127934; Tennis -- soon", active: false },
+    { label: "\u{1F3BE} Tennis -- soon", active: false },
   ],
   cta: "Start voting",
   icon: (active) => <Swords size={22} strokeWidth={1.5} className={active ? "text-goat" : "text-white/40"} />,
@@ -232,9 +232,9 @@ return (
     <div className="flex justify-center gap-2 mb-6 flex-wrap">
       {[
         { id: "all", label: "All sports" },
-        { id: "football", label: "&#9917; Football" },
-        { id: "basketball", label: "\U0001f3c0 Basketball" },
-        { id: "tennis", label: "\U0001f3be Tennis" },
+        { id: "football", label: "\u26BD Football" }, 
+        { id: "basketball", label: "\u{1F3C0} Basketball" }, 
+        { label: "\u26BD Football", active: true },
       ].map(sport => (
         <button
           key={sport.id}
