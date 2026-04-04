@@ -125,7 +125,7 @@ descShort: "Two players appear. You choose the greatest. Every vote shapes the r
 
   tags: [
     { label: "\u26BD Football", active: true },
-    { label: "\U0001f3c0 Basketball", active: true },
+    { label: "🏀 Basketball", active: true },
     { label: "\u{1F3BE} Tennis -- soon", active: false },
   ],
   cta: "Start voting",
@@ -138,8 +138,8 @@ descShort: "Two players appear. You choose the greatest. Every vote shapes the r
   descShort: "Select the category and build your Top 10. Save it, share it and compare with the world.",
   
   tags: [
-    { label: "&#9917; Football", active: true },
-    { label: "&#127936; Basketball -- soon", active: false },
+    { label: "⚽ Football", active: true },
+    { label: "🏀 Basketball -- soon", active: false },
   ],
   cta: "Build your Top 10",
   href: "/top10",
@@ -152,8 +152,8 @@ descShort: "Two players appear. You choose the greatest. Every vote shapes the r
   descShort: "Four options, you rank them. New debate every week.",
   
   tags: [
-    { label: "&#9917; Football", active: true },
-    { label: "&#127936; Basketball -- soon", active: false },
+    { label: "⚽ Football", active: true },
+    { label: "🏀 Basketball -- soon", active: false },
   ],
   cta: "See this week",
   href: "/rank4",
