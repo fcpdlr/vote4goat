@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vote4GOAT - Premium Social Pack</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #050709; padding: 32px 16px; font-family: 'Barlow Condensed', sans-serif; display: flex; flex-direction: column; align-items: center; gap: 48px; }
+.label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: #374151; text-align: center; margin-bottom: 10px; }
+.card { background: #0d0f18; border-radius: 4px; overflow: hidden; position: relative; }
+.sq { aspect-ratio: 1/1; width: min(400px, 100vw - 32px); }
+.st { aspect-ratio: 9/16; width: min(220px, 100vw - 32px); }
+.tw { aspect-ratio: 16/9; width: min(400px, 100vw - 32px); }
+.glow  { position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(245,166,35,.10) 0%,transparent 60%);pointer-events:none;z-index:0; }
+.glowC { position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(245,166,35,.07) 0%,transparent 65%);pointer-events:none;z-index:0; }
+.glowL { position:absolute;inset:0;background:radial-gradient(ellipse at 20% 60%,rgba(245,166,35,.07) 0%,transparent 50%);pointer-events:none;z-index:0; }
+.z { position:relative;z-index:1; }
+.logo { font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#fff; }
+.logo em { color:#f5a623;font-style:normal; }
+.tag  { font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,166,35,.85);background:rgba(245,166,35,.10);border:1px solid rgba(245,166,35,.25);padding:3px 9px;border-radius:20px; }
+.tagW { font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:3px 9px;border-radius:20px; }
+.url  { font-size:10px;color:rgba(245,166,35,.4);letter-spacing:.08em; }
+.photo { border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05); }
+.photoG { border-color:#f5a623; }
+.btn  { display:block;width:100%;padding:9px 0;border-radius:8px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase; }
+.btnG { background:#f5a623;color:#000; }
+.btnO { background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.3);color:#f5a623; }
+.btnW { background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6); }
+.top-row { display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:9px; }
+.top-row-1 { background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25); }
+.top-row-n { background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07); }
+.top-pos { font-family:'Bebas Neue',sans-serif;width:18px;text-align:center;flex-shrink:0; }
+.top-name { font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.03em;flex:1; }
+.drag { font-size:10px;color:rgba(255,255,255,.15); }
+@keyframes fi1 { from{opacity:0;transform:translateX(-36px) rotate(-6deg)} to{opacity:1;transform:none} }
+@keyframes fi2 { from{opacity:0;transform:translateX(36px) rotate(6deg)}  to{opacity:1;transform:none} }
+@keyframes fi3 { from{opacity:0;transform:translateY(-24px)} to{opacity:1;transform:none} }
+@keyframes fi4 { from{opacity:0;transform:translateY(24px)}  to{opacity:1;transform:none} }
+.a1{animation:fi1 .55s ease both}
+.a2{animation:fi2 .55s .10s ease both}
+.a3{animation:fi3 .55s .20s ease both}
+.a4{animation:fi4 .55s .30s ease both}
+.a5{animation:fi1 .55s .40s ease both}
+.a6{animation:fi2 .55s .50s ease both}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. MESSI VS RONALDO SQ ============ -->
+<div>
+<p class="label">1 — Messi vs Ronaldo · 1:1</p>
+<div class="card sq">
+  <div class="glow"></div><div class="glowL"></div>
+  <div class="z" style="width:100%;height:100%;display:flex;flex-direction:column;padding:18px 16px 14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div class="logo" style="font-size:13px;">Vote4<em>GOAT</em></div>
+      <div class="tag">Cast your vote</div>
+    </div>
+    <div style="flex:1;display:flex;align-items:center;gap:0;">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;">
+        <img class="photo" style="width:96px;height:96px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/cristiano_ronaldo.webp" alt="Ronaldo"/>
+        <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;">Cristiano</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;line-height:1;">Ronaldo</div>
+        <div class="btnW btn" style="font-size:10px;padding:7px 0;">Pick him</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 8px;flex-shrink:0;">
+        <div style="width:1px;height:36px;background:rgba(255,255,255,.08);"></div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f5a623;">VS</div>
+        <div style="width:1px;height:36px;background:rgba(255,255,255,.08);"></div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;">
+        <img class="photo photoG" style="width:96px;height:96px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/lionel_messi.webp" alt="Messi"/>
+        <div style="font-size:9px;color:rgba(245,166,35,.5);text-transform:uppercase;letter-spacing:.05em;">Lionel</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#f5a623;letter-spacing:2px;line-height:1;">Messi</div>
+        <div class="btnO btn" style="font-size:10px;padding:7px 0;">Pick him</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);">
+      <span style="font-size:10px;color:rgba(255,255,255,.2);">Your vote shapes the ranking</span>
+      <span class="url">vote4goat.com</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 2. PELE VS MARADONA SQ ============ -->
+<div>
+<p class="label">2 — Pele vs Maradona · 1:1</p>
+<div class="card sq">
+  <div class="glow"></div>
+  <div class="z" style="width:100%;height:100%;display:flex;flex-direction:column;padding:18px 16px 14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div class="logo" style="font-size:13px;">Vote4<em>GOAT</em></div>
+      <div class="tag">DVELS</div>
+    </div>
+    <div style="flex:1;display:flex;align-items:center;gap:0;">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;">
+        <img class="photo" style="width:96px;height:96px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/pele.webp" alt="Pele"/>
+        <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;">Edson</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;line-height:1;">Pele</div>
+        <div class="btnW btn" style="font-size:10px;padding:7px 0;">Pick him</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 8px;flex-shrink:0;">
+        <div style="width:1px;height:36px;background:rgba(255,255,255,.08);"></div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f5a623;">VS</div>
+        <div style="width:1px;height:36px;background:rgba(255,255,255,.08);"></div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;">
+        <img class="photo" style="width:96px;height:96px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/diego_maradona.webp" alt="Maradona"/>
+        <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;">Diego</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;line-height:1;">Maradona</div>
+        <div class="btnW btn" style="font-size:10px;padding:7px 0;">Pick him</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);">
+      <span style="font-size:10px;color:rgba(255,255,255,.2);">Football · All time</span>
+      <span class="url">vote4goat.com</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 3. ZIDANE VS RONALDINHO SQ ============ -->
+<div>
+<p class="label">3 — Zidane vs Ronaldinho · 1:1</p>
+<div class="card sq">
+  <div class="glow"></div>
+  <div class="z" style="width:100%;height:100%;display:flex;flex-direction:column;padding:18px 16px 14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div class="logo" style="font-size:13px;">Vote4<em>GOAT</em></div>
+      <div class="tag">DVELS</div>
+    </div>
+    <div style="flex:1;display:flex;align-items:center;gap:0;">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;">
+        <img class="photo" style="width:96px;height:96px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/zinedine_zidane.webp" alt="Zidane"/>
+        <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;">Zinedine</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;line-height:1;">Zidane</div>
+        <div class="btnW btn" style="font-size:10px;padding:7px 0;">Pick him</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 8px;flex-shrink:0;">
+        <div style="width:1px;height:36px;background:rgba(255,255,255,.08);"></div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f5a623;">VS</div>
+        <div style="width:1px;height:36px;background:rgba(255,255,255,.08);"></div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;">
+        <img class="photo" style="width:96px;height:96px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/ronaldinho.webp" alt="Ronaldinho"/>
+        <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;">Ronaldo</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;line-height:1;">Ronaldinho</div>
+        <div class="btnW btn" style="font-size:10px;padding:7px 0;">Pick him</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);">
+      <span style="font-size:10px;color:rgba(255,255,255,.2);">Football · All time</span>
+      <span class="url">vote4goat.com</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 4. TOP 10 BARÇA - FLYING SQ ============ -->
+<div>
+<p class="label">4 — T0PS: FC Barcelona · 1:1</p>
+<div class="card sq">
+  <div class="glow"></div>
+  <div class="z" style="width:100%;height:100%;display:flex;flex-direction:column;padding:18px 16px 14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="logo" style="font-size:13px;">Vote4<em>GOAT</em></div>
+      <div class="tag">T0PS</div>
+    </div>
+    <div style="font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.05em;margin-bottom:2px;">Building</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#fff;line-height:1;margin-bottom:12px;">FC Barcelona <span style="color:#f5a623;">All&#x2011;Time</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:5px;">
+      <div class="top-row top-row-1 a1">
+        <span class="top-pos" style="font-size:15px;color:#f5a623;">1</span>
+        <img class="photo" style="width:26px;height:26px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/lionel_messi.webp" alt="Messi"/>
+        <span class="top-name" style="color:#fff;">Lionel Messi</span>
+        <span class="drag">&#x2630;</span>
+      </div>
+      <div class="top-row top-row-n a2">
+        <span class="top-pos" style="font-size:15px;color:rgba(255,255,255,.35);">2</span>
+        <img class="photo" style="width:26px;height:26px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/andres_iniesta.webp" alt="Iniesta"/>
+        <span class="top-name" style="color:rgba(255,255,255,.8);">Andres Iniesta</span>
+        <span class="drag">&#x2630;</span>
+      </div>
+      <div class="top-row top-row-n a3">
+        <span class="top-pos" style="font-size:15px;color:rgba(255,255,255,.35);">3</span>
+        <img class="photo" style="width:26px;height:26px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/ronaldinho.webp" alt="Ronaldinho"/>
+        <span class="top-name" style="color:rgba(255,255,255,.8);">Ronaldinho</span>
+        <span class="drag">&#x2630;</span>
+      </div>
+      <div class="top-row top-row-n a4">
+        <span class="top-pos" style="font-size:15px;color:rgba(255,255,255,.35);">4</span>
+        <span class="top-name" style="color:rgba(255,255,255,.75);">Xavi</span>
+        <span class="drag">&#x2630;</span>
+      </div>
+      <div class="top-row top-row-n a5">
+        <span class="top-pos" style="font-size:15px;color:rgba(255,255,255,.3);">5</span>
+        <span class="top-name" style="color:rgba(255,255,255,.65);">Puyol</span>
+        <span class="drag">&#x2630;</span>
+      </div>
+      <div class="top-row top-row-n a6" style="opacity:.55;">
+        <span class="top-pos" style="font-size:15px;color:rgba(255,255,255,.2);">6</span>
+        <span class="top-name" style="color:rgba(255,255,255,.5);">Guardiola</span>
+        <span class="drag">&#x2630;</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06);">
+      <span style="font-size:10px;color:rgba(255,255,255,.2);">Drag to reorder</span>
+      <span class="url">vote4goat.com</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 5. MESSI VS RONALDO STORY ============ -->
+<div>
+<p class="label">5 — Messi vs Ronaldo Story · 9:16</p>
+<div class="card st">
+  <div class="glow"></div><div class="glowL"></div>
+  <div class="z" style="width:100%;height:100%;display:flex;flex-direction:column;padding:16px 14px 14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div class="logo" style="font-size:12px;">Vote4<em>GOAT</em></div>
+      <div class="tag" style="font-size:8px;">DVELS</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:#fff;line-height:1;">Who is<br>the <span style="color:#f5a623;">GOAT?</span></div>
+      <div style="display:flex;gap:7px;">
+        <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;">
+          <img class="photo" style="width:62px;height:62px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/cristiano_ronaldo.webp" alt="CR7"/>
+          <div style="font-size:8px;color:rgba(255,255,255,.35);text-transform:uppercase;">Cristiano</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:#fff;letter-spacing:1px;">Ronaldo</div>
+        </div>
+        <div style="display:flex;align-items:center;padding-bottom:14px;font-family:'Bebas Neue',sans-serif;font-size:18px;color:rgba(245,166,35,.5);">VS</div>
+        <div style="flex:1;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.25);border-radius:12px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;">
+          <img class="photo photoG" style="width:62px;height:62px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/lionel_messi.webp" alt="Messi"/>
+          <div style="font-size:8px;color:rgba(245,166,35,.5);text-transform:uppercase;">Lionel</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:#f5a623;letter-spacing:1px;">Messi</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,.3);line-height:1.5;">One tap. Every vote shapes the all-time ranking.</div>
+    </div>
+    <div class="btn btnG" style="margin-bottom:8px;">Cast your vote</div>
+    <div style="text-align:center;font-size:9px;color:rgba(245,166,35,.4);letter-spacing:.08em;">vote4goat.com</div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 6. TOP BARÇA STORY ============ -->
+<div>
+<p class="label">6 — T0PS Barça Story · 9:16</p>
+<div class="card st">
+  <div class="glow"></div>
+  <div class="z" style="width:100%;height:100%;display:flex;flex-direction:column;padding:16px 14px 14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div class="logo" style="font-size:12px;">Vote4<em>GOAT</em></div>
+      <div class="tag" style="font-size:8px;">T0PS</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:#fff;line-height:1;">My <span style="color:#f5a623;">Top 10</span><br>FC Barcelona</div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div class="top-row top-row-1 a1" style="padding:5px 8px;">
+          <span class="top-pos" style="font-size:13px;color:#f5a623;">1</span>
+          <img class="photo" style="width:24px;height:24px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/lionel_messi.webp" alt="Messi"/>
+          <span class="top-name" style="font-size:10px;color:#fff;">Lionel Messi</span>
+          <span class="drag" style="font-size:9px;">&#x2630;</span>
+        </div>
+        <div class="top-row top-row-n a2" style="padding:5px 8px;">
+          <span class="top-pos" style="font-size:13px;color:rgba(255,255,255,.35);">2</span>
+          <img class="photo" style="width:24px;height:24px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/andres_iniesta.webp" alt="Iniesta"/>
+          <span class="top-name" style="font-size:10px;color:rgba(255,255,255,.8);">Andres Iniesta</span>
+          <span class="drag" style="font-size:9px;">&#x2630;</span>
+        </div>
+        <div class="top-row top-row-n a3" style="padding:5px 8px;">
+          <span class="top-pos" style="font-size:13px;color:rgba(255,255,255,.35);">3</span>
+          <img class="photo" style="width:24px;height:24px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/ronaldinho.webp" alt="Ronaldinho"/>
+          <span class="top-name" style="font-size:10px;color:rgba(255,255,255,.8);">Ronaldinho</span>
+          <span class="drag" style="font-size:9px;">&#x2630;</span>
+        </div>
+        <div class="top-row top-row-n a4" style="padding:5px 8px;">
+          <span class="top-pos" style="font-size:13px;color:rgba(255,255,255,.3);">4</span>
+          <span class="top-name" style="font-size:10px;color:rgba(255,255,255,.7);">Xavi</span>
+          <span class="drag" style="font-size:9px;">&#x2630;</span>
+        </div>
+        <div class="top-row top-row-n a5" style="padding:5px 8px;opacity:.7;">
+          <span class="top-pos" style="font-size:13px;color:rgba(255,255,255,.25);">5</span>
+          <span class="top-name" style="font-size:10px;color:rgba(255,255,255,.6);">Puyol</span>
+          <span class="drag" style="font-size:9px;">&#x2630;</span>
+        </div>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,.25);line-height:1.4;">Build yours and compare with the world.</div>
+    </div>
+    <div class="btn btnG" style="margin-bottom:8px;">Build your Top 10</div>
+    <div style="text-align:center;font-size:9px;color:rgba(245,166,35,.4);letter-spacing:.08em;">vote4goat.com</div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 7. DUEL TW - MESSI vs RONALDO ============ -->
+<div style="width:100%;max-width:400px;">
+<p class="label">7 — Messi vs Ronaldo · 16:9</p>
+<div class="card tw">
+  <div class="glow"></div><div class="glowL"></div>
+  <div class="z" style="width:100%;height:100%;display:flex;align-items:center;padding:12px 16px;gap:0;">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <img class="photo" style="width:64px;height:64px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/cristiano_ronaldo.webp" alt="CR7"/>
+      <div style="font-size:8px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.05em;">Cristiano</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#fff;letter-spacing:2px;line-height:1;">Ronaldo</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 14px;flex-shrink:0;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:#fff;text-align:center;line-height:1;">Who is<br>the <span style="color:#f5a623;">GOAT?</span></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#f5a623;">VS</div>
+      <div class="btn btnG" style="font-size:8px;padding:5px 12px;width:auto;">Vote free</div>
+      <div style="font-size:8px;color:rgba(245,166,35,.4);letter-spacing:.06em;">vote4goat.com</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <img class="photo photoG" style="width:64px;height:64px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/lionel_messi.webp" alt="Messi"/>
+      <div style="font-size:8px;color:rgba(245,166,35,.4);text-transform:uppercase;letter-spacing:.05em;">Lionel</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#f5a623;letter-spacing:2px;line-height:1;">Messi</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 8. PELE VS MARADONA TW ============ -->
+<div style="width:100%;max-width:400px;">
+<p class="label">8 — Pele vs Maradona · 16:9</p>
+<div class="card tw">
+  <div class="glow"></div>
+  <div class="z" style="width:100%;height:100%;display:flex;align-items:center;padding:12px 16px;gap:0;">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <img class="photo" style="width:64px;height:64px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/pele.webp" alt="Pele"/>
+      <div style="font-size:8px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.05em;">Edson</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#fff;letter-spacing:2px;line-height:1;">Pele</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 14px;flex-shrink:0;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:#fff;text-align:center;line-height:1;">The eternal<br><span style="color:#f5a623;">debate</span></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#f5a623;">VS</div>
+      <div class="btn btnG" style="font-size:8px;padding:5px 12px;width:auto;">Vote free</div>
+      <div style="font-size:8px;color:rgba(245,166,35,.4);letter-spacing:.06em;">vote4goat.com</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <img class="photo" style="width:64px;height:64px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/diego_maradona.webp" alt="Maradona"/>
+      <div style="font-size:8px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.05em;">Diego</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#fff;letter-spacing:2px;line-height:1;">Maradona</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 9. TOP BARÇA TW ============ -->
+<div style="width:100%;max-width:400px;">
+<p class="label">9 — T0PS Barça · 16:9</p>
+<div class="card tw">
+  <div class="glow"></div>
+  <div class="z" style="width:100%;height:100%;display:flex;padding:12px 16px;gap:14px;">
+    <div style="width:120px;display:flex;flex-direction:column;justify-content:center;gap:6px;flex-shrink:0;">
+      <div style="font-size:8px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;">Building</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:#fff;line-height:1;">FC Barcelona<br><span style="color:#f5a623;">All&#x2011;Time</span></div>
+      <div style="font-size:9px;color:rgba(255,255,255,.25);line-height:1.4;">Drag to reorder. Compare with the world.</div>
+      <div class="btn btnG" style="font-size:8px;padding:5px 0;">Build yours</div>
+      <div style="font-size:8px;color:rgba(245,166,35,.4);letter-spacing:.05em;text-align:center;">vote4goat.com</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:4px;justify-content:center;">
+      <div class="top-row top-row-1 a1" style="padding:4px 8px;">
+        <span class="top-pos" style="font-size:12px;color:#f5a623;">1</span>
+        <img class="photo" style="width:22px;height:22px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/lionel_messi.webp" alt="Messi"/>
+        <span class="top-name" style="font-size:10px;color:#fff;">Lionel Messi</span>
+        <span class="drag" style="font-size:8px;">&#x2630;</span>
+      </div>
+      <div class="top-row top-row-n a2" style="padding:4px 8px;">
+        <span class="top-pos" style="font-size:12px;color:rgba(255,255,255,.3);">2</span>
+        <img class="photo" style="width:22px;height:22px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/andres_iniesta.webp" alt="Iniesta"/>
+        <span class="top-name" style="font-size:10px;color:rgba(255,255,255,.75);">Andres Iniesta</span>
+        <span class="drag" style="font-size:8px;">&#x2630;</span>
+      </div>
+      <div class="top-row top-row-n a3" style="padding:4px 8px;">
+        <span class="top-pos" style="font-size:12px;color:rgba(255,255,255,.3);">3</span>
+        <img class="photo" style="width:22px;height:22px;" src="https://scninxvgqzvlyedsvxbc.supabase.co/storage/v1/object/public/football-players/ronaldinho.webp" alt="Ronaldinho"/>
+        <span class="top-name" style="font-size:10px;color:rgba(255,255,255,.75);">Ronaldinho</span>
+        <span class="drag" style="font-size:8px;">&#x2630;</span>
+      </div>
+      <div class="top-row top-row-n a4" style="padding:4px 8px;">
+        <span class="top-pos" style="font-size:12px;color:rgba(255,255,255,.25);">4</span>
+        <span class="top-name" style="font-size:10px;color:rgba(255,255,255,.7);">Xavi</span>
+        <span class="drag" style="font-size:8px;">&#x2630;</span>
+      </div>
+      <div class="top-row top-row-n a5" style="padding:4px 8px;opacity:.65;">
+        <span class="top-pos" style="font-size:12px;color:rgba(255,255,255,.2);">5</span>
+        <span class="top-name" style="font-size:10px;color:rgba(255,255,255,.6);">Puyol</span>
+        <span class="drag" style="font-size:8px;">&#x2630;</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>

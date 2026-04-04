@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vote4GOAT - Social Pack</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #050709; padding: 32px 16px; font-family: 'Barlow Condensed', sans-serif; display: flex; flex-direction: column; align-items: center; gap: 48px; }
+.section-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: #374151; text-align: center; margin-bottom: 10px; }
+.card { background: #0d0f18; border-radius: 4px; overflow: hidden; position: relative; width: min(400px, 100vw - 32px); }
+.sq { aspect-ratio: 1/1; }
+.st { aspect-ratio: 9/16; width: min(220px, 100vw - 32px); }
+.tw { aspect-ratio: 16/9; }
+.glow { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(245,166,35,0.08) 0%, transparent 60%); pointer-events: none; z-index: 0; }
+.logo { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; color: #fff; position: relative; z-index: 1; }
+.logo em { color: #f5a623; font-style: normal; }
+.tag { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,166,35,0.85); background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.25); padding: 3px 9px; border-radius: 20px; position: relative; z-index: 1; }
+.tag-w { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 3px 9px; border-radius: 20px; position: relative; z-index: 1; }
+.inner { position: relative; z-index: 1; width: 100%; height: 100%; display: flex; flex-direction: column; }
+
+/* CARD 1 - Ranking Top 5 - SQ */
+.c1 .inner { padding: 20px 18px 16px; }
+.c1-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; color: #fff; line-height: 1; margin: 12px 0 10px; }
+.c1-title em { color: #f5a623; font-style: normal; }
+.c1-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+.c1-num { font-family: 'Bebas Neue', sans-serif; font-size: 15px; width: 18px; text-align: right; flex-shrink: 0; }
+.c1-name { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.03em; flex: 1; }
+.c1-bar { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; width: 44px; }
+.c1-fill { height: 100%; border-radius: 2px; }
+.c1-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
+.url { font-size: 10px; color: rgba(245,166,35,0.4); letter-spacing: 0.08em; }
+.cta-sm { font-size: 10px; color: rgba(255,255,255,0.2); }
+
+/* CARD 2 - Big stat - SQ */
+.c2 .inner { padding: 22px 20px; justify-content: space-between; }
+.c2-num { font-family: 'Bebas Neue', sans-serif; font-size: 96px; letter-spacing: -2px; color: #f5a623; line-height: 0.85; }
+.c2-desc { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; color: #fff; line-height: 1.1; }
+.c2-desc em { color: #f5a623; font-style: normal; }
+.c2-sub { font-size: 11px; color: rgba(255,255,255,0.25); letter-spacing: 0.05em; }
+
+/* CARD 3 - GOAT debate claim - SQ */
+.c3 .inner { padding: 22px 20px; justify-content: space-between; }
+.c3-pill { font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); padding: 4px 12px; border-radius: 20px; align-self: flex-start; }
+.c3-claim { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 1px; color: #fff; line-height: 1; }
+.c3-claim em { color: #f5a623; font-style: normal; }
+.c3-sub { font-size: 12px; color: rgba(255,255,255,0.3); line-height: 1.4; max-width: 280px; }
+.c3-btn { background: #f5a623; color: #000; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 0; border-radius: 8px; text-align: center; }
+
+/* CARD 4 - This week R4NK - SQ */
+.c4 .inner { padding: 20px 18px 16px; }
+.c4-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.c4-q { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; color: #fff; line-height: 1; margin-bottom: 14px; }
+.c4-q em { color: #f5a623; font-style: normal; }
+.c4-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.c4-opt { display: flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 9px 10px; }
+.c4-n { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: #f5a623; width: 14px; }
+.c4-oname { font-size: 12px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+.c4-footer { display: flex; align-items: center; justify-content: space-between; }
+
+/* CARD 5 - R4NK results - SQ */
+.c5 .inner { padding: 20px 18px 16px; }
+.c5-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.c5-subtitle { font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.05em; margin-bottom: 4px; }
+.c5-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; color: #fff; line-height: 1; margin-bottom: 14px; }
+.c5-title em { color: #f5a623; font-style: normal; }
+.c5-rows { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.c5-row { display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 9px; padding: 9px 11px; }
+.c5-pos { font-family: 'Bebas Neue', sans-serif; font-size: 20px; width: 24px; text-align: center; }
+.c5-pname { flex: 1; font-weight: 700; font-size: 13px; text-transform: uppercase; }
+.c5-pct-wrap { width: 52px; }
+.c5-pct-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; margin-bottom: 2px; }
+.c5-pct-fill { height: 100%; border-radius: 2px; }
+.c5-pct-num { font-size: 9px; color: rgba(255,255,255,0.3); text-align: right; }
+.c5-footer { margin-top: 10px; display: flex; align-items: center; justify-content: space-between; }
+
+/* CARD 6 - Duel - SQ */
+.c6 .inner { padding: 20px 18px; justify-content: space-between; }
+.c6-header { display: flex; align-items: center; justify-content: space-between; }
+.c6-players { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0; padding: 12px 0; }
+.c6-player { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.c6-flag { font-size: 28px; line-height: 1; }
+.c6-first { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.05em; text-transform: uppercase; }
+.c6-last { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: #f5a623; line-height: 1; }
+.c6-vs { display: flex; flex-direction: column; align-items: center; padding: 0 10px; padding-bottom: 16px; }
+.c6-vstext { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #f5a623; }
+.c6-q { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: rgba(255,255,255,0.7); text-align: center; line-height: 1.1; }
+.c6-q em { color: #f5a623; font-style: normal; }
+.c6-footer { display: flex; align-items: center; justify-content: space-between; }
+
+/* STORY variants */
+.st-inner { position: relative; z-index: 1; width: 100%; height: 100%; display: flex; flex-direction: column; padding: 18px 16px 16px; }
+.st-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: auto; }
+.st-body { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+.st-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 2px; color: #fff; line-height: 1; }
+.st-title em { color: #f5a623; font-style: normal; }
+.st-btn { background: #f5a623; color: #000; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; padding: 10px; border-radius: 8px; }
+.st-url { font-size: 9px; color: rgba(245,166,35,0.4); letter-spacing: 0.1em; text-align: center; }
+
+/* TW variants */
+.tw-inner { position: relative; z-index: 1; width: 100%; height: 100%; display: flex; flex-direction: column; padding: 16px 20px 14px; }
+.tw-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.tw-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: #fff; line-height: 1; }
+.tw-title em { color: #f5a623; font-style: normal; }
+.tw-body { flex: 1; }
+.tw-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px; }
+.tw-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; flex: 1; }
+.tw-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+.tw-num { font-family: 'Bebas Neue', sans-serif; font-size: 13px; width: 16px; text-align: right; color: rgba(255,255,255,0.2); }
+.tw-name { font-weight: 700; font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,0.8); flex: 1; }
+.tw-bar { width: 32px; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+.tw-fill { height: 100%; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ===== CARD 1: RANKING TOP 5 - SQ ===== -->
+<div>
+  <p class="section-label">1 — Ranking Top 5 · 1:1</p>
+  <div class="card sq c1">
+    <div class="glow"></div>
+    <div class="inner">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="logo" style="font-size:14px;">Vote4<em>GOAT</em></div>
+        <div class="tag">Live ranking</div>
+      </div>
+      <div class="c1-title">Football<br><em>GOAT</em> ranking</div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;">
+        <div class="c1-row"><span class="c1-num" style="color:#f5a623;">1</span><span class="c1-name" style="color:#fff;">Lionel Messi</span><span style="font-size:11px;">&#x1F947;</span><div class="c1-bar"><div class="c1-fill" style="width:100%;background:#f5a623;"></div></div></div>
+        <div class="c1-row"><span class="c1-num" style="color:rgba(255,255,255,0.55);">2</span><span class="c1-name" style="color:rgba(255,255,255,0.8);">Cristiano Ronaldo</span><span style="font-size:11px;">&#x1F948;</span><div class="c1-bar"><div class="c1-fill" style="width:89%;background:#9ca3af;"></div></div></div>
+        <div class="c1-row"><span class="c1-num" style="color:rgba(180,140,70,0.8);">3</span><span class="c1-name" style="color:rgba(255,255,255,0.7);">Ronaldo R9</span><span style="font-size:11px;">&#x1F949;</span><div class="c1-bar"><div class="c1-fill" style="width:76%;background:#92400e;"></div></div></div>
+        <div class="c1-row"><span class="c1-num" style="color:rgba(255,255,255,0.2);">4</span><span class="c1-name" style="color:rgba(255,255,255,0.6);">Pele</span><div class="c1-bar"><div class="c1-fill" style="width:68%;background:rgba(255,255,255,0.2);"></div></div></div>
+        <div class="c1-row"><span class="c1-num" style="color:rgba(255,255,255,0.2);">5</span><span class="c1-name" style="color:rgba(255,255,255,0.5);">Zidane</span><div class="c1-bar"><div class="c1-fill" style="width:61%;background:rgba(255,255,255,0.2);"></div></div></div>
+        <div class="c1-row"><span class="c1-num" style="color:rgba(255,255,255,0.2);">6</span><span class="c1-name" style="color:rgba(255,255,255,0.4);">Maradona</span><div class="c1-bar"><div class="c1-fill" style="width:55%;background:rgba(255,255,255,0.15);"></div></div></div>
+        <div class="c1-row"><span class="c1-num" style="color:rgba(255,255,255,0.2);">7</span><span class="c1-name" style="color:rgba(255,255,255,0.35);">Xavi</span><div class="c1-bar"><div class="c1-fill" style="width:48%;background:rgba(255,255,255,0.1);"></div></div></div>
+      </div>
+      <div class="c1-footer">
+        <span class="cta-sm">Updated live with every vote</span>
+        <span class="url">vote4goat.com</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD 2: BIG STAT - SQ ===== -->
+<div>
+  <p class="section-label">2 — Big Stat · 1:1</p>
+  <div class="card sq c2">
+    <div class="glow"></div>
+    <div class="inner">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="logo" style="font-size:14px;">Vote4<em>GOAT</em></div>
+        <div class="tag-w">By the numbers</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;">
+        <div class="c2-num">73%</div>
+        <div class="c2-desc">of the world<br>picks <em>Messi</em><br>over Ronaldo</div>
+        <div class="c2-sub">Based on 50,000+ votes</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:10px;color:rgba(255,255,255,0.2);">Do you agree?</span>
+        <span class="url">vote4goat.com</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD 3: CONTROVERSIAL CLAIM - SQ ===== -->
+<div>
+  <p class="section-label">3 — Controversial Claim · 1:1</p>
+  <div class="card sq c3">
+    <div class="glow"></div>
+    <div class="inner">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="logo" style="font-size:14px;">Vote4<em>GOAT</em></div>
+        <div class="tag-w">Hot take</div>
+      </div>
+      <div class="c3-pill" style="margin-top:16px;">The world says</div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;">
+        <div class="c3-claim">Ronaldo <em>R9</em><br>was better<br>than <em>CR7</em></div>
+        <div class="c3-sub">After 12,000 head-to-head votes. Do you agree?</div>
+      </div>
+      <div class="c3-btn">Cast your vote</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+        <span style="font-size:10px;color:rgba(255,255,255,0.2);">#Vote4GOAT</span>
+        <span class="url">vote4goat.com</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD 4: R4NK TEASER - SQ ===== -->
+<div>
+  <p class="section-label">4 — R4NK Teaser · 1:1</p>
+  <div class="card sq c4">
+    <div class="glow"></div>
+    <div class="inner">
+      <div class="c4-header">
+        <div class="logo" style="font-size:14px;">Vote4<em>GOAT</em></div>
+        <div class="tag">This week</div>
+      </div>
+      <div class="c4-q">Greatest <em>Italian</em><br>Playmakers</div>
+      <div class="c4-opts">
+        <div class="c4-opt"><span class="c4-n">1</span><span class="c4-oname">Del Piero</span></div>
+        <div class="c4-opt"><span class="c4-n">2</span><span class="c4-oname">Baggio</span></div>
+        <div class="c4-opt"><span class="c4-n">3</span><span class="c4-oname">Totti</span></div>
+        <div class="c4-opt"><span class="c4-n">4</span><span class="c4-oname">Pirlo</span></div>
+      </div>
+      <div class="c4-footer">
+        <span style="font-size:10px;color:rgba(255,255,255,0.2);">Closes Sunday</span>
+        <span class="url">vote4goat.com/rank4</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD 5: R4NK RESULTS - SQ ===== -->
+<div>
+  <p class="section-label">5 — R4NK Results · 1:1</p>
+  <div class="card sq c5">
+    <div class="glow"></div>
+    <div class="inner">
+      <div class="c5-header">
+        <div class="logo" style="font-size:14px;">Vote4<em>GOAT</em></div>
+        <div class="tag">Results</div>
+      </div>
+      <div class="c5-subtitle">The world ranked</div>
+      <div class="c5-title">Spanish <em>Centre-Backs</em></div>
+      <div class="c5-rows">
+        <div class="c5-row" style="border-color:rgba(245,166,35,0.3);background:rgba(245,166,35,0.06);">
+          <span class="c5-pos" style="color:#f5a623;">1</span>
+          <span class="c5-pname" style="color:#fff;">Sergio Ramos</span>
+          <div class="c5-pct-wrap"><div class="c5-pct-bar"><div class="c5-pct-fill" style="width:42%;background:#f5a623;"></div></div><div class="c5-pct-num">42%</div></div>
+        </div>
+        <div class="c5-row">
+          <span class="c5-pos" style="color:rgba(255,255,255,0.55);">2</span>
+          <span class="c5-pname" style="color:rgba(255,255,255,0.8);">Carles Puyol</span>
+          <div class="c5-pct-wrap"><div class="c5-pct-bar"><div class="c5-pct-fill" style="width:31%;background:#9ca3af;"></div></div><div class="c5-pct-num">31%</div></div>
+        </div>
+        <div class="c5-row">
+          <span class="c5-pos" style="color:rgba(180,140,70,0.75);">3</span>
+          <span class="c5-pname" style="color:rgba(255,255,255,0.7);">Gerard Pique</span>
+          <div class="c5-pct-wrap"><div class="c5-pct-bar"><div class="c5-pct-fill" style="width:17%;background:#92400e;"></div></div><div class="c5-pct-num">17%</div></div>
+        </div>
+        <div class="c5-row">
+          <span class="c5-pos" style="color:rgba(255,255,255,0.2);">4</span>
+          <span class="c5-pname" style="color:rgba(255,255,255,0.5);">Fernando Hierro</span>
+          <div class="c5-pct-wrap"><div class="c5-pct-bar"><div class="c5-pct-fill" style="width:10%;background:rgba(255,255,255,0.2);"></div></div><div class="c5-pct-num">10%</div></div>
+        </div>
+      </div>
+      <div class="c5-footer">
+        <span style="font-size:10px;color:rgba(255,255,255,0.2);">8,241 votes</span>
+        <span class="url">vote4goat.com</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD 6: DUEL - SQ ===== -->
+<div>
+  <p class="section-label">6 — Duel Card · 1:1</p>
+  <div class="card sq c6">
+    <div class="glow"></div>
+    <div class="inner">
+      <div class="c6-header">
+        <div class="logo" style="font-size:14px;">Vote4<em>GOAT</em></div>
+        <div class="tag">Cast your vote</div>
+      </div>
+      <div class="c6-players">
+        <div class="c6-player">
+          <div class="c6-flag">&#x1F1F5;&#x1F1F9;</div>
+          <div class="c6-first">Cristiano</div>
+          <div class="c6-last">Ronaldo</div>
+        </div>
+        <div class="c6-vs"><div class="c6-vstext">VS</div></div>
+        <div class="c6-player">
+          <div class="c6-flag">&#x1F1E6;&#x1F1F7;</div>
+          <div class="c6-first">Lionel</div>
+          <div class="c6-last">Messi</div>
+        </div>
+      </div>
+      <div class="c6-q">Who is the <em>GOAT?</em><br>The world decides.</div>
+      <div class="c6-footer" style="margin-top:12px;">
+        <span class="url">vote4goat.com</span>
+        <div class="tag">&#x1F4CA; 50K+ votes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD 7: RANKING STORY ===== -->
+<div>
+  <p class="section-label">7 — Ranking Story · 9:16</p>
+  <div class="card st">
+    <div class="glow"></div>
+    <div class="st-inner">
+      <div class="st-top">
+        <div class="logo" style="font-size:13px;">Vote4<em>GOAT</em></div>
+        <div class="tag" style="font-size:8px;">Live ranking</div>
+      </div>
+      <div class="st-body">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:#fff;line-height:1;">Football<br><span style="color:#f5a623;">GOAT</span> ranking</div>
+        <div>
+          <div class="c1-row"><span class="c1-num" style="color:#f5a623;font-size:13px;">1</span><span class="c1-name" style="color:#fff;font-size:12px;">Lionel Messi</span><span style="font-size:10px;">&#x1F947;</span></div>
+          <div class="c1-row"><span class="c1-num" style="color:rgba(255,255,255,0.55);font-size:13px;">2</span><span class="c1-name" style="color:rgba(255,255,255,0.8);font-size:12px;">Cristiano Ronaldo</span><span style="font-size:10px;">&#x1F948;</span></div>
+          <div class="c1-row"><span class="c1-num" style="color:rgba(180,140,70,0.8);font-size:13px;">3</span><span class="c1-name" style="color:rgba(255,255,255,0.7);font-size:12px;">Ronaldo R9</span><span style="font-size:10px;">&#x1F949;</span></div>
+          <div class="c1-row"><span class="c1-num" style="color:rgba(255,255,255,0.2);font-size:13px;">4</span><span class="c1-name" style="color:rgba(255,255,255,0.5);font-size:12px;">Pele</span></div>
+          <div class="c1-row"><span class="c1-num" style="color:rgba(255,255,255,0.2);font-size:13px;">5</span><span class="c1-name" style="color:rgba(255,255,255,0.4);font-size:12px;">Zidane</span></div>
+        </div>
+        <div class="st-btn">Vote now</div>
+        <div class="st-url">vote4goat.com</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD 8: STAT STORY ===== -->
+<div>
+  <p class="section-label">8 — Big Stat Story · 9:16</p>
+  <div class="card st">
+    <div class="glow"></div>
+    <div class="st-inner">
+      <div class="st-top">
+        <div class="logo" style="font-size:13px;">Vote4<em>GOAT</em></div>
+        <div class="tag-w" style="font-size:8px;">By the numbers</div>
+      </div>
+      <div class="st-body">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:80px;color:#f5a623;line-height:0.85;letter-spacing:-2px;">73%</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fff;letter-spacing:2px;line-height:1.1;">Of the world picks<br><span style="color:#f5a623;">Messi</span> over Ronaldo</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.25);">Based on 50,000+ votes on Vote4GOAT</div>
+        <div class="st-btn">Cast your vote</div>
+        <div class="st-url">vote4goat.com</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD 9: R4NK STORY ===== -->
+<div>
+  <p class="section-label">9 — R4NK Teaser Story · 9:16</p>
+  <div class="card st">
+    <div class="glow"></div>
+    <div class="st-inner">
+      <div class="st-top">
+        <div class="logo" style="font-size:13px;">Vote4<em>GOAT</em></div>
+        <div class="tag" style="font-size:8px;">This week</div>
+      </div>
+      <div class="st-body">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,166,35,0.7);">New R4NK is live</div>
+        <div class="st-title">Greatest <em>Brazilian</em> fullbacks</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div class="c4-opt"><span class="c4-n" style="font-size:14px;">1</span><span class="c4-oname" style="font-size:11px;">Cafu</span></div>
+          <div class="c4-opt"><span class="c4-n" style="font-size:14px;">2</span><span class="c4-oname" style="font-size:11px;">R. Carlos</span></div>
+          <div class="c4-opt"><span class="c4-n" style="font-size:14px;">3</span><span class="c4-oname" style="font-size:11px;">Dani Alves</span></div>
+          <div class="c4-opt"><span class="c4-n" style="font-size:14px;">4</span><span class="c4-oname" style="font-size:11px;">Marcelo</span></div>
+        </div>
+        <div class="st-btn">Rank them now</div>
+        <div class="st-url">vote4goat.com/rank4</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD 10: RANKING - TW ===== -->
+<div style="width:100%;max-width:400px;">
+  <p class="section-label">10 — Ranking · 16:9</p>
+  <div class="card tw">
+    <div class="glow"></div>
+    <div class="tw-inner">
+      <div class="tw-top">
+        <div class="tw-title">Football <em>GOAT</em> Ranking</div>
+        <div class="logo" style="font-size:12px;">Vote4<em>GOAT</em></div>
+      </div>
+      <div class="tw-cols tw-body">
+        <div>
+          <div class="tw-row"><span class="tw-num" style="color:#f5a623;">1</span><span class="tw-name" style="color:#fff;">Lionel Messi</span><span style="font-size:9px;">&#x1F947;</span></div>
+          <div class="tw-row"><span class="tw-num" style="color:rgba(255,255,255,0.5);">2</span><span class="tw-name">Cristiano Ronaldo</span></div>
+          <div class="tw-row"><span class="tw-num" style="color:rgba(180,140,70,0.7);">3</span><span class="tw-name">Ronaldo R9</span></div>
+          <div class="tw-row"><span class="tw-num">4</span><span class="tw-name">Pele</span></div>
+          <div class="tw-row"><span class="tw-num">5</span><span class="tw-name">Zidane</span></div>
+        </div>
+        <div>
+          <div class="tw-row"><span class="tw-num">6</span><span class="tw-name">Maradona</span></div>
+          <div class="tw-row"><span class="tw-num">7</span><span class="tw-name">Xavi</span></div>
+          <div class="tw-row"><span class="tw-num">8</span><span class="tw-name">Iniesta</span></div>
+          <div class="tw-row"><span class="tw-num">9</span><span class="tw-name">Ronaldinho</span></div>
+          <div class="tw-row"><span class="tw-num">10</span><span class="tw-name">Beckenbauer</span></div>
+        </div>
+      </div>
+      <div class="tw-footer">
+        <span style="font-size:9px;color:rgba(255,255,255,0.2);">Updated live · 50,000+ votes</span>
+        <span class="url" style="font-size:9px;">vote4goat.com</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD 11: DUEL - TW ===== -->
+<div style="width:100%;max-width:400px;">
+  <p class="section-label">11 — Duel Card · 16:9</p>
+  <div class="card tw">
+    <div class="glow"></div>
+    <div class="tw-inner">
+      <div class="tw-top">
+        <div class="tw-title">Who is the <em>GOAT?</em></div>
+        <div class="logo" style="font-size:12px;">Vote4<em>GOAT</em></div>
+      </div>
+      <div class="tw-body" style="display:flex;align-items:center;justify-content:center;gap:0;flex:1;">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="font-size:22px;">&#x1F1F5;&#x1F1F9;</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.05em;">Cristiano</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#f5a623;letter-spacing:2px;">Ronaldo</div>
+        </div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#f5a623;padding:0 12px;padding-bottom:16px;">VS</div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="font-size:22px;">&#x1F1E6;&#x1F1F7;</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.05em;">Lionel</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#f5a623;letter-spacing:2px;">Messi</div>
+        </div>
+      </div>
+      <div class="tw-footer">
+        <span style="font-size:9px;color:rgba(255,255,255,0.2);">50,000+ votes cast</span>
+        <span class="url" style="font-size:9px;">vote4goat.com</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARD 12: R4NK RESULTS - TW ===== -->
+<div style="width:100%;max-width:400px;">
+  <p class="section-label">12 — R4NK Results · 16:9</p>
+  <div class="card tw">
+    <div class="glow"></div>
+    <div class="tw-inner">
+      <div class="tw-top">
+        <div style="display:flex;flex-direction:column;gap:1px;">
+          <div style="font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:0.08em;text-transform:uppercase;">The world ranked</div>
+          <div class="tw-title">Spanish <em>Centre-Backs</em></div>
+        </div>
+        <div class="logo" style="font-size:12px;">Vote4<em>GOAT</em></div>
+      </div>
+      <div class="tw-body" style="display:flex;flex-direction:column;gap:5px;flex:1;justify-content:center;">
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.2);border-radius:6px;padding:5px 8px;">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:#f5a623;width:16px;text-align:center;">1</span>
+          <span style="font-weight:700;font-size:11px;text-transform:uppercase;flex:1;color:#fff;">Sergio Ramos</span>
+          <span style="font-size:10px;color:#f5a623;font-weight:700;">42%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:5px 8px;">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:rgba(255,255,255,0.5);width:16px;text-align:center;">2</span>
+          <span style="font-weight:700;font-size:11px;text-transform:uppercase;flex:1;color:rgba(255,255,255,0.8);">Carles Puyol</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;">31%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:5px 8px;">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:rgba(180,140,70,0.7);width:16px;text-align:center;">3</span>
+          <span style="font-weight:700;font-size:11px;text-transform:uppercase;flex:1;color:rgba(255,255,255,0.7);">Gerard Pique</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.3);font-weight:700;">17%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:5px 8px;">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:rgba(255,255,255,0.2);width:16px;text-align:center;">4</span>
+          <span style="font-weight:700;font-size:11px;text-transform:uppercase;flex:1;color:rgba(255,255,255,0.5);">Fernando Hierro</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.2);font-weight:700;">10%</span>
+        </div>
+      </div>
+      <div class="tw-footer">
+        <span style="font-size:9px;color:rgba(255,255,255,0.2);">8,241 votes</span>
+        <span class="url" style="font-size:9px;">vote4goat.com</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vote4GOAT — Crown x Goat</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0d0f18; min-height: 100vh; padding: 48px 24px; font-family: 'Inter', -apple-system, sans-serif; color: #fff; }
+.page-title { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #4b5563; margin-bottom: 8px; text-align: center; }
+.page-sub { font-size: 12px; color: #374151; text-align: center; margin-bottom: 48px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1000px; margin: 0 auto 48px; }
+.card { background: #111827; border: 1px solid #1f2937; border-radius: 20px; padding: 32px 24px 24px; display: flex; flex-direction: column; gap: 20px; }
+.direction-num { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: #4b5563; }
+.concept-name { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #f5a623; }
+.concept-desc { font-size: 12px; color: #4b5563; line-height: 1.5; }
+.swatch-dark { background: #0d0f18; border: 1px solid #1f2937; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 28px 20px; min-height: 110px; }
+.swatch-light { background: #f3f4f6; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 28px 20px; min-height: 110px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.variant-label { font-size: 9px; color: #374151; text-align: center; margin-top: 4px; letter-spacing: 0.05em; }
+
+/* Wordmark */
+.wm { font-family: 'Bebas Neue', sans-serif; letter-spacing: 3px; line-height: 1; white-space: nowrap; }
+.wm .vote { color: rgba(255,255,255,0.4); font-size: 0.75em; }
+.wm .four { color: #f5a623; }
+.wm .goat { color: #fff; }
+.wm-light .vote { color: rgba(17,24,39,0.4); font-size: 0.75em; }
+.wm-light .four { color: #f5a623; }
+.wm-light .goat { color: #111827; }
+
+.logo-row { display: flex; align-items: center; gap: 12px; }
+.logo-stack { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.wm-sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 5px; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+.wm-main { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 4px; color: #fff; line-height: 1; }
+.wm-main span { color: #f5a623; }
+
+/* Icon sizes */
+.icon-row { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+.icon-dark { background: #0d0f18; border: 1px solid #1f2937; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 10px; }
+.icon-light { background: #f3f4f6; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 10px; }
+.icon-brand { background: #f5a623; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 10px; }
+
+.divider { height: 1px; background: #1f2937; margin: 40px 0; max-width: 1000px; margin-left: auto; margin-right: auto; }
+</style>
+</head>
+<body>
+
+<p class="page-title">Vote4GOAT — Crown × Goat Fusion</p>
+<p class="page-sub">Los cuernos de la cabra se convierten en los picos de la corona</p>
+
+<div class="grid">
+
+  <!-- CONCEPT A: Crown where outer peaks are curved goat horns -->
+  <div class="card">
+    <span class="direction-num">Concept A — Horns as Crown Peaks</span>
+    <div class="two-col">
+      <div>
+        <div class="swatch-dark">
+          <svg width="64" height="56" viewBox="0 0 80 70" fill="none">
+            <!-- Crown base -->
+            <rect x="8" y="46" width="64" height="10" rx="2" fill="none" stroke="white" stroke-width="2.5"/>
+            <!-- Left horn curving up (outer left peak) -->
+            <path d="M16 46 Q8 20 18 8 Q22 16 20 28 L16 46" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Right horn curving up (outer right peak) -->
+            <path d="M64 46 Q72 20 62 8 Q58 16 60 28 L64 46" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Center peak (crown middle) -->
+            <path d="M32 46 L40 16 L48 46" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Center jewel (beard/goat) -->
+            <circle cx="40" cy="28" r="4" fill="#f5a623"/>
+            <!-- Small beard hint -->
+            <path d="M36 56 Q40 64 44 56" stroke="#f5a623" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <p class="variant-label">Dark</p>
+      </div>
+      <div>
+        <div class="swatch-light">
+          <svg width="64" height="56" viewBox="0 0 80 70" fill="none">
+            <rect x="8" y="46" width="64" height="10" rx="2" fill="none" stroke="#111827" stroke-width="2.5"/>
+            <path d="M16 46 Q8 20 18 8 Q22 16 20 28 L16 46" stroke="#111827" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M64 46 Q72 20 62 8 Q58 16 60 28 L64 46" stroke="#111827" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M32 46 L40 16 L48 46" stroke="#111827" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="40" cy="28" r="4" fill="#f5a623"/>
+            <path d="M36 56 Q40 64 44 56" stroke="#f5a623" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <p class="variant-label">Light</p>
+      </div>
+    </div>
+    <span class="concept-name">Horns as Crown Peaks</span>
+    <p class="concept-desc">Los cuernos curvos de la cabra son los picos exteriores de la corona. El centro tiene la joya naranja y una pequeña barba. Doble lectura orgánica.</p>
+  </div>
+
+  <!-- CONCEPT B: Goat silhouette wearing crown -->
+  <div class="card">
+    <span class="direction-num">Concept B — Goat Wearing Crown</span>
+    <div class="two-col">
+      <div>
+        <div class="swatch-dark">
+          <svg width="56" height="64" viewBox="0 0 70 80" fill="none">
+            <!-- Mini crown on top -->
+            <path d="M20 30 L20 18 L28 26 L35 10 L42 26 L50 18 L50 30 Z" stroke="white" stroke-width="2" fill="none" stroke-linejoin="round"/>
+            <line x1="20" y1="30" x2="50" y2="30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <!-- Crown jewel -->
+            <circle cx="35" cy="22" r="2.5" fill="#f5a623"/>
+            <!-- Goat head below -->
+            <ellipse cx="35" cy="52" rx="16" ry="14" stroke="white" stroke-width="2.5" fill="none"/>
+            <!-- Ears -->
+            <path d="M19 44 Q14 38 18 34 Q20 40 21 42" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M51 44 Q56 38 52 34 Q50 40 49 42" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <!-- Eyes -->
+            <circle cx="29" cy="50" r="1.5" fill="white"/>
+            <circle cx="41" cy="50" r="1.5" fill="white"/>
+            <!-- Beard -->
+            <path d="M29 66 Q35 74 41 66" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <p class="variant-label">Dark</p>
+      </div>
+      <div>
+        <div class="swatch-light">
+          <svg width="56" height="64" viewBox="0 0 70 80" fill="none">
+            <path d="M20 30 L20 18 L28 26 L35 10 L42 26 L50 18 L50 30 Z" stroke="#111827" stroke-width="2" fill="none" stroke-linejoin="round"/>
+            <line x1="20" y1="30" x2="50" y2="30" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="35" cy="22" r="2.5" fill="#f5a623"/>
+            <ellipse cx="35" cy="52" rx="16" ry="14" stroke="#111827" stroke-width="2.5" fill="none"/>
+            <path d="M19 44 Q14 38 18 34 Q20 40 21 42" stroke="#111827" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M51 44 Q56 38 52 34 Q50 40 49 42" stroke="#111827" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <circle cx="29" cy="50" r="1.5" fill="#111827"/>
+            <circle cx="41" cy="50" r="1.5" fill="#111827"/>
+            <path d="M29 66 Q35 74 41 66" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <p class="variant-label">Light</p>
+      </div>
+    </div>
+    <span class="concept-name">Goat Wearing Crown</span>
+    <p class="concept-desc">Cabeza de cabra con corona encima. Más ilustrativo. El GOAT coronado. La barba naranja remata el concepto.</p>
+  </div>
+
+  <!-- CONCEPT C: Abstract — crown shape IS the goat face -->
+  <div class="card">
+    <span class="direction-num">Concept C — Crown IS the Goat</span>
+    <div class="two-col">
+      <div>
+        <div class="swatch-dark">
+          <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+            <!-- The crown base doubles as the jaw of the goat -->
+            <!-- Outer shape: crown with curved horn-peaks -->
+            <path d="M12 52 Q10 28 22 14 Q26 24 24 36 L28 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M68 52 Q70 28 58 14 Q54 24 56 36 L52 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Center peak with subtle curve -->
+            <path d="M32 52 Q40 22 48 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Base bar = jaw line -->
+            <path d="M12 52 Q40 64 68 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Beard in orange hanging from center -->
+            <path d="M34 62 Q40 72 46 62" stroke="#f5a623" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <!-- Eyes as crown jewels -->
+            <circle cx="26" cy="44" r="3" fill="#f5a623"/>
+            <circle cx="54" cy="44" r="3" fill="#f5a623"/>
+          </svg>
+        </div>
+        <p class="variant-label">Dark</p>
+      </div>
+      <div>
+        <div class="swatch-light">
+          <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+            <path d="M12 52 Q10 28 22 14 Q26 24 24 36 L28 52" stroke="#111827" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M68 52 Q70 28 58 14 Q54 24 56 36 L52 52" stroke="#111827" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M32 52 Q40 22 48 52" stroke="#111827" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M12 52 Q40 64 68 52" stroke="#111827" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M34 62 Q40 72 46 62" stroke="#f5a623" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <circle cx="26" cy="44" r="3" fill="#f5a623"/>
+            <circle cx="54" cy="44" r="3" fill="#f5a623"/>
+          </svg>
+        </div>
+        <p class="variant-label">Light</p>
+      </div>
+    </div>
+    <span class="concept-name">Crown IS the Goat</span>
+    <p class="concept-desc">La corona y la cara de la cabra son el mismo símbolo. Los cuernos son picos, la base curva es la mandíbula, los ojos son las joyas, la barba naranja cuelga abajo. Máxima fusión.</p>
+  </div>
+
+</div>
+
+<!-- FULL SYSTEM FOR CONCEPT C (the most interesting) -->
+<div class="divider"></div>
+
+<p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#f5a623;text-align:center;margin-bottom:32px;">Sistema completo — Concept C refinado</p>
+
+<div style="max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+
+  <!-- Full horizontal dark -->
+  <div>
+    <p class="variant-label" style="margin-bottom:8px;">Full · Horizontal · Dark</p>
+    <div class="swatch-dark">
+      <div class="logo-row">
+        <svg width="44" height="44" viewBox="0 0 80 80" fill="none">
+          <path d="M12 52 Q10 28 22 14 Q26 24 24 36 L28 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M68 52 Q70 28 58 14 Q54 24 56 36 L52 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M32 52 Q40 22 48 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M12 52 Q40 64 68 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M34 62 Q40 72 46 62" stroke="#f5a623" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="26" cy="44" r="3" fill="#f5a623"/>
+          <circle cx="54" cy="44" r="3" fill="#f5a623"/>
+        </svg>
+        <div class="wm" style="font-size:32px;">
+          <span class="vote">VOTE</span><span class="four">4</span><span class="goat">GOAT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full horizontal light -->
+  <div>
+    <p class="variant-label" style="margin-bottom:8px;">Full · Horizontal · Light</p>
+    <div class="swatch-light">
+      <div class="logo-row">
+        <svg width="44" height="44" viewBox="0 0 80 80" fill="none">
+          <path d="M12 52 Q10 28 22 14 Q26 24 24 36 L28 52" stroke="#111827" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M68 52 Q70 28 58 14 Q54 24 56 36 L52 52" stroke="#111827" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M32 52 Q40 22 48 52" stroke="#111827" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M12 52 Q40 64 68 52" stroke="#111827" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M34 62 Q40 72 46 62" stroke="#f5a623" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="26" cy="44" r="3" fill="#f5a623"/>
+          <circle cx="54" cy="44" r="3" fill="#f5a623"/>
+        </svg>
+        <div class="wm wm-light" style="font-size:32px;">
+          <span class="vote">VOTE</span><span class="four">4</span><span class="goat">GOAT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compact stacked -->
+  <div>
+    <p class="variant-label" style="margin-bottom:8px;">Compact · Stacked · Dark</p>
+    <div class="swatch-dark">
+      <div class="logo-stack">
+        <svg width="48" height="48" viewBox="0 0 80 80" fill="none">
+          <path d="M12 52 Q10 28 22 14 Q26 24 24 36 L28 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M68 52 Q70 28 58 14 Q54 24 56 36 L52 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M32 52 Q40 22 48 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M12 52 Q40 64 68 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M34 62 Q40 72 46 62" stroke="#f5a623" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="26" cy="44" r="3" fill="#f5a623"/>
+          <circle cx="54" cy="44" r="3" fill="#f5a623"/>
+        </svg>
+        <div style="text-align:center;">
+          <div class="wm-sub">VOTE<span style="color:#f5a623;">4</span></div>
+          <div class="wm-main">G<span>O</span>AT</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Icons -->
+  <div>
+    <p class="variant-label" style="margin-bottom:8px;">Icon · All variants</p>
+    <div class="swatch-dark" style="flex-wrap:wrap;gap:10px;min-height:auto;padding:16px;">
+      <div class="icon-row">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div class="icon-dark">
+            <svg width="28" height="28" viewBox="0 0 80 80" fill="none">
+              <path d="M12 52 Q10 28 22 14 Q26 24 24 36 L28 52" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M68 52 Q70 28 58 14 Q54 24 56 36 L52 52" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M32 52 Q40 22 48 52" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M12 52 Q40 64 68 52" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M34 62 Q40 70 46 62" stroke="#f5a623" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <circle cx="26" cy="44" r="4" fill="#f5a623"/>
+              <circle cx="54" cy="44" r="4" fill="#f5a623"/>
+            </svg>
+          </div>
+          <span class="variant-label">Dark</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div class="icon-light">
+            <svg width="28" height="28" viewBox="0 0 80 80" fill="none">
+              <path d="M12 52 Q10 28 22 14 Q26 24 24 36 L28 52" stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M68 52 Q70 28 58 14 Q54 24 56 36 L52 52" stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M32 52 Q40 22 48 52" stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M12 52 Q40 64 68 52" stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M34 62 Q40 70 46 62" stroke="#f5a623" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <circle cx="26" cy="44" r="4" fill="#f5a623"/>
+              <circle cx="54" cy="44" r="4" fill="#f5a623"/>
+            </svg>
+          </div>
+          <span class="variant-label">Light</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div class="icon-brand">
+            <svg width="28" height="28" viewBox="0 0 80 80" fill="none">
+              <path d="M12 52 Q10 28 22 14 Q26 24 24 36 L28 52" stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M68 52 Q70 28 58 14 Q54 24 56 36 L52 52" stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M32 52 Q40 22 48 52" stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M12 52 Q40 64 68 52" stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M34 62 Q40 70 46 62" stroke="rgba(17,24,39,0.4)" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <circle cx="26" cy="44" r="4" fill="rgba(17,24,39,0.3)"/>
+              <circle cx="54" cy="44" r="4" fill="rgba(17,24,39,0.3)"/>
+            </svg>
+          </div>
+          <span class="variant-label">Brand</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center;font-size:11px;color:#374151;margin-top:40px;max-width:600px;margin-left:auto;margin-right:auto;line-height:1.6;">
+  Concept C es el más original — corona y cabra en un solo símbolo. Los cuernos son los picos exteriores, los ojos son las joyas naranja, la barba cuelga de la base curva.
+</p>
+
+</body>
+</html>

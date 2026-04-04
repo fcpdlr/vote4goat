@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vote4GOAT — Crown Final</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0d0f18; min-height: 100vh; padding: 48px 24px; font-family: 'Inter', -apple-system, sans-serif; color: #fff; }
+.page-title { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #4b5563; margin-bottom: 6px; text-align: center; }
+.page-sub { font-size: 12px; color: #374151; text-align: center; margin-bottom: 48px; }
+.section-title { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #f5a623; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid #1f2937; max-width: 1000px; margin-left: auto; margin-right: auto; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; max-width: 1000px; margin: 0 auto 48px; }
+.swatch-dark { background: #0d0f18; border: 1px solid #1f2937; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 28px 20px; min-height: 100px; }
+.swatch-light { background: #f3f4f6; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 28px 20px; min-height: 100px; }
+.swatch-brand { background: #f5a623; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 28px 20px; min-height: 100px; }
+.variant-label { font-size: 9px; color: #374151; text-align: center; margin-top: 6px; letter-spacing: 0.05em; }
+.variant-block { display: flex; flex-direction: column; }
+.logo-row { display: flex; align-items: center; gap: 12px; }
+.logo-stack { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.wm { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 3px; line-height: 1; white-space: nowrap; }
+.wm .v { color: rgba(255,255,255,0.4); }
+.wm .f { color: #f5a623; }
+.wm .g { color: #fff; }
+.wm-l .v { color: rgba(17,24,39,0.4); }
+.wm-l .f { color: #f5a623; }
+.wm-l .g { color: #111827; }
+.wm-b .v { color: rgba(17,24,39,0.5); }
+.wm-b .f { color: rgba(17,24,39,0.4); }
+.wm-b .g { color: #111827; }
+.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 5px; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+.main { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 4px; color: #fff; line-height: 1; }
+.main span { color: #f5a623; }
+.icon-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.icon-box { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.icon-d { background: #0d0f18; border: 1px solid #1f2937; border-radius: 8px; padding: 8px; display: flex; }
+.icon-l { background: #f3f4f6; border-radius: 8px; padding: 8px; display: flex; }
+.icon-b { background: #f5a623; border-radius: 8px; padding: 8px; display: flex; }
+
+/* The crown SVG — original symmetric but left peak slightly taller
+   Original: center at y=16, sides at y=28
+   New: left side at y=24 (slightly taller), right side at y=28 (original), center at y=16 (original)
+*/
+</style>
+</head>
+<body>
+
+<p class="page-title">Vote4GOAT — Crown Final</p>
+<p class="page-sub">Original con pico izquierdo ligeramente más alto</p>
+
+<p class="section-title">Sistema completo</p>
+
+<div class="grid">
+
+  <!-- Full Dark -->
+  <div class="variant-block">
+    <div class="swatch-dark">
+      <div class="logo-row">
+        <svg width="44" height="38" viewBox="0 0 64 56" fill="none">
+          <path d="M6 46 L6 24 L18 38 L32 10 L46 40 L58 28 L58 46 Z" stroke="white" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+          <line x1="6" y1="46" x2="58" y2="46" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="32" cy="28" r="3.5" fill="#f5a623"/>
+          <circle cx="14" cy="42" r="2" fill="#f5a623" opacity="0.5"/>
+          <circle cx="50" cy="42" r="2" fill="#f5a623" opacity="0.5"/>
+        </svg>
+        <div class="wm"><span class="v">VOTE</span><span class="f">4</span><span class="g">GOAT</span></div>
+      </div>
+    </div>
+    <p class="variant-label">Full · Dark</p>
+  </div>
+
+  <!-- Full Light -->
+  <div class="variant-block">
+    <div class="swatch-light">
+      <div class="logo-row">
+        <svg width="44" height="38" viewBox="0 0 64 56" fill="none">
+          <path d="M6 46 L6 24 L18 38 L32 10 L46 40 L58 28 L58 46 Z" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+          <line x1="6" y1="46" x2="58" y2="46" stroke="#111827" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="32" cy="28" r="3.5" fill="#f5a623"/>
+          <circle cx="14" cy="42" r="2" fill="#f5a623" opacity="0.5"/>
+          <circle cx="50" cy="42" r="2" fill="#f5a623" opacity="0.5"/>
+        </svg>
+        <div class="wm wm-l"><span class="v">VOTE</span><span class="f">4</span><span class="g">GOAT</span></div>
+      </div>
+    </div>
+    <p class="variant-label">Full · Light</p>
+  </div>
+
+  <!-- Full Brand -->
+  <div class="variant-block">
+    <div class="swatch-brand">
+      <div class="logo-row">
+        <svg width="44" height="38" viewBox="0 0 64 56" fill="none">
+          <path d="M6 46 L6 24 L18 38 L32 10 L46 40 L58 28 L58 46 Z" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+          <line x1="6" y1="46" x2="58" y2="46" stroke="#111827" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="32" cy="28" r="3.5" fill="rgba(17,24,39,0.35)"/>
+          <circle cx="14" cy="42" r="2" fill="rgba(17,24,39,0.3)"/>
+          <circle cx="50" cy="42" r="2" fill="rgba(17,24,39,0.3)"/>
+        </svg>
+        <div class="wm wm-b"><span class="v">VOTE</span><span class="f">4</span><span class="g">GOAT</span></div>
+      </div>
+    </div>
+    <p class="variant-label">Full · Brand</p>
+  </div>
+
+  <!-- Compact stacked -->
+  <div class="variant-block">
+    <div class="swatch-dark">
+      <div class="logo-stack">
+        <svg width="48" height="42" viewBox="0 0 64 56" fill="none">
+          <path d="M6 46 L6 24 L18 38 L32 10 L46 40 L58 28 L58 46 Z" stroke="white" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+          <line x1="6" y1="46" x2="58" y2="46" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="32" cy="28" r="3.5" fill="#f5a623"/>
+          <circle cx="14" cy="42" r="2" fill="#f5a623" opacity="0.5"/>
+          <circle cx="50" cy="42" r="2" fill="#f5a623" opacity="0.5"/>
+        </svg>
+        <div style="text-align:center;">
+          <div class="sub">VOTE<span style="color:#f5a623;">4</span></div>
+          <div class="main">G<span>O</span>AT</div>
+        </div>
+      </div>
+    </div>
+    <p class="variant-label">Compact · Dark</p>
+  </div>
+
+  <!-- Icons -->
+  <div class="variant-block">
+    <div class="swatch-dark" style="min-height:auto;padding:20px;">
+      <div class="icon-row">
+        <div class="icon-box">
+          <div class="icon-d">
+            <svg width="28" height="26" viewBox="0 0 64 56" fill="none">
+              <path d="M6 46 L6 24 L18 38 L32 10 L46 40 L58 28 L58 46 Z" stroke="white" stroke-width="3" stroke-linejoin="round" fill="none"/>
+              <line x1="6" y1="46" x2="58" y2="46" stroke="white" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="32" cy="28" r="4" fill="#f5a623"/>
+            </svg>
+          </div>
+          <span class="variant-label">Dark</span>
+        </div>
+        <div class="icon-box">
+          <div class="icon-l">
+            <svg width="28" height="26" viewBox="0 0 64 56" fill="none">
+              <path d="M6 46 L6 24 L18 38 L32 10 L46 40 L58 28 L58 46 Z" stroke="#111827" stroke-width="3" stroke-linejoin="round" fill="none"/>
+              <line x1="6" y1="46" x2="58" y2="46" stroke="#111827" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="32" cy="28" r="4" fill="#f5a623"/>
+            </svg>
+          </div>
+          <span class="variant-label">Light</span>
+        </div>
+        <div class="icon-box">
+          <div class="icon-b">
+            <svg width="28" height="26" viewBox="0 0 64 56" fill="none">
+              <path d="M6 46 L6 24 L18 38 L32 10 L46 40 L58 28 L58 46 Z" stroke="#111827" stroke-width="3" stroke-linejoin="round" fill="none"/>
+              <line x1="6" y1="46" x2="58" y2="46" stroke="#111827" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="32" cy="28" r="4" fill="rgba(17,24,39,0.35)"/>
+            </svg>
+          </div>
+          <span class="variant-label">Brand</span>
+        </div>
+      </div>
+    </div>
+    <p class="variant-label">Icons</p>
+  </div>
+
+</div>
+
+<!-- Large isolated view -->
+<p class="section-title">Vista ampliada</p>
+<div style="max-width:1000px;margin:0 auto;display:flex;gap:24px;justify-content:center;flex-wrap:wrap;">
+
+  <div style="background:#0d0f18;border:1px solid #1f2937;border-radius:16px;padding:48px;display:flex;align-items:center;justify-content:center;">
+    <svg width="120" height="110" viewBox="0 0 64 56" fill="none">
+      <path d="M6 46 L6 24 L18 38 L32 10 L46 40 L58 28 L58 46 Z" stroke="white" stroke-width="2" stroke-linejoin="round" fill="none"/>
+      <line x1="6" y1="46" x2="58" y2="46" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="32" cy="28" r="3" fill="#f5a623"/>
+      <circle cx="14" cy="42" r="1.8" fill="#f5a623" opacity="0.5"/>
+      <circle cx="50" cy="42" r="1.8" fill="#f5a623" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <div style="background:#f3f4f6;border-radius:16px;padding:48px;display:flex;align-items:center;justify-content:center;">
+    <svg width="120" height="110" viewBox="0 0 64 56" fill="none">
+      <path d="M6 46 L6 24 L18 38 L32 10 L46 40 L58 28 L58 46 Z" stroke="#111827" stroke-width="2" stroke-linejoin="round" fill="none"/>
+      <line x1="6" y1="46" x2="58" y2="46" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="32" cy="28" r="3" fill="#f5a623"/>
+      <circle cx="14" cy="42" r="1.8" fill="#f5a623" opacity="0.5"/>
+      <circle cx="50" cy="42" r="1.8" fill="#f5a623" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <div style="background:#f5a623;border-radius:16px;padding:48px;display:flex;align-items:center;justify-content:center;">
+    <svg width="120" height="110" viewBox="0 0 64 56" fill="none">
+      <path d="M6 46 L6 24 L18 38 L32 10 L46 40 L58 28 L58 46 Z" stroke="#111827" stroke-width="2" stroke-linejoin="round" fill="none"/>
+      <line x1="6" y1="46" x2="58" y2="46" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="32" cy="28" r="3" fill="rgba(17,24,39,0.4)"/>
+      <circle cx="14" cy="42" r="1.8" fill="rgba(17,24,39,0.3)"/>
+      <circle cx="50" cy="42" r="1.8" fill="rgba(17,24,39,0.3)"/>
+    </svg>
+  </div>
+
+</div>
+
+<p style="text-align:center;font-size:11px;color:#374151;margin-top:32px;max-width:600px;margin-left:auto;margin-right:auto;line-height:1.6;">
+  El pico izquierdo baja de y=28 a y=24 — 4 unidades más alto. Sutil pero da personalidad sin romper la simetría de la corona.
+</p>
+
+</body>
+</html>

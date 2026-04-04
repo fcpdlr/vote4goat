@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1200px;
+  height: 630px;
+  background: #0d0f18;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Background glow */
+.glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,166,35,0.08) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Logo SVG — goat V shape */
+.logo-mark {
+  width: 120px;
+  height: 120px;
+}
+
+.wordmark {
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.wordmark span { color: #f5a623; }
+
+.tagline {
+  font-size: 20px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.url {
+  font-size: 16px;
+  color: rgba(245,166,35,0.6);
+  letter-spacing: 0.1em;
+  margin-top: 8px;
+}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="content">
+
+  <!-- Goat V logo reproduced in SVG -->
+  <svg class="logo-mark" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Left horn -->
+    <line x1="100" y1="155" x2="30" y2="30" stroke="#ffffff" stroke-width="18" stroke-linecap="round"/>
+    <!-- Right horn -->
+    <line x1="100" y1="155" x2="170" y2="30" stroke="#ffffff" stroke-width="18" stroke-linecap="round"/>
+    <!-- Left arrow tip -->
+    <polygon points="30,30 18,55 43,48" fill="#ffffff"/>
+    <!-- Right arrow tip -->
+    <polygon points="170,30 157,48 182,55" fill="#ffffff"/>
+    <!-- Horizontal bar -->
+    <line x1="55" y1="112" x2="145" y2="112" stroke="#ffffff" stroke-width="18" stroke-linecap="round"/>
+    <!-- Beard (orange triangle) -->
+    <polygon points="75,112 125,112 100,155" fill="#f5a623"/>
+  </svg>
+
+  <div class="wordmark">Vote<span>4</span>GOAT</div>
+  <div class="tagline">The world decides who is the GOAT</div>
+  <div class="url">vote4goat.com</div>
+
+</div>
+</body>
+</html>
