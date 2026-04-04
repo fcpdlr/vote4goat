@@ -50,7 +50,7 @@ const { data: { user } } = await supabase.auth.getUser()
 if (!user) { window.location.href = "/login"; return }
 setUser(user)
 
-```
+
   const { data: prof } = await supabase
     .from("profiles")
     .select("*")
@@ -92,7 +92,7 @@ setUser(user)
   setLoading(false)
 }
 init()
-```
+
 
 }, [])
 
@@ -105,7 +105,7 @@ setUsernameError("3-20 characters. Letters, numbers and underscores only.")
 return
 }
 
-```
+
 setSaving(true)
 
 // Check username uniqueness (only if changed)
@@ -141,7 +141,7 @@ if (!error) {
   setSaved(true)
   setTimeout(() => setSaved(false), 2000)
 }
-```
+
 
 }
 
@@ -171,7 +171,7 @@ return (
 <link rel="icon" href="/favicon.ico" />
 </Head>
 
-```
+
   <main className="min-h-screen bg-background text-white font-sans pb-16">
 
     {/* HEADER */}
@@ -351,7 +351,7 @@ return (
 
   </main>
 </>
-```
+
 
 )
 }
