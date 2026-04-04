@@ -234,7 +234,7 @@ return (
         { id: "all", label: "All sports" },
         { id: "football", label: "\u26BD Football" }, 
         { id: "basketball", label: "\u{1F3C0} Basketball" }, 
-        { label: "\u26BD Football", active: true },
+        { id: "tennis", label: "🎾 Tennis" },
       ].map(sport => (
         <button
           key={sport.id}
