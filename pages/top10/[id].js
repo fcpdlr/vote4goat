@@ -207,11 +207,11 @@ const handleShare = async () => {
 setIsGeneratingShare(true)
 try {
 // Load fonts into canvas context
-const fontBold = new FontFace("ShareFont", "url(https://fonts.gstatic.com/s/barlow/v12/7cHqv4kjgoGqM7E3b8s8yn4.woff2)", { weight: "700" })
-const fontBlack = new FontFace("ShareFont", "url(https://fonts.gstatic.com/s/barlow/v12/7cHqv4kjgoGqM7E3_8s8yn4.woff2)", { weight: "900" })
-const fontReg = new FontFace("ShareFont", "url(https://fonts.gstatic.com/s/barlow/v12/7cHqv4kjgoGqM7E_b8s8yn4.woff2)", { weight: "400" })
-await Promise.all([fontBold.load(), fontBlack.load(), fontReg.load()].map(p => p.catch(() => null)))
-;[fontBold, fontBlack, fontReg].forEach(f => { try { document.fonts.add(f) } catch(e) {} })
+const fontBold = new FontFace("ShareFont", "url(/fonts/BarlowCondensed-Bold.ttf)", { weight: "700" })
+const fontBlack = new FontFace("ShareFont", "url(/fonts/BarlowCondensed-Black.ttf)", { weight: "900" })
+await Promise.all([fontBold.load(), fontBlack.load()])
+document.fonts.add(fontBold)
+document.fonts.add(fontBlack)
 await document.fonts.ready
 
 
