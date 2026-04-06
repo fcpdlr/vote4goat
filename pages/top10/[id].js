@@ -206,13 +206,21 @@ setMessage("submitted")
 const handleShare = async () => {
 setIsGeneratingShare(true)
 try {
-const W = 640
-const H = 800
-const canvas = document.createElement("canvas")
-canvas.width = W
-canvas.height = H
-const ctx = canvas.getContext("2d")
+// Load fonts into canvas context
+const fontBold = new FontFace("ShareFont", "url(https://fonts.gstatic.com/s/barlow/v12/7cHqv4kjgoGqM7E3b8s8yn4.woff2)", { weight: "700" })
+const fontBlack = new FontFace("ShareFont", "url(https://fonts.gstatic.com/s/barlow/v12/7cHqv4kjgoGqM7E3_8s8yn4.woff2)", { weight: "900" })
+const fontReg = new FontFace("ShareFont", "url(https://fonts.gstatic.com/s/barlow/v12/7cHqv4kjgoGqM7E_b8s8yn4.woff2)", { weight: "400" })
+await Promise.all([fontBold.load(), fontBlack.load(), fontReg.load()].map(p => p.catch(() => null)))
+;[fontBold, fontBlack, fontReg].forEach(f => { try { document.fonts.add(f) } catch(e) {} })
+await document.fonts.ready
 
+
+  const W = 640
+  const H = 800
+  const canvas = document.createElement("canvas")
+  canvas.width = W
+  canvas.height = H
+  const ctx = canvas.getContext("2d")
 
   // Background
   ctx.fillStyle = "#0d0f18"
@@ -228,7 +236,7 @@ const ctx = canvas.getContext("2d")
   const pad = 48
 
   // Logo: Vote4GOAT
-  ctx.font = "bold 28px sans-serif"
+  ctx.font = "900 28px ShareFont, sans-serif"
   ctx.fillStyle = "#ffffff"
   ctx.fillText("Vote4", pad, 72)
   const v4w = ctx.measureText("Vote4").width
@@ -255,19 +263,19 @@ const ctx = canvas.getContext("2d")
   ctx.strokeStyle = "rgba(245,166,35,0.5)"
   ctx.lineWidth = 1.5
   ctx.stroke()
-  ctx.font = "bold 11px sans-serif"
+  ctx.font = "700 11px ShareFont, sans-serif"
   ctx.fillStyle = "rgba(245,166,35,0.9)"
   ctx.textAlign = "center"
   ctx.fillText("T0PS", badgeX + badgeW / 2, badgeY + 19)
   ctx.textAlign = "left"
 
   // Eyebrow
-  ctx.font = "12px sans-serif"
+  ctx.font = "400 12px ShareFont, sans-serif"
   ctx.fillStyle = "rgba(255,255,255,0.3)"
   ctx.fillText("MY ALL-TIME TOP 10", pad, 120)
 
   // Category title ? wrap if needed
-  ctx.font = "bold 36px sans-serif"
+  ctx.font = "900 36px ShareFont, sans-serif"
   ctx.fillStyle = "#ffffff"
   const title = category ? category.title : "Top 10"
   const maxW = W - pad * 2
@@ -321,14 +329,14 @@ const ctx = canvas.getContext("2d")
 
     // Number
     const numColors = ["#f5a623", "rgba(255,255,255,0.5)", "rgba(180,140,70,0.8)"]
-    ctx.font = "bold " + (i < 3 ? "20px" : "15px") + " sans-serif"
+    ctx.font = "900 " + (i < 3 ? "20px" : "15px") + " ShareFont, sans-serif"
     ctx.fillStyle = i < 3 ? numColors[i] : "rgba(255,255,255,0.2)"
     ctx.textAlign = "right"
     ctx.fillText(String(i + 1), pad + 20, y + rowH * 0.65)
     ctx.textAlign = "left"
 
     // Name
-    ctx.font = (i < 3 ? "bold 17px" : "15px") + " sans-serif"
+    ctx.font = (i < 3 ? "700 17px" : "400 15px") + " ShareFont, sans-serif"
     ctx.fillStyle = i === 0 ? "#ffffff" : "rgba(255,255,255," + Math.max(0.3, 0.85 - i * 0.06) + ")"
     // truncate if too long
     let nameText = name
@@ -340,7 +348,7 @@ const ctx = canvas.getContext("2d")
     ctx.fillText(nameText, pad + 32, y + rowH * 0.65)
 
     // Medal emoji text for top 3
-    if (i === 0) { ctx.font = "16px sans-serif"; ctx.fillText("#1", W - pad - 28, y + rowH * 0.65) }
+    if (i === 0) { ctx.font = "700 16px ShareFont, sans-serif"; ctx.fillText("#1", W - pad - 28, y + rowH * 0.65) }
   })
 
   // Footer
@@ -351,7 +359,7 @@ const ctx = canvas.getContext("2d")
   ctx.lineTo(W - pad, H - 44)
   ctx.stroke()
 
-  ctx.font = "12px sans-serif"
+  ctx.font = "400 12px ShareFont, sans-serif"
   ctx.fillStyle = "rgba(255,255,255,0.2)"
   ctx.fillText("vote4goat.com", pad, H - 20)
   ctx.textAlign = "right"
