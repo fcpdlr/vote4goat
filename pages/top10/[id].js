@@ -270,6 +270,47 @@ return (
             </div>
           </div>
 
+ {/* Search */}
+          <div className="mb-4 px-1">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-white/35 uppercase tracking-wide">Add players</span>
+              <span className="text-xs text-white/30">
+                <span className="text-goat font-bold">{selectedCount}</span> / 10
+              </span>
+            </div>
+            {isLoadingCandidates ? (
+              <div className="h-10 bg-white/5 rounded-xl animate-pulse" />
+            ) : (
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/25 text-sm">&#x1F50D;</span>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder="Search player..."
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-white/25 focus:outline-none focus:border-goat/40 transition"
+                />
+                {search && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-[#0d0f18] border border-white/10 rounded-xl overflow-hidden z-20 max-h-52 overflow-y-auto shadow-xl">
+                    {filteredCandidates.length === 0 ? (
+                      <div className="px-4 py-3 text-xs text-white/35">No matches found.</div>
+                    ) : (
+                      filteredCandidates.slice(0, 20).map(c => (
+                        <button
+                          key={c.id}
+                          onClick={() => handleAddCandidate(c)}
+                          className="w-full text-left px-4 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white border-t border-white/5 first:border-0 transition"
+                        >
+                          {c.name}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Slots */}
           <div className="flex flex-col gap-2 mb-5 px-1">
             {slots.map((slot, index) => {
@@ -330,47 +371,6 @@ return (
                 </div>
               )
             })}
-          </div>
-
-          {/* Search */}
-          <div className="mb-4 px-1">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-white/35 uppercase tracking-wide">Add players</span>
-              <span className="text-xs text-white/30">
-                <span className="text-goat font-bold">{selectedCount}</span> / 10
-              </span>
-            </div>
-            {isLoadingCandidates ? (
-              <div className="h-10 bg-white/5 rounded-xl animate-pulse" />
-            ) : (
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/25 text-sm">&#x1F50D;</span>
-                <input
-                  type="text"
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  placeholder="Search player..."
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-white/25 focus:outline-none focus:border-goat/40 transition"
-                />
-                {search && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-[#0d0f18] border border-white/10 rounded-xl overflow-hidden z-20 max-h-52 overflow-y-auto shadow-xl">
-                    {filteredCandidates.length === 0 ? (
-                      <div className="px-4 py-3 text-xs text-white/35">No matches found.</div>
-                    ) : (
-                      filteredCandidates.slice(0, 20).map(c => (
-                        <button
-                          key={c.id}
-                          onClick={() => handleAddCandidate(c)}
-                          className="w-full text-left px-4 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white border-t border-white/5 first:border-0 transition"
-                        >
-                          {c.name}
-                        </button>
-                      ))
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Inspiration panel */}
