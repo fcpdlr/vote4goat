@@ -24,8 +24,10 @@ const [error, setError] = useState(null)
 const [user, setUser] = useState(null)
 const [showMenu, setShowMenu] = useState(false)
 const [showInspiration, setShowInspiration] = useState(false)
+const [isGeneratingShare, setIsGeneratingShare] = useState(false)
 
 const menuRef = useRef(null)
+const shareCardRef = useRef(null)
 const selectedCount = slots.filter(Boolean).length
 
 useEffect(() => {
@@ -199,7 +201,28 @@ setIsSubmitting(false)
 return
 }
 setIsSubmitting(false)
-setMessage("Your Top 10 has been submitted!")
+setMessage("submitted")
+}
+
+const handleShare = async () => {
+if (!shareCardRef.current) return
+setIsGeneratingShare(true)
+try {
+const html2canvas = (await import("html2canvas")).default
+const canvas = await html2canvas(shareCardRef.current, {
+backgroundColor: "#0d0f18",
+scale: 2,
+useCORS: true,
+logging: false,
+})
+const link = document.createElement("a")
+link.download = "vote4goat-top10.png"
+link.href = canvas.toDataURL("image/png")
+link.click()
+} catch (err) {
+console.error("Share error:", err)
+}
+setIsGeneratingShare(false)
 }
 
 const sportLabel = id => id === 1 ? "Football" : id === 2 ? "Basketball" : id === 3 ? "Tennis" : "Other"
@@ -248,6 +271,125 @@ return (
         </div>
       ) : !category ? (
         <p className="text-sm text-red-400 text-center mt-20">Category not found.</p>
+      ) : message === "submitted" ? (
+
+        /* SUCCESS + SHARE STATE */
+        <div className="flex flex-col items-center gap-5 pt-8 px-1">
+
+          <div className="text-center">
+            <div className="text-3xl mb-3">&#x2713;</div>
+            <h2 className="text-xl font-extrabold text-goat mb-1">Top 10 submitted!</h2>
+            <p className="text-xs text-white/35">Your ranking has been saved.</p>
+          </div>
+
+          {/* Share card -- rendered offscreen for capture, shown as preview */}
+          <div className="w-full">
+            <p className="text-xs text-white/30 uppercase tracking-wide mb-2 text-center">Your card</p>
+
+            {/* The actual card to capture */}
+            <div
+              ref={shareCardRef}
+              style={{
+                width: "320px",
+                height: "400px",
+                backgroundColor: "#0d0f18",
+                borderRadius: "12px",
+                padding: "20px",
+                margin: "0 auto",
+                display: "flex",
+                flexDirection: "column",
+                fontFamily: "sans-serif",
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              {/* Glow */}
+              <div style={{
+                position: "absolute", inset: 0,
+                background: "radial-gradient(ellipse at 50% 0%, rgba(245,166,35,0.12) 0%, transparent 55%)",
+                pointerEvents: "none",
+              }} />
+
+              {/* Top bar */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px", position: "relative", zIndex: 1 }}>
+                <div style={{ fontFamily: "sans-serif", fontWeight: 900, fontSize: "13px", letterSpacing: "2px", color: "#fff" }}>
+                  Vote4<span style={{ color: "#f5a623" }}>GOAT</span>
+                </div>
+                <div style={{ fontSize: "8px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(245,166,35,0.85)", background: "rgba(245,166,35,0.1)", border: "1px solid rgba(245,166,35,0.25)", padding: "2px 8px", borderRadius: "20px" }}>
+                  T0PS
+                </div>
+              </div>
+
+              {/* Category */}
+              <div style={{ position: "relative", zIndex: 1, marginBottom: "10px" }}>
+                <div style={{ fontSize: "9px", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "2px" }}>
+                  My all-time Top 10
+                </div>
+                <div style={{ fontSize: "16px", fontWeight: 900, color: "#fff", letterSpacing: "1px" }}>
+                  {category.title}
+                </div>
+              </div>
+
+              {/* List */}
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+                {slots.map((slot, i) => (
+                  <div key={i} style={{
+                    display: "flex", alignItems: "center", gap: "6px",
+                    padding: "3px 0",
+                    borderTop: "1px solid rgba(255,255,255,0.05)",
+                  }}>
+                    <span style={{
+                      fontWeight: 900, fontSize: "11px", width: "16px", textAlign: "right", flexShrink: 0,
+                      color: i === 0 ? "#f5a623" : i === 1 ? "rgba(255,255,255,0.45)" : i === 2 ? "rgba(180,140,70,0.75)" : "rgba(255,255,255,0.2)",
+                    }}>{i + 1}</span>
+                    <span style={{
+                      fontWeight: 700, fontSize: "11px", textTransform: "uppercase",
+                      color: i === 0 ? "#fff" : "rgba(255,255,255," + Math.max(0.25, 0.85 - i * 0.07) + ")",
+                      flex: 1,
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>{slot ? slot.name : ""}</span>
+                    {i < 3 && <span style={{ fontSize: "10px" }}>{i === 0 ? "\uD83E\uDD47" : i === 1 ? "\uD83E\uDD48" : "\uD83E\uDD49"}</span>}
+                  </div>
+                ))}
+              </div>
+
+              {/* Footer */}
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                paddingTop: "8px", borderTop: "1px solid rgba(255,255,255,0.07)",
+                position: "relative", zIndex: 1, marginTop: "6px",
+              }}>
+                <span style={{ fontSize: "8px", color: "rgba(255,255,255,0.2)" }}>vote4goat.com</span>
+                <span style={{ fontSize: "8px", color: "rgba(245,166,35,0.4)", letterSpacing: "1px" }}>vote4goat.com/top10</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="w-full flex flex-col gap-2 px-1">
+            <button
+              onClick={handleShare}
+              disabled={isGeneratingShare}
+              className="w-full py-3.5 rounded-2xl text-sm font-bold bg-goat/10 border border-goat/25 text-goat hover:bg-goat/15 transition active:scale-[0.99] flex items-center justify-center gap-2"
+            >
+              {isGeneratingShare ? "Generating..." : "Save image"}
+            </button>
+            <a
+              href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent("My Top 10 " + (category ? category.title : "") + ": 1. " + (slots[0]?.name || "") + ", 2. " + (slots[1]?.name || "") + ", 3. " + (slots[2]?.name || "") + "... Do you agree? vote4goat.com #Vote4GOAT")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3 rounded-2xl text-sm font-bold bg-black border border-white/10 text-white/70 hover:bg-white/5 transition flex items-center justify-center gap-2"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Share on X
+            </a>
+            <a href="/top10" className="text-center text-xs text-white/30 hover:text-white/60 transition py-2">
+              &#x2190; Build another Top 10
+            </a>
+          </div>
+
+        </div>
+
       ) : (
         <>
           {/* Hero */}
@@ -270,7 +412,7 @@ return (
             </div>
           </div>
 
- {/* Search */}
+          {/* Search */}
           <div className="mb-4 px-1">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-white/35 uppercase tracking-wide">Add players</span>
@@ -339,11 +481,7 @@ return (
                     {index + 1}
                   </span>
                   {slot ? (
-                    <div
-                      draggable
-                      onDragStart={e => handleDragStartSlot(e, index)}
-                      className="flex-1 flex items-center gap-2 cursor-move py-2"
-                    >
+                    <div draggable onDragStart={e => handleDragStartSlot(e, index)} className="flex-1 flex items-center gap-2 cursor-move py-2">
                       <span
                         className="flex-1 font-bold tracking-wide"
                         style={{
@@ -373,7 +511,7 @@ return (
             })}
           </div>
 
-          {/* Inspiration panel */}
+          {/* Inspiration */}
           {showInspiration && availableCandidates.length > 0 && (
             <div className="mb-5 px-1">
               <p className="text-xs text-white/30 uppercase tracking-wide mb-2">Tap to add</p>
@@ -396,25 +534,17 @@ return (
           {/* Submit */}
           <div className="px-1 pb-4">
             {error && <p className="mb-3 text-sm text-red-400 text-center">{error}</p>}
-            {message && (
-              <div className="mb-4 px-4 py-3 rounded-2xl bg-goat/10 border border-goat/25 text-center">
-                <p className="text-sm font-bold text-goat">{message}</p>
-                <a href="/top10" className="text-xs text-white/40 hover:text-white/70 mt-1 block transition">&#x2190; Build another Top 10</a>
-              </div>
-            )}
-            {!message && (
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting || !id || selectedCount < 10}
-                className={"w-full py-4 rounded-2xl text-sm font-bold transition " + (
-                  isSubmitting || !id || selectedCount < 10
-                    ? "bg-white/5 text-white/20 cursor-not-allowed border border-white/5"
-                    : "bg-goat text-black hover:brightness-110 active:scale-[0.99]"
-                )}
-              >
-                {isSubmitting ? "Submitting..." : selectedCount < 10 ? (10 - selectedCount) + " more to submit" : "Submit your Top 10"}
-              </button>
-            )}
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting || !id || selectedCount < 10}
+              className={"w-full py-4 rounded-2xl text-sm font-bold transition " + (
+                isSubmitting || !id || selectedCount < 10
+                  ? "bg-white/5 text-white/20 cursor-not-allowed border border-white/5"
+                  : "bg-goat text-black hover:brightness-110 active:scale-[0.99]"
+              )}
+            >
+              {isSubmitting ? "Submitting..." : selectedCount < 10 ? (10 - selectedCount) + " more to submit" : "Submit your Top 10"}
+            </button>
           </div>
         </>
       )}
