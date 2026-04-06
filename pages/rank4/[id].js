@@ -180,7 +180,7 @@ return "Closes in " + days + " days"
 
 // SUBMITTED STATE
 if (submitted) {
-const shareText = "My R4NK for "" + (question?.title || "") + "": 1. " + slots[0] + "  2. " + slots[1] + "  3. " + slots[2] + "  4. " + slots[3] + " – Do you agree? vote4goat.com #Vote4GOAT"
+const shareText = "My R4NK for \" + (question?.title || "") + \": 1. " + slots[0] + "  2. " + slots[1] + "  3. " + slots[2] + "  4. " + slots[3] + " – Do you agree? vote4goat.com #Vote4GOAT"
 return (
 <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 <header className="flex items-center justify-between px-3 py-2">
