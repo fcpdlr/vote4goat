@@ -100,6 +100,7 @@ if (voting) return
 setSelected(winnerId)
 setVoting(true)
 
+
 const winner = duel.find(p => p.id === winnerId)
 const loser = duel.find(p => p.id === loserId)
 
@@ -163,6 +164,7 @@ await new Promise(resolve => setTimeout(resolve, 700))
 await fetchDuel()
 setVoting(false)
 
+
 }
 
 const winnerRank = duel.length === 2 ? ranking.findIndex(r => r.id === duel[0]?.id) + 1 : null
@@ -196,6 +198,7 @@ return (
 <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
 <link rel="icon" href="/favicon.ico" />
 </Head>
+
 
   <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 
@@ -273,7 +276,7 @@ return (
           <div className="flex-1 rounded-2xl bg-white/[0.03] border border-white/[0.06] h-48 animate-pulse" />
         </div>
       ) : duel.length === 2 ? (
-        <div className="flex gap-3 items-stretch">
+        <div className="flex gap-3 items-stretch relative">
           {duel.map((player, idx) => {
             const isWinner = selected === player.id
             const isLoser = selected !== null && selected !== player.id
@@ -314,26 +317,19 @@ return (
               </button>
             )
           })}
-          {/* VS center */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10" style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: 0, overflow: "visible" }}>
+
+          {/* VS badge */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+            <div className="bg-goat text-black text-sm font-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg">VS</div>
           </div>
         </div>
       ) : null}
 
-      {/* VS label between cards */}
-      {!loading && duel.length === 2 && (
-        <div className="flex justify-center -mt-[calc(50%+1rem)] pointer-events-none" style={{ marginTop: "-6rem", position: "relative", zIndex: 10, marginBottom: "-2rem" }}>
-        </div>
-      )}
+
 
     </div>
 
-    {/* VS badge absolute center */}
-    {!loading && duel.length === 2 && (
-      <div className="relative flex justify-center" style={{ marginTop: "-11rem", marginBottom: "5rem", zIndex: 20, pointerEvents: "none" }}>
-        <div className="bg-goat text-black text-sm font-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg">VS</div>
-      </div>
-    )}
+
 
     {/* IMPACT PANEL */}
     {impact && !voting && (
@@ -427,6 +423,7 @@ return (
 
   </main>
 </>
+
 
 )
 }
