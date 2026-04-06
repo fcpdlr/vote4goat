@@ -28,6 +28,7 @@ const [topElo, setTopElo] = useState(1)
 const [impact, setImpact] = useState(null)
 const [sessionVotes, setSessionVotes] = useState(0)
 const [loading, setLoading] = useState(true)
+const [fullRanking, setFullRanking] = useState([])
 
 const ENTITY_CATEGORY_ID = 1
 const menuRef = useRef()
@@ -35,7 +36,7 @@ const helpRef = useRef()
 
 useEffect(() => {
 fetchDuel()
-fetchRanking(20)
+fetchRanking(100)
 checkUser()
 fetchIp()
 }, [duelLimit])
@@ -93,6 +94,7 @@ const { data, error } = await supabase
 if (error) console.error("Error in fetchRanking:", error)
 const results = data || []
 setRanking(results)
+if (top >= 100) setFullRanking(results)
 if (results.length > 0) setTopElo(results[0].elo_rating)
 return results
 }
@@ -108,7 +110,7 @@ const winner = duel.find(p => p.id === winnerId)
 const loser = duel.find(p => p.id === loserId)
 
 // snapshot ranking before vote
-const rankingBefore = [...ranking]
+const rankingBefore = fullRanking.length > 0 ? [...fullRanking] : [...ranking]
 const winnerBefore = rankingBefore.find(r => r.id === winnerId)
 const loserBefore = rankingBefore.find(r => r.id === loserId)
 const winnerEloBefore = winnerBefore?.elo_rating || 1200
@@ -142,6 +144,7 @@ if (error) {
 setSessionVotes(v => v + 1)
 
 // fetch updated ranking
+await fetchRanking(100)
 const rankingAfter = await fetchRanking(limit)
 
 const winnerAfter = rankingAfter.find(r => r.id === winnerId)
@@ -273,7 +276,7 @@ return (
           {duel.map((player) => {
             const isWinner = selected === player.id
             const isLoser = selected !== null && selected !== player.id
-            const rank = ranking.findIndex(r => r.id === player.id)
+            const rank = (fullRanking.length > 0 ? fullRanking : ranking).findIndex(r => r.id === player.id)
             const rankNum = rank >= 0 ? rank + 1 : null
             return (
               <button
@@ -304,10 +307,9 @@ return (
                   {player.name_line1 && <div className="text-[10px] text-white/35 uppercase tracking-wide">{player.name_line1}</div>}
                   <div className={"text-lg font-black leading-tight " + (isWinner ? "text-goat" : "text-white")}>{player.name_line2}</div>
                   {player.name_line3 && <div className={"text-lg font-black leading-tight " + (isWinner ? "text-goat" : "text-white")}>{player.name_line3}</div>}
+                  {rankNum && <div className={"text-[10px] mt-1 font-semibold " + (isWinner ? "text-goat/70" : "text-white/25")}>#{rankNum} in ranking</div>}
                 </div>
-                <div className={"w-full py-2 rounded-xl text-xs font-bold tracking-wide text-center border " + (isWinner ? "bg-goat border-goat text-black" : "bg-white/5 border-white/10 text-white/40")}>
-                  {isWinner ? "Your pick" : "Pick him"}
-                </div>
+
               </button>
             )
           })}
