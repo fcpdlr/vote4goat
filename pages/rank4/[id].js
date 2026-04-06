@@ -80,13 +80,13 @@ fetchQuestion()
 const handleAddOption = (option) => {
 const emptyIndex = slots.findIndex(s => s === null)
 if (emptyIndex === -1) return
-const newSlots = […slots]
+const newSlots = [...slots]
 newSlots[emptyIndex] = option
 setSlots(newSlots)
 }
 
 const handleRemoveSlot = (index) => {
-const newSlots = […slots]
+const newSlots = [...slots]
 newSlots[index] = null
 setSlots(newSlots)
 }
@@ -108,7 +108,7 @@ try { data = JSON.parse(raw) } catch { return }
 if (data.type === "slot") {
 const fromIndex = data.index
 if (fromIndex === targetIndex) return
-const newSlots = […slots]
+const newSlots = [...slots]
 const temp = newSlots[fromIndex]
 newSlots[fromIndex] = newSlots[targetIndex]
 newSlots[targetIndex] = temp
@@ -116,7 +116,7 @@ setSlots(newSlots)
 return
 }
 if (data.type === "option") {
-const newSlots = […slots]
+const newSlots = [...slots]
 for (let i = 0; i < newSlots.length; i++) {
 if (newSlots[i] === data.option) newSlots[i] = null
 }
