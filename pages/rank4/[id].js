@@ -111,14 +111,14 @@ c.name.toLowerCase().includes(search.toLowerCase())
 const handleAddCandidate = candidate => {
 const emptyIndex = slots.findIndex(s => s === null)
 if (emptyIndex === -1) return
-const newSlots = […slots]
+const newSlots = [...slots]
 newSlots[emptyIndex] = candidate
 setSlots(newSlots)
 setSearch("")
 }
 
 const handleRemoveSlot = index => {
-const newSlots = […slots]
+const newSlots = [...slots]
 newSlots[index] = null
 setSlots(newSlots)
 }
@@ -147,7 +147,7 @@ try { data = JSON.parse(raw) } catch { return }
 if (data.type === "slot") {
 const fromIndex = data.index
 if (fromIndex === targetIndex) return
-const newSlots = […slots]
+const newSlots = [...slots]
 const temp = newSlots[fromIndex]
 newSlots[fromIndex] = newSlots[targetIndex]
 newSlots[targetIndex] = temp
@@ -157,7 +157,7 @@ return
 if (data.type === "candidate") {
 const candidate = candidates.find(c => c.id === data.id)
 if (!candidate) return
-const newSlots = […slots]
+const newSlots = [...slots]
 for (let i = 0; i < newSlots.length; i++) {
 if (newSlots[i]?.id === candidate.id) newSlots[i] = null
 }
