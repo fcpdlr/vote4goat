@@ -27,7 +27,6 @@ const [showInspiration, setShowInspiration] = useState(false)
 const [isGeneratingShare, setIsGeneratingShare] = useState(false)
 
 const menuRef = useRef(null)
-const shareCardRef = useRef(null)
 const selectedCount = slots.filter(Boolean).length
 
 useEffect(() => {
@@ -205,24 +204,171 @@ setMessage("submitted")
 }
 
 const handleShare = async () => {
-if (!shareCardRef.current) return
 setIsGeneratingShare(true)
 try {
-const html2canvas = (await import("html2canvas")).default
-const canvas = await html2canvas(shareCardRef.current, {
-backgroundColor: "#0d0f18",
-scale: 2,
-useCORS: true,
-logging: false,
-})
-const link = document.createElement("a")
-link.download = "vote4goat-top10.png"
-link.href = canvas.toDataURL("image/png")
-link.click()
+const W = 640
+const H = 800
+const canvas = document.createElement("canvas")
+canvas.width = W
+canvas.height = H
+const ctx = canvas.getContext("2d")
+
+
+  // Background
+  ctx.fillStyle = "#0d0f18"
+  ctx.fillRect(0, 0, W, H)
+
+  // Glow
+  const glow = ctx.createRadialGradient(W / 2, 0, 0, W / 2, 0, H * 0.55)
+  glow.addColorStop(0, "rgba(245,166,35,0.13)")
+  glow.addColorStop(1, "rgba(0,0,0,0)")
+  ctx.fillStyle = glow
+  ctx.fillRect(0, 0, W, H)
+
+  const pad = 48
+
+  // Logo: Vote4GOAT
+  ctx.font = "bold 28px sans-serif"
+  ctx.fillStyle = "#ffffff"
+  ctx.fillText("Vote4", pad, 72)
+  const v4w = ctx.measureText("Vote4").width
+  ctx.fillStyle = "#f5a623"
+  ctx.fillText("GOAT", pad + v4w, 72)
+
+  // T0PS badge
+  const badgeX = W - pad - 70
+  const badgeY = 48
+  const badgeW = 70
+  const badgeH = 28
+  const badgeR = 14
+  ctx.beginPath()
+  ctx.moveTo(badgeX + badgeR, badgeY)
+  ctx.lineTo(badgeX + badgeW - badgeR, badgeY)
+  ctx.quadraticCurveTo(badgeX + badgeW, badgeY, badgeX + badgeW, badgeY + badgeR)
+  ctx.lineTo(badgeX + badgeW, badgeY + badgeH - badgeR)
+  ctx.quadraticCurveTo(badgeX + badgeW, badgeY + badgeH, badgeX + badgeW - badgeR, badgeY + badgeH)
+  ctx.lineTo(badgeX + badgeR, badgeY + badgeH)
+  ctx.quadraticCurveTo(badgeX, badgeY + badgeH, badgeX, badgeY + badgeH - badgeR)
+  ctx.lineTo(badgeX, badgeY + badgeR)
+  ctx.quadraticCurveTo(badgeX, badgeY, badgeX + badgeR, badgeY)
+  ctx.closePath()
+  ctx.strokeStyle = "rgba(245,166,35,0.5)"
+  ctx.lineWidth = 1.5
+  ctx.stroke()
+  ctx.font = "bold 11px sans-serif"
+  ctx.fillStyle = "rgba(245,166,35,0.9)"
+  ctx.textAlign = "center"
+  ctx.fillText("T0PS", badgeX + badgeW / 2, badgeY + 19)
+  ctx.textAlign = "left"
+
+  // Eyebrow
+  ctx.font = "12px sans-serif"
+  ctx.fillStyle = "rgba(255,255,255,0.3)"
+  ctx.fillText("MY ALL-TIME TOP 10", pad, 120)
+
+  // Category title ? wrap if needed
+  ctx.font = "bold 36px sans-serif"
+  ctx.fillStyle = "#ffffff"
+  const title = category ? category.title : "Top 10"
+  const maxW = W - pad * 2
+  const words = title.split(" ")
+  let line = ""
+  let ty = 168
+  for (let i = 0; i < words.length; i++) {
+    const test = line + (line ? " " : "") + words[i]
+    if (ctx.measureText(test).width > maxW && line) {
+      ctx.fillText(line, pad, ty)
+      line = words[i]
+      ty += 44
+    } else {
+      line = test
+    }
+  }
+  ctx.fillText(line, pad, ty)
+  ty += 28
+
+  // Divider
+  ctx.strokeStyle = "rgba(255,255,255,0.08)"
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(pad, ty + 8)
+  ctx.lineTo(W - pad, ty + 8)
+  ctx.stroke()
+  ty += 24
+
+  // Player rows
+  const rowH = (H - ty - 60) / 10
+
+  slots.forEach((slot, i) => {
+    const y = ty + i * rowH
+    const name = slot ? slot.name.toUpperCase() : ""
+
+    // Row bg for top 3
+    if (i === 0) {
+      ctx.fillStyle = "rgba(245,166,35,0.08)"
+      ctx.fillRect(pad - 8, y - 2, W - pad * 2 + 16, rowH - 2)
+    }
+
+    // Separator
+    if (i > 0) {
+      ctx.strokeStyle = "rgba(255,255,255,0.06)"
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(pad, y)
+      ctx.lineTo(W - pad, y)
+      ctx.stroke()
+    }
+
+    // Number
+    const numColors = ["#f5a623", "rgba(255,255,255,0.5)", "rgba(180,140,70,0.8)"]
+    ctx.font = "bold " + (i < 3 ? "20px" : "15px") + " sans-serif"
+    ctx.fillStyle = i < 3 ? numColors[i] : "rgba(255,255,255,0.2)"
+    ctx.textAlign = "right"
+    ctx.fillText(String(i + 1), pad + 20, y + rowH * 0.65)
+    ctx.textAlign = "left"
+
+    // Name
+    ctx.font = (i < 3 ? "bold 17px" : "15px") + " sans-serif"
+    ctx.fillStyle = i === 0 ? "#ffffff" : "rgba(255,255,255," + Math.max(0.3, 0.85 - i * 0.06) + ")"
+    // truncate if too long
+    let nameText = name
+    const maxNameW = W - pad * 2 - 50
+    while (ctx.measureText(nameText).width > maxNameW && nameText.length > 3) {
+      nameText = nameText.slice(0, -1)
+    }
+    if (nameText !== name) nameText += "..."
+    ctx.fillText(nameText, pad + 32, y + rowH * 0.65)
+
+    // Medal emoji text for top 3
+    if (i === 0) { ctx.font = "16px sans-serif"; ctx.fillText("#1", W - pad - 28, y + rowH * 0.65) }
+  })
+
+  // Footer
+  ctx.strokeStyle = "rgba(255,255,255,0.07)"
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(pad, H - 44)
+  ctx.lineTo(W - pad, H - 44)
+  ctx.stroke()
+
+  ctx.font = "12px sans-serif"
+  ctx.fillStyle = "rgba(255,255,255,0.2)"
+  ctx.fillText("vote4goat.com", pad, H - 20)
+  ctx.textAlign = "right"
+  ctx.fillStyle = "rgba(245,166,35,0.4)"
+  ctx.fillText("vote4goat.com/top10", W - pad, H - 20)
+  ctx.textAlign = "left"
+
+  const link = document.createElement("a")
+  link.download = "vote4goat-top10.png"
+  link.href = canvas.toDataURL("image/png")
+  link.click()
 } catch (err) {
-console.error("Share error:", err)
+  console.error("Share error:", err)
 }
 setIsGeneratingShare(false)
+
+
 }
 
 const sportLabel = id => id === 1 ? "Football" : id === 2 ? "Basketball" : id === 3 ? "Tennis" : "Other"
@@ -286,81 +432,21 @@ return (
           <div className="w-full">
             <p className="text-xs text-white/30 uppercase tracking-wide mb-2 text-center">Your card</p>
 
-            {/* The actual card to capture */}
-            <div
-              ref={shareCardRef}
-              style={{
-                width: "320px",
-                height: "400px",
-                backgroundColor: "#0d0f18",
-                borderRadius: "12px",
-                padding: "20px",
-                margin: "0 auto",
-                display: "flex",
-                flexDirection: "column",
-                fontFamily: "sans-serif",
-                position: "relative",
-                overflow: "hidden",
-              }}
-            >
-              {/* Glow */}
-              <div style={{
-                position: "absolute", inset: 0,
-                background: "radial-gradient(ellipse at 50% 0%, rgba(245,166,35,0.12) 0%, transparent 55%)",
-                pointerEvents: "none",
-              }} />
-
-              {/* Top bar */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px", position: "relative", zIndex: 1 }}>
-                <div style={{ fontFamily: "sans-serif", fontWeight: 900, fontSize: "13px", letterSpacing: "2px", color: "#fff" }}>
-                  Vote4<span style={{ color: "#f5a623" }}>GOAT</span>
-                </div>
-                <div style={{ fontSize: "8px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(245,166,35,0.85)", background: "rgba(245,166,35,0.1)", border: "1px solid rgba(245,166,35,0.25)", padding: "2px 8px", borderRadius: "20px" }}>
-                  T0PS
-                </div>
+            {/* Preview card */}
+            <div className="w-64 mx-auto rounded-2xl overflow-hidden border border-white/8" style={{ background: "#0d0f18", padding: "16px" }}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-black text-white">Vote4<span className="text-goat">GOAT</span></span>
+                <span className="text-[9px] font-bold text-goat/80 border border-goat/30 rounded-full px-2 py-0.5">T0PS</span>
               </div>
-
-              {/* Category */}
-              <div style={{ position: "relative", zIndex: 1, marginBottom: "10px" }}>
-                <div style={{ fontSize: "9px", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "2px" }}>
-                  My all-time Top 10
-                </div>
-                <div style={{ fontSize: "16px", fontWeight: 900, color: "#fff", letterSpacing: "1px" }}>
-                  {category.title}
-                </div>
-              </div>
-
-              {/* List */}
-              <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+              <div className="text-[9px] text-white/30 uppercase tracking-widest mb-1">My all-time top 10</div>
+              <div className="text-sm font-black text-white mb-2 leading-tight">{category.title}</div>
+              <div className="flex flex-col">
                 {slots.map((slot, i) => (
-                  <div key={i} style={{
-                    display: "flex", alignItems: "center", gap: "6px",
-                    padding: "3px 0",
-                    borderTop: "1px solid rgba(255,255,255,0.05)",
-                  }}>
-                    <span style={{
-                      fontWeight: 900, fontSize: "11px", width: "16px", textAlign: "right", flexShrink: 0,
-                      color: i === 0 ? "#f5a623" : i === 1 ? "rgba(255,255,255,0.45)" : i === 2 ? "rgba(180,140,70,0.75)" : "rgba(255,255,255,0.2)",
-                    }}>{i + 1}</span>
-                    <span style={{
-                      fontWeight: 700, fontSize: "11px", textTransform: "uppercase",
-                      color: i === 0 ? "#fff" : "rgba(255,255,255," + Math.max(0.25, 0.85 - i * 0.07) + ")",
-                      flex: 1,
-                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                    }}>{slot ? slot.name : ""}</span>
-                    {i < 3 && <span style={{ fontSize: "10px" }}>{i === 0 ? "\uD83E\uDD47" : i === 1 ? "\uD83E\uDD48" : "\uD83E\uDD49"}</span>}
+                  <div key={i} className="flex items-center gap-2 py-1 border-t border-white/5">
+                    <span className="text-[10px] font-black w-4 text-right flex-shrink-0" style={{ color: i === 0 ? "#f5a623" : i === 1 ? "rgba(255,255,255,0.4)" : i === 2 ? "rgba(180,140,70,0.75)" : "rgba(255,255,255,0.18)" }}>{i + 1}</span>
+                    <span className="text-[10px] font-bold uppercase flex-1 truncate" style={{ color: i === 0 ? "#fff" : "rgba(255,255,255," + Math.max(0.25, 0.82 - i * 0.06) + ")" }}>{slot ? slot.name : ""}</span>
                   </div>
                 ))}
-              </div>
-
-              {/* Footer */}
-              <div style={{
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                paddingTop: "8px", borderTop: "1px solid rgba(255,255,255,0.07)",
-                position: "relative", zIndex: 1, marginTop: "6px",
-              }}>
-                <span style={{ fontSize: "8px", color: "rgba(255,255,255,0.2)" }}>vote4goat.com</span>
-                <span style={{ fontSize: "8px", color: "rgba(245,166,35,0.4)", letterSpacing: "1px" }}>vote4goat.com/top10</span>
               </div>
             </div>
           </div>
@@ -551,6 +637,7 @@ return (
     </div>
   </div>
 </main>
+
 
 )
 }
