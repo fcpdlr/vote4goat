@@ -16,24 +16,24 @@ return "position"
 }
 
 const getCategoryTheme = (slug) => {
-if (!slug) return { bar: "#f5a623" }
+if (!slug) return { bar: "#f5a623", tint: "rgba(245,166,35,0.06)" }
 const s = slug.toLowerCase()
-if (s.includes("real-madrid")) return { bar: "#e8e0c8" }
-if (s.includes("fc-barcelona") || s.includes("barcelona-all-time")) return { bar: "#a50044" }
-if (s.includes("bayern")) return { bar: "#dc052d" }
-if (s.includes("manchester-united")) return { bar: "#da291c" }
-if (s.includes("liverpool")) return { bar: "#c8102e" }
-if (s.includes("ac-milan") || s.includes("milan-all-time")) return { bar: "#a0001e" }
-if (s.includes("boca")) return { bar: "#ffcc00" }
-if (s.includes("river")) return { bar: "#e11d48" }
-if (s.startsWith("brazil-")) return { bar: "#009c3b" }
-if (s.startsWith("argentina-")) return { bar: "#75aadb" }
-if (s.startsWith("france-")) return { bar: "#0055a4" }
-if (s.startsWith("germany-")) return { bar: "#e5e7eb" }
-if (s.startsWith("spain-")) return { bar: "#aa151b" }
-if (s.startsWith("italy-")) return { bar: "#0072ce" }
-if (s.startsWith("england-")) return { bar: "#c8102e" }
-return { bar: "#f5a623" }
+if (s.includes("real-madrid"))          return { bar: "#e8e0c8", tint: "rgba(232,224,200,0.06)" }
+if (s.includes("fc-barcelona") || s.includes("barcelona-all-time")) return { bar: "#a50044", tint: "rgba(165,0,68,0.10)" }
+if (s.includes("bayern"))               return { bar: "#dc052d", tint: "rgba(220,5,45,0.10)" }
+if (s.includes("manchester-united"))    return { bar: "#da291c", tint: "rgba(218,41,28,0.10)" }
+if (s.includes("liverpool"))            return { bar: "#c8102e", tint: "rgba(200,16,46,0.10)" }
+if (s.includes("ac-milan") || s.includes("milan-all-time")) return { bar: "#a0001e", tint: "rgba(160,0,30,0.10)" }
+if (s.includes("boca"))                 return { bar: "#ffcc00", tint: "rgba(255,204,0,0.07)" }
+if (s.includes("river"))                return { bar: "#e11d48", tint: "rgba(225,29,72,0.08)" }
+if (s.startsWith("brazil-"))            return { bar: "#009c3b", tint: "rgba(0,156,59,0.08)" }
+if (s.startsWith("argentina-"))         return { bar: "#75aadb", tint: "rgba(117,170,219,0.08)" }
+if (s.startsWith("france-"))            return { bar: "#0055a4", tint: "rgba(0,85,164,0.10)" }
+if (s.startsWith("germany-"))           return { bar: "#e5e7eb", tint: "rgba(229,231,235,0.05)" }
+if (s.startsWith("spain-"))             return { bar: "#aa151b", tint: "rgba(170,21,27,0.10)" }
+if (s.startsWith("italy-"))             return { bar: "#0072ce", tint: "rgba(0,114,206,0.10)" }
+if (s.startsWith("england-"))           return { bar: "#c8102e", tint: "rgba(200,16,46,0.08)" }
+return { bar: "#f5a623", tint: "rgba(245,166,35,0.06)" }
 }
 
 const TABS = ["All", "Clubs", "Countries", "Positions"]
@@ -123,114 +123,64 @@ return items
 
 const visible = getVisible()
 
+const CategoryCard = ({ cat }) => {
+const theme = getCategoryTheme(cat.slug)
+return (
+<a
+href={"/top10/" + cat.id}
+className="group flex items-center justify-between h-[68px] border border-white/10 hover:border-white/25 rounded-2xl px-5 transition relative overflow-hidden"
+style={{ background: theme.tint }}
+>
+<div
+className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+style={{ background: theme.tint }}
+/>
+<div className="flex flex-col gap-0.5 z-10">
+<span className="text-[15px] font-extrabold text-white leading-tight">
+{cat.title}
+</span>
+<span className="text-[10px] text-white/30 uppercase tracking-widest font-semibold">
+All-time · Football
+</span>
+</div>
+<svg className="w-4 h-4 text-white/20 group-hover:text-white/60 transition z-10 flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+<path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+</svg>
+<div
+className="absolute bottom-0 left-0 right-0 h-[2px]"
+style={{ background: theme.bar }}
+/>
+</a>
+)
+}
+
 const renderSection = (label, items) => {
 if (items.length === 0) return null
 return (
 <div className="mb-6">
-<p className="text-xs font-bold uppercase tracking-widest text-white/25 mb-3 px-1">{label}</p>
+<p className="text-[10px] font-bold uppercase tracking-widest text-white/25 mb-3 px-1">{label}</p>
 <div className="flex flex-col gap-2">
-{items.map(cat => {
-const theme = getCategoryTheme(cat.slug)
-return (
-<a
-key={cat.id}
-href={"/top10/" + cat.id}
-className="group flex items-center justify-between h-[68px] bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 rounded-2xl px-5 transition relative overflow-hidden"
->
-<div className="flex flex-col gap-0.5 z-10">
-<span className="text-base font-black tracking-wide text-white leading-tight" style={{ fontFamily: "system-ui, sans-serif" }}>
-{cat.title}
-</span>
-<span className="text-xs text-white/30 uppercase tracking-wider">All-time · Football</span>
-</div>
-<svg className="w-4 h-4 text-white/20 group-hover:text-white/50 transition z-10 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-<path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
-</svg>
-<div
-className="absolute bottom-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-style={{ background: theme.bar }}
-/>
-</a>
-)
-})}
+{items.map(cat => <CategoryCard key={cat.id} cat={cat} />)}
 </div>
 </div>
 )
 }
 
-const renderAll = () => {
-if (search.trim()) {
+const renderContent = () => {
+if (search.trim() || activeTab !== "All") {
 return (
 <div className="flex flex-col gap-2 pb-10">
-{visible.map(cat => {
-const theme = getCategoryTheme(cat.slug)
-return (
-<a
-key={cat.id}
-href={"/top10/" + cat.id}
-className="group flex items-center justify-between h-[68px] bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 rounded-2xl px-5 transition relative overflow-hidden"
->
-<div className="flex flex-col gap-0.5 z-10">
-<span className="text-base font-black tracking-wide text-white leading-tight" style={{ fontFamily: "system-ui, sans-serif" }}>
-{cat.title}
-</span>
-<span className="text-xs text-white/30 uppercase tracking-wider">All-time · Football</span>
-</div>
-<svg className="w-4 h-4 text-white/20 group-hover:text-white/50 transition z-10 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-<path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
-</svg>
-<div
-className="absolute bottom-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-style={{ background: theme.bar }}
-/>
-</a>
-)
-})}
+{visible.map(cat => <CategoryCard key={cat.id} cat={cat} />)}
 </div>
 )
 }
-
-
-if (activeTab === "All") {
-  return (
-    <div className="pb-10">
-      {renderSection("Clubs", grouped.clubs)}
-      {renderSection("Countries", grouped.countries)}
-      {renderSection("Positions", grouped.positions)}
-    </div>
-  )
-}
-
 return (
-  <div className="flex flex-col gap-2 pb-10">
-    {visible.map(cat => {
-      const theme = getCategoryTheme(cat.slug)
-      return (
-        <a
-          key={cat.id}
-          href={"/top10/" + cat.id}
-          className="group flex items-center justify-between h-[68px] bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 rounded-2xl px-5 transition relative overflow-hidden"
-        >
-          <div className="flex flex-col gap-0.5 z-10">
-            <span className="text-base font-black tracking-wide text-white leading-tight" style={{ fontFamily: "system-ui, sans-serif" }}>
-              {cat.title}
-            </span>
-            <span className="text-xs text-white/30 uppercase tracking-wider">All-time &middot; Football</span>
-          </div>
-          <svg className="w-4 h-4 text-white/20 group-hover:text-white/50 transition z-10 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
-          </svg>
-          <div
-            className="absolute bottom-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-            style={{ background: theme.bar }}
-          />
-        </a>
-      )
-    })}
-  </div>
+<div className="pb-10">
+{renderSection("Clubs", grouped.clubs)}
+{renderSection("Countries", grouped.countries)}
+{renderSection("Positions", grouped.positions)}
+</div>
 )
-
-
 }
 
 return (
@@ -330,7 +280,7 @@ return (
       ) : visible.length === 0 ? (
         <p className="text-sm text-white/30 text-center py-8">No results.</p>
       ) : (
-        renderAll()
+        renderContent()
       )}
 
     </div>
