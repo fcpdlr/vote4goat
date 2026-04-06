@@ -146,7 +146,6 @@ return (
 <link rel="icon" href="/favicon.ico" />
 </Head>
 
-```
   <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 
     <header className="flex items-center justify-between px-3 py-2">
@@ -245,7 +244,6 @@ return (
     </div>
   </main>
 </>
-```
 
 )
 }
