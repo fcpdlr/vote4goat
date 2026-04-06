@@ -1,147 +1,342 @@
-<!DOCTYPE html>
+import { useEffect, useState, useRef } from "react"
+import { createClient } from "@supabase/supabase-js"
+import Head from "next/head"
 
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T0PS Index Redesign — Vote4GOAT</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #050709; padding: 32px 16px; font-family: 'Barlow Condensed', sans-serif; display: flex; flex-direction: column; align-items: center; gap: 64px; color: #fff; }
-.section-title { font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: #374151; text-align: center; margin-bottom: 16px; }
-.mobile-frame { width: min(390px, 100vw - 32px); background: #0d0f18; border-radius: 40px; border: 6px solid #1a1f2e; overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,0.6); }
-.mobile-notch { width: 120px; height: 28px; background: #1a1f2e; border-radius: 0 0 20px 20px; margin: 0 auto; }
-.header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px 0; }
-.logo { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: #fff; }
-.logo em { color: #f5a623; font-style: normal; }
-.nav-link { font-size: 11px; color: rgba(255,255,255,0.35); }
-.nav-signup { font-size: 11px; font-weight: 700; color: #000; background: #f5a623; padding: 4px 10px; border-radius: 20px; margin-left: 10px; }
-.hero { padding: 18px 20px 0; text-align: center; }
-.hero-mode { font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,166,35,0.6); margin-bottom: 5px; }
-.hero-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 3px; color: #fff; line-height: 1; margin-bottom: 5px; }
-.hero-title em { color: #f5a623; font-style: normal; }
-.hero-sub { font-size: 11px; color: rgba(255,255,255,0.3); line-height: 1.4; max-width: 240px; margin: 0 auto; }
-.search-wrap { padding: 14px 16px 0; position: relative; }
-.search-icon { position: absolute; left: 28px; top: 50%; transform: translateY(-50%); margin-top: 7px; font-size: 12px; color: rgba(255,255,255,0.2); pointer-events: none; }
-.search-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; padding: 9px 14px 9px 32px; font-size: 12px; color: #fff; font-family: 'Barlow Condensed', sans-serif; outline: none; }
-.search-input::placeholder { color: rgba(255,255,255,0.2); }
-.tabs { display: flex; gap: 6px; padding: 10px 16px 0; overflow-x: auto; }
-.tabs::-webkit-scrollbar { display: none; }
-.tab { flex-shrink: 0; padding: 5px 11px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.03); }
-.tab.active { background: rgba(245,166,35,0.1); border-color: rgba(245,166,35,0.3); color: #f5a623; }
-.tab-count { opacity: 0.5; margin-left: 3px; }
-.section-label { font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.2); padding: 14px 16px 8px; }
-.cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px; }
-.cat-card { border-radius: 14px; border: 1.5px solid transparent; height: 68px; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; padding: 10px 12px; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.15s; }
-.cat-card:hover { transform: translateY(-2px); }
-.cat-name { font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: 1.5px; color: #fff; line-height: 1; position: relative; z-index: 1; }
-.cat-sub { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-top: 2px; position: relative; z-index: 1; }
-.cat-arrow { position: absolute; top: 10px; right: 10px; z-index: 1; font-size: 11px; color: rgba(255,255,255,0.2); }
-.cat-accent { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; }
+const supabase = createClient(
+process.env.NEXT_PUBLIC_SUPABASE_URL,
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
 
-/* Club cards */
-.card-rm   { background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border-color: rgba(255,255,255,0.16); }
-.card-barca { background: linear-gradient(135deg, rgba(0,77,152,0.32), rgba(165,0,68,0.22)); border-color: rgba(165,0,68,0.35); }
-.card-bay  { background: linear-gradient(135deg, rgba(220,5,45,0.28), rgba(120,0,20,0.15)); border-color: rgba(220,5,45,0.3); }
-.card-mufc { background: linear-gradient(135deg, rgba(218,41,28,0.28), rgba(0,0,0,0.2)); border-color: rgba(218,41,28,0.3); }
-.card-lfc  { background: linear-gradient(135deg, rgba(200,16,46,0.28), rgba(0,0,0,0.2)); border-color: rgba(200,16,46,0.28); }
-.card-mil  { background: linear-gradient(135deg, rgba(10,10,10,0.6), rgba(160,0,30,0.22)); border-color: rgba(160,0,30,0.28); }
-.card-boca { background: linear-gradient(135deg, rgba(0,51,160,0.32), rgba(255,204,0,0.12)); border-color: rgba(0,51,160,0.38); }
-.card-riv  { background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(225,29,72,0.14)); border-color: rgba(255,255,255,0.18); }
+const classifyCategory = (slug) => {
+if (!slug) return "other"
+const s = slug.toLowerCase()
+if (s.includes("real-madrid") || s.includes("fc-barcelona") || s.includes("barcelona-all-time") || s.includes("bayern") || s.includes("manchester-united") || s.includes("liverpool") || s.includes("ac-milan") || s.includes("milan-all-time") || s.includes("boca") || s.includes("river")) return "club"
+if (s.startsWith("brazil-") || s.startsWith("argentina-") || s.startsWith("france-") || s.startsWith("germany-") || s.startsWith("spain-") || s.startsWith("italy-") || s.startsWith("england-")) return "country"
+return "position"
+}
 
-/* Country cards */
-.card-bra { background: linear-gradient(135deg, rgba(0,156,59,0.22), rgba(255,223,0,0.12)); border-color: rgba(255,223,0,0.25); }
-.card-arg { background: linear-gradient(135deg, rgba(117,170,219,0.22), rgba(255,255,255,0.06)); border-color: rgba(117,170,219,0.3); }
-.card-fra { background: linear-gradient(135deg, rgba(0,85,164,0.28), rgba(229,27,35,0.18)); border-color: rgba(0,85,164,0.38); }
-.card-ger { background: linear-gradient(135deg, rgba(15,15,15,0.6), rgba(255,255,255,0.04)); border-color: rgba(255,255,255,0.14); }
-.card-esp { background: linear-gradient(135deg, rgba(170,21,27,0.28), rgba(241,191,0,0.12)); border-color: rgba(170,21,27,0.32); }
-.card-ita { background: linear-gradient(135deg, rgba(0,114,206,0.28), rgba(255,255,255,0.04)); border-color: rgba(0,114,206,0.32); }
-.card-eng { background: linear-gradient(135deg, rgba(200,16,46,0.22), rgba(255,255,255,0.04)); border-color: rgba(200,16,46,0.28); }
+const getCategoryTheme = (slug) => {
+if (!slug) return { bar: "#f5a623" }
+const s = slug.toLowerCase()
+if (s.includes("real-madrid")) return { bar: "#e8e0c8" }
+if (s.includes("fc-barcelona") || s.includes("barcelona-all-time")) return { bar: "#a50044" }
+if (s.includes("bayern")) return { bar: "#dc052d" }
+if (s.includes("manchester-united")) return { bar: "#da291c" }
+if (s.includes("liverpool")) return { bar: "#c8102e" }
+if (s.includes("ac-milan") || s.includes("milan-all-time")) return { bar: "#a0001e" }
+if (s.includes("boca")) return { bar: "#ffcc00" }
+if (s.includes("river")) return { bar: "#e11d48" }
+if (s.startsWith("brazil-")) return { bar: "#009c3b" }
+if (s.startsWith("argentina-")) return { bar: "#75aadb" }
+if (s.startsWith("france-")) return { bar: "#0055a4" }
+if (s.startsWith("germany-")) return { bar: "#e5e7eb" }
+if (s.startsWith("spain-")) return { bar: "#aa151b" }
+if (s.startsWith("italy-")) return { bar: "#0072ce" }
+if (s.startsWith("england-")) return { bar: "#c8102e" }
+return { bar: "#f5a623" }
+}
 
-/* Accent bars */
-.a-rm    { background: #fff; }
-.a-bar   { background: linear-gradient(90deg, #004d98, #a50044); }
-.a-bay   { background: #dc052d; }
-.a-muf   { background: #da291c; }
-.a-lfc   { background: #c8102e; }
-.a-mil   { background: linear-gradient(90deg, #111, #a0001e); }
-.a-boc   { background: linear-gradient(90deg, #0033a0, #ffcc00); }
-.a-riv   { background: linear-gradient(90deg, #e5e7eb, #e11d48); }
-.a-bra   { background: linear-gradient(90deg, #009c3b, #ffdf00); }
-.a-arg   { background: #75aadb; }
-.a-fra   { background: linear-gradient(90deg, #0055a4, #e51b23); }
-.a-ger   { background: linear-gradient(90deg, #111, #e5e7eb); }
-.a-esp   { background: linear-gradient(90deg, #aa151b, #f1bf00); }
-.a-ita   { background: linear-gradient(90deg, #0072ce, #e5e7eb); }
-.a-eng   { background: linear-gradient(90deg, #e5e7eb, #c8102e); }
+const TABS = ["All", "Clubs", "Countries", "Positions"]
 
-.pb { height: 28px; }
-</style>
+export default function Top10IndexPage() {
+const [categories, setCategories] = useState([])
+const [isLoading, setIsLoading] = useState(true)
+const [error, setError] = useState(null)
+const [user, setUser] = useState(null)
+const [showHelp, setShowHelp] = useState(false)
+const [showMenu, setShowMenu] = useState(false)
+const [activeTab, setActiveTab] = useState("All")
+const [search, setSearch] = useState("")
 
-</head>
-<body>
+const menuRef = useRef(null)
+const helpRef = useRef(null)
 
-<div>
-  <p class="section-title">T0PS Index — Mobile</p>
-  <div class="mobile-frame">
-    <div class="mobile-notch"></div>
+useEffect(() => {
+const checkUser = async () => {
+try {
+const { data: { user } } = await supabase.auth.getUser()
+setUser(user)
+} catch (err) {}
+}
+checkUser()
+}, [])
+
+useEffect(() => {
+function handleClickOutside(event) {
+if (menuRef.current && !menuRef.current.contains(event.target)) setShowMenu(false)
+if (helpRef.current && !helpRef.current.contains(event.target)) setShowHelp(false)
+}
+function handleEsc(event) {
+if (event.key === "Escape") { setShowMenu(false); setShowHelp(false) }
+}
+document.addEventListener("mousedown", handleClickOutside)
+document.addEventListener("keydown", handleEsc)
+return () => {
+document.removeEventListener("mousedown", handleClickOutside)
+document.removeEventListener("keydown", handleEsc)
+}
+}, [])
+
+useEffect(() => {
+const fetchCategories = async () => {
+setIsLoading(true)
+setError(null)
+const { data, error } = await supabase
+.from("top10_categories")
+.select("id, slug, title, description, entity_category_id, is_active")
+.eq("is_active", true)
+.order("title", { ascending: true })
+if (error) { setError("Error loading categories."); setIsLoading(false); return }
+setCategories(data || [])
+setIsLoading(false)
+}
+fetchCategories()
+}, [])
+
+const grouped = categories.reduce((acc, cat) => {
+const type = classifyCategory(cat.slug)
+if (type === "club") acc.clubs.push(cat)
+else if (type === "country") acc.countries.push(cat)
+else acc.positions.push(cat)
+return acc
+}, { clubs: [], countries: [], positions: [] })
+
+const counts = {
+All: categories.length,
+Clubs: grouped.clubs.length,
+Countries: grouped.countries.length,
+Positions: grouped.positions.length,
+}
+
+const getVisible = () => {
+let items = []
+if (activeTab === "All") items = categories
+else if (activeTab === "Clubs") items = grouped.clubs
+else if (activeTab === "Countries") items = grouped.countries
+else items = grouped.positions
+if (search.trim()) {
+const q = search.toLowerCase()
+items = items.filter(c => c.title.toLowerCase().includes(q))
+}
+return items
+}
+
+const visible = getVisible()
+
+const renderSection = (label, items) => {
+if (items.length === 0) return null
+return (
+<div className="mb-6">
+<p className="text-xs font-bold uppercase tracking-widest text-white/25 mb-3 px-1">{label}</p>
+<div className="flex flex-col gap-2">
+{items.map(cat => {
+const theme = getCategoryTheme(cat.slug)
+return (
+<a
+key={cat.id}
+href={"/top10/" + cat.id}
+className="group flex items-center justify-between h-[68px] bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 rounded-2xl px-5 transition relative overflow-hidden"
+>
+<div className="flex flex-col gap-0.5 z-10">
+<span className="text-base font-black tracking-wide text-white leading-tight" style={{ fontFamily: "system-ui, sans-serif" }}>
+{cat.title}
+</span>
+<span className="text-xs text-white/30 uppercase tracking-wider">All-time · Football</span>
+</div>
+<svg className="w-4 h-4 text-white/20 group-hover:text-white/50 transition z-10 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+<path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+</svg>
+<div
+className="absolute bottom-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+style={{ background: theme.bar }}
+/>
+</a>
+)
+})}
+</div>
+</div>
+)
+}
+
+const renderAll = () => {
+if (search.trim()) {
+return (
+<div className="flex flex-col gap-2 pb-10">
+{visible.map(cat => {
+const theme = getCategoryTheme(cat.slug)
+return (
+<a
+key={cat.id}
+href={"/top10/" + cat.id}
+className="group flex items-center justify-between h-[68px] bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 rounded-2xl px-5 transition relative overflow-hidden"
+>
+<div className="flex flex-col gap-0.5 z-10">
+<span className="text-base font-black tracking-wide text-white leading-tight" style={{ fontFamily: "system-ui, sans-serif" }}>
+{cat.title}
+</span>
+<span className="text-xs text-white/30 uppercase tracking-wider">All-time · Football</span>
+</div>
+<svg className="w-4 h-4 text-white/20 group-hover:text-white/50 transition z-10 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+<path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+</svg>
+<div
+className="absolute bottom-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+style={{ background: theme.bar }}
+/>
+</a>
+)
+})}
+</div>
+)
+}
 
 
-<div class="header">
-  <div class="logo">Vote4<em>GOAT</em></div>
-  <div style="display:flex;align-items:center;">
-    <span class="nav-link">Log in</span>
-    <span class="nav-signup">Sign up</span>
+if (activeTab === "All") {
+  return (
+    <div className="pb-10">
+      {renderSection("Clubs", grouped.clubs)}
+      {renderSection("Countries", grouped.countries)}
+      {renderSection("Positions", grouped.positions)}
+    </div>
+  )
+}
+
+return (
+  <div className="flex flex-col gap-2 pb-10">
+    {visible.map(cat => {
+      const theme = getCategoryTheme(cat.slug)
+      return (
+        <a
+          key={cat.id}
+          href={"/top10/" + cat.id}
+          className="group flex items-center justify-between h-[68px] bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 rounded-2xl px-5 transition relative overflow-hidden"
+        >
+          <div className="flex flex-col gap-0.5 z-10">
+            <span className="text-base font-black tracking-wide text-white leading-tight" style={{ fontFamily: "system-ui, sans-serif" }}>
+              {cat.title}
+            </span>
+            <span className="text-xs text-white/30 uppercase tracking-wider">All-time &middot; Football</span>
+          </div>
+          <svg className="w-4 h-4 text-white/20 group-hover:text-white/50 transition z-10 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+          <div
+            className="absolute bottom-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+            style={{ background: theme.bar }}
+          />
+        </a>
+      )
+    })}
   </div>
-</div>
-
-<div class="hero">
-  <div class="hero-mode">T0PS Mode</div>
-  <div class="hero-title">Build your <em>Top 10</em></div>
-  <div class="hero-sub">Pick a category. Rank your 10. Share it and compare with the world.</div>
-</div>
-
-<div class="search-wrap">
-  <span class="search-icon">&#x1F50D;</span>
-  <input class="search-input" type="text" placeholder="Search clubs, countries..."/>
-</div>
-
-<div class="tabs">
-  <div class="tab active">All <span class="tab-count">15</span></div>
-  <div class="tab">Clubs <span class="tab-count">8</span></div>
-  <div class="tab">Countries <span class="tab-count">7</span></div>
-  <div class="tab">Positions</div>
-</div>
-
-<div class="section-label">Clubs</div>
-<div class="cat-grid">
-  <div class="cat-card card-rm"><span class="cat-arrow">&#x276F;</span><div class="cat-name">Real Madrid</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-rm"></div></div>
-  <div class="cat-card card-barca"><span class="cat-arrow">&#x276F;</span><div class="cat-name">FC Barcelona</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-bar"></div></div>
-  <div class="cat-card card-bay"><span class="cat-arrow">&#x276F;</span><div class="cat-name">Bayern Munich</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-bay"></div></div>
-  <div class="cat-card card-mufc"><span class="cat-arrow">&#x276F;</span><div class="cat-name">Man United</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-muf"></div></div>
-  <div class="cat-card card-lfc"><span class="cat-arrow">&#x276F;</span><div class="cat-name">Liverpool</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-lfc"></div></div>
-  <div class="cat-card card-mil"><span class="cat-arrow">&#x276F;</span><div class="cat-name">AC Milan</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-mil"></div></div>
-  <div class="cat-card card-boca"><span class="cat-arrow">&#x276F;</span><div class="cat-name">Boca Juniors</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-boc"></div></div>
-  <div class="cat-card card-riv"><span class="cat-arrow">&#x276F;</span><div class="cat-name">River Plate</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-riv"></div></div>
-</div>
-
-<div class="section-label">Countries</div>
-<div class="cat-grid">
-  <div class="cat-card card-bra"><span class="cat-arrow">&#x276F;</span><div class="cat-name">Brazil</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-bra"></div></div>
-  <div class="cat-card card-arg"><span class="cat-arrow">&#x276F;</span><div class="cat-name">Argentina</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-arg"></div></div>
-  <div class="cat-card card-fra"><span class="cat-arrow">&#x276F;</span><div class="cat-name">France</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-fra"></div></div>
-  <div class="cat-card card-ger"><span class="cat-arrow">&#x276F;</span><div class="cat-name">Germany</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-ger"></div></div>
-  <div class="cat-card card-esp"><span class="cat-arrow">&#x276F;</span><div class="cat-name">Spain</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-esp"></div></div>
-  <div class="cat-card card-ita"><span class="cat-arrow">&#x276F;</span><div class="cat-name">Italy</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-ita"></div></div>
-  <div class="cat-card card-eng"><span class="cat-arrow">&#x276F;</span><div class="cat-name">England</div><div class="cat-sub">All-time · Football</div><div class="cat-accent a-eng"></div></div>
-</div>
-
-<div class="pb"></div>
+)
 
 
-  </div>
-</div>
+}
 
-</body>
-</html>
+return (
+<>
+<Head>
+<title>Build your Top 10 | Vote4GOAT</title>
+<meta name="description" content="Build your all-time Top 10 by club or national team and see how it compares with the world." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://vote4goat.com/top10" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Build your Top 10 | Vote4GOAT" />
+<meta property="og:description" content="Build your all-time Top 10 by club or national team and see how it compares with the world." />
+<meta property="og:url" content="https://vote4goat.com/top10" />
+<meta property="og:image" content="https://vote4goat.com/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:site_name" content="Vote4GOAT" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Build your Top 10 | Vote4GOAT" />
+<meta name="twitter:description" content="Build your all-time Top 10 by club or national team and see how it compares with the world." />
+<meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
+<link rel="icon" href="/favicon.ico" />
+</Head>
+
+
+  <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
+
+    <header className="flex items-center justify-between px-3 py-2">
+      <a href="/" className="text-xl sm:text-2xl font-bold text-white hover:opacity-80 transition">Vote4GOAT</a>
+      <nav className="flex items-center gap-3 text-xs sm:text-sm">
+        <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">About</button>
+        {user ? (
+          <div className="relative" ref={menuRef}>
+            <button onClick={() => setShowMenu(!showMenu)} className="text-goat font-semibold hover:underline">My Account</button>
+            {showMenu && (
+              <div className="absolute right-0 mt-1 w-28 bg-white text-black rounded shadow-md z-50">
+                <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">Profile</a>
+                <button onClick={async () => { await supabase.auth.signOut(); window.location.reload() }} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Logout</button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <a href="/login" className="hover:underline">Log In</a>
+            <a href="/signup" className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105">Sign Up</a>
+          </>
+        )}
+      </nav>
+    </header>
+
+    {showHelp && (
+      <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
+        <p className="mb-2 font-semibold text-goat">What is Vote4GOAT?</p>
+        <p className="mb-2">Build your all-time Top 10 for any club or national team. Save it, share it, and compare with the world.</p>
+        <p className="mt-4 font-semibold text-goat">Start building. Shape the GOAT lists.</p>
+      </div>
+    )}
+
+    <div className="text-center pt-8 pb-4 px-4">
+      <p className="text-xs tracking-widest uppercase text-white/30 mb-2">T0PS Mode</p>
+      <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-1">
+        Build your <span className="text-goat">Top 10</span>
+      </h1>
+      <p className="text-sm text-white/40 max-w-xs mx-auto">Pick a category. Rank your 10. Compare with the world.</p>
+    </div>
+
+    <div className="max-w-lg mx-auto w-full px-1 mt-2">
+
+      <div className="relative mb-3">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/25 text-sm">&#x1F50D;</span>
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search clubs, countries..."
+          className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/25 focus:outline-none focus:border-goat/40 transition"
+        />
+      </div>
+
+      <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
+        {TABS.map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={"flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide border transition " + (activeTab === tab ? "bg-goat/10 border-goat/30 text-goat" : "bg-white/[0.03] border-white/10 text-white/40 hover:text-white/60")}
+          >
+            {tab}
+            {counts[tab] > 0 && <span className="ml-1 opacity-50">{counts[tab]}</span>}
+          </button>
+        ))}
+      </div>
+
+      {isLoading ? (
+        <p className="text-sm text-white/30 text-center py-8">Loading...</p>
+      ) : error ? (
+        <p className="text-sm text-red-400 text-center py-8">{error}</p>
+      ) : visible.length === 0 ? (
+        <p className="text-sm text-white/30 text-center py-8">No results.</p>
+      ) : (
+        renderAll()
+      )}
+
+    </div>
+  </main>
+</>
+
+
+)
+}
