@@ -7,6 +7,12 @@ process.env.NEXT_PUBLIC_SUPABASE_URL,
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
+const K = 32
+
+function expectedScore(rA, rB) {
+return 1 / (1 + Math.pow(10, (rB - rA) / 400))
+}
+
 export default function FootballPage() {
 const [duel, setDuel] = useState([])
 const [ranking, setRanking] = useState([])
@@ -88,27 +94,30 @@ if (error) console.error("Error in fetchRanking:", error)
 const results = data || []
 setRanking(results)
 if (results.length > 0) setTopElo(results[0].elo_rating)
-}
-
-const getRankBefore = (playerId) => {
-const idx = ranking.findIndex(r => r.id === playerId)
-return idx >= 0 ? idx + 1 : null
+return results
 }
 
 const vote = async (winnerId, loserId) => {
 if (voting) return
 setSelected(winnerId)
 setVoting(true)
+setImpact(null)
 
 
 const winner = duel.find(p => p.id === winnerId)
 const loser = duel.find(p => p.id === loserId)
 
-const winnerRankBefore = getRankBefore(winnerId)
-const loserRankBefore = getRankBefore(loserId)
+// snapshot ranking before vote
+const rankingBefore = [...ranking]
+const winnerBefore = rankingBefore.find(r => r.id === winnerId)
+const loserBefore = rankingBefore.find(r => r.id === loserId)
+const winnerEloBefore = winnerBefore?.elo_rating || 1200
+const loserEloBefore = loserBefore?.elo_rating || 1200
+const winnerRankBefore = winnerBefore ? rankingBefore.indexOf(winnerBefore) + 1 : null
+const loserRankBefore = loserBefore ? rankingBefore.indexOf(loserBefore) + 1 : null
 
-const winnerEloBefore = ranking.find(r => r.id === winnerId)?.elo_rating || 1200
-const loserEloBefore = ranking.find(r => r.id === loserId)?.elo_rating || 1200
+// calculate expected elo change
+const eloChange = Math.round(K * (1 - expectedScore(winnerEloBefore, loserEloBefore)))
 
 let userId = null
 try {
@@ -132,32 +141,26 @@ if (error) {
 
 setSessionVotes(v => v + 1)
 
-await fetchRanking(limit)
+// fetch updated ranking
+const rankingAfter = await fetchRanking(limit)
 
-const winnerEloAfter = ranking.find(r => r.id === winnerId)?.elo_rating || winnerEloBefore
-const loserEloAfter = ranking.find(r => r.id === loserId)?.elo_rating || loserEloBefore
-const winnerRankAfter = getRankBefore(winnerId)
-const loserRankAfter = getRankBefore(loserId)
-
-const eloGain = Math.round(Math.abs(winnerEloAfter - winnerEloBefore)) || 18
-const eloLoss = eloGain
-
-const winnerClimbed = winnerRankBefore && winnerRankAfter && winnerRankAfter < winnerRankBefore
-const loserFell = loserRankBefore && loserRankAfter && loserRankAfter > loserRankBefore
+const winnerAfter = rankingAfter.find(r => r.id === winnerId)
+const loserAfter = rankingAfter.find(r => r.id === loserId)
+const winnerRankAfter = winnerAfter ? rankingAfter.indexOf(winnerAfter) + 1 : null
+const loserRankAfter = loserAfter ? rankingAfter.indexOf(loserAfter) + 1 : null
 
 setImpact({
   winnerName: winner?.name_line2 || winner?.name_line1 || "Winner",
   loserName: loser?.name_line2 || loser?.name_line1 || "Loser",
   winnerImg: winner?.image_url,
   loserImg: loser?.image_url,
-  eloGain,
-  eloLoss,
+  eloChange,
   winnerRankBefore,
   winnerRankAfter,
   loserRankBefore,
   loserRankAfter,
-  winnerClimbed,
-  loserFell,
+  winnerClimbed: winnerRankBefore && winnerRankAfter && winnerRankAfter < winnerRankBefore,
+  loserFell: loserRankBefore && loserRankAfter && loserRankAfter > loserRankBefore,
 })
 
 await new Promise(resolve => setTimeout(resolve, 700))
@@ -167,14 +170,9 @@ setVoting(false)
 
 }
 
-const winnerRank = duel.length === 2 ? ranking.findIndex(r => r.id === duel[0]?.id) + 1 : null
-const loserRank = duel.length === 2 ? ranking.findIndex(r => r.id === duel[1]?.id) + 1 : null
-
-const getStreakLabel = () => {
-if (sessionVotes >= 20) return "20 +"
-if (sessionVotes >= 10) return String(sessionVotes)
-if (sessionVotes >= 5) return String(sessionVotes)
-return String(sessionVotes)
+const getShareText = () => {
+if (!impact) return ""
+return "My pick in the football GOAT debate: " + impact.winnerName + " over " + impact.loserName + ". Do you agree? Vote now at vote4goat.com #Vote4GOAT #GOAT #Football"
 }
 
 return (
@@ -202,14 +200,13 @@ return (
 
   <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 
-    {/* HEADER */}
     <header className="flex items-center justify-between px-3 py-2">
       <a href="/" className="text-xl sm:text-2xl font-bold text-white hover:opacity-80 transition">Vote4GOAT</a>
       <nav className="flex items-center gap-3 text-xs sm:text-sm">
         {sessionVotes > 0 && (
           <div className="flex items-center gap-1.5 bg-goat/10 border border-goat/25 rounded-full px-2.5 py-1">
             <span className="text-xs">&#x1F525;</span>
-            <span className="text-xs font-bold text-goat">{getStreakLabel()}</span>
+            <span className="text-xs font-bold text-goat">{sessionVotes}</span>
           </div>
         )}
         <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">About</button>
@@ -235,18 +232,16 @@ return (
     {showHelp && (
       <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
         <p className="mb-2 font-semibold text-goat">What is Vote4GOAT?</p>
-        <p className="mb-2">Two players appear. You pick the greatest. Every vote updates the ranking using Elo -- the same system used in chess.</p>
+        <p className="mb-2">Two players appear. You pick the greatest. Every vote updates the ranking using Elo.</p>
         <p className="mt-4 font-semibold text-goat">Start voting. Shape the GOAT list.</p>
       </div>
     )}
 
-    {/* CONTEXT */}
     <div className="text-center pt-6 pb-2">
-      <p className="text-xs tracking-widest uppercase text-white/25 mb-1">Football - All time</p>
+      <p className="text-xs tracking-widest uppercase text-white/25 mb-1">Football -- All time</p>
       <h1 className="text-2xl font-extrabold text-white">Who is the <span className="text-goat">greatest?</span></h1>
     </div>
 
-    {/* FILTER */}
     <div className="flex justify-center gap-2 mt-3 mb-4">
       {[
         { label: "All Players", val: null },
@@ -256,39 +251,38 @@ return (
         <button
           key={f.label}
           onClick={() => { if (f.auth && !user) { alert("Please log in to use this filter."); return } setDuelLimit(f.val) }}
-          className={"px-3 py-1 rounded-full text-xs border transition " + (duelLimit === f.val ? "bg-goat border-goat text-black font-bold" : (f.auth && !user ? "border-white/10 text-white/20 cursor-not-allowed" : "border-white/20 text-white/50 hover:border-white/40 hover:text-white/80"))}
+          className={"px-3 py-1 rounded-full text-xs border transition " + (duelLimit === f.val ? "bg-goat border-goat text-black font-bold" : (f.auth && !user ? "border-white/10 text-white/20 cursor-not-allowed" : "border-white/20 text-white/50 hover:border-white/40"))}
         >
           {f.label}
         </button>
       ))}
     </div>
 
-    {/* DUEL */}
     <div className="max-w-lg mx-auto w-full px-1">
 
       {loading ? (
-        /* SKELETON */
         <div className="flex gap-3">
-          <div className="flex-1 rounded-2xl bg-white/[0.03] border border-white/[0.06] h-48 animate-pulse" />
-          <div className="flex items-center px-2 pb-8">
-            <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" />
+          <div className="flex-1 rounded-2xl bg-white/[0.03] border border-white/[0.06] h-52 animate-pulse" />
+          <div className="flex items-center px-1">
+            <div className="w-9 h-9 rounded-full bg-white/10 animate-pulse" />
           </div>
-          <div className="flex-1 rounded-2xl bg-white/[0.03] border border-white/[0.06] h-48 animate-pulse" />
+          <div className="flex-1 rounded-2xl bg-white/[0.03] border border-white/[0.06] h-52 animate-pulse" />
         </div>
       ) : duel.length === 2 ? (
         <div className="flex gap-3 items-stretch relative">
-          {duel.map((player, idx) => {
+          {duel.map((player) => {
             const isWinner = selected === player.id
             const isLoser = selected !== null && selected !== player.id
-            const rank = idx === 0 ? (ranking.findIndex(r => r.id === player.id) + 1 || null) : (ranking.findIndex(r => r.id === player.id) + 1 || null)
+            const rank = ranking.findIndex(r => r.id === player.id)
+            const rankNum = rank >= 0 ? rank + 1 : null
             return (
               <button
                 key={player.id}
                 onClick={() => vote(player.id, duel.find(p => p.id !== player.id).id)}
                 disabled={voting}
                 className={"flex-1 rounded-2xl border overflow-hidden flex flex-col items-center gap-3 py-5 px-3 transition-all duration-300 focus:outline-none relative " +
-                  (isWinner ? "border-goat bg-goat/8 scale-[1.02] shadow-[0_0_24px_rgba(245,166,35,0.25)]" :
-                   isLoser ? "border-white/5 bg-white/[0.02] opacity-40 scale-[0.97]" :
+                  (isWinner ? "border-goat bg-goat/5 scale-[1.02] shadow-[0_0_24px_rgba(245,166,35,0.2)]" :
+                   isLoser ? "border-white/5 bg-white/[0.02] opacity-35 scale-[0.97]" :
                    "border-white/10 bg-white/[0.04] hover:border-white/20 hover:bg-white/[0.07] active:scale-[0.98]")}
               >
                 {isWinner && (
@@ -300,9 +294,9 @@ return (
                     alt={player.name_line2 || player.name_line1}
                     className={"w-20 h-20 rounded-full object-cover object-top border-2 " + (isWinner ? "border-goat" : "border-white/15")}
                   />
-                  {rank > 0 && (
+                  {rankNum && (
                     <div className={"absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border " + (isWinner ? "bg-goat border-goat text-black" : "bg-background border-white/20 text-white/50")}>
-                      {rank}
+                      {rankNum}
                     </div>
                   )}
                 </div>
@@ -311,66 +305,76 @@ return (
                   <div className={"text-lg font-black leading-tight " + (isWinner ? "text-goat" : "text-white")}>{player.name_line2}</div>
                   {player.name_line3 && <div className={"text-lg font-black leading-tight " + (isWinner ? "text-goat" : "text-white")}>{player.name_line3}</div>}
                 </div>
-                <div className={"w-full py-2 rounded-xl text-xs font-bold tracking-wide text-center border transition " + (isWinner ? "bg-goat border-goat text-black" : "bg-white/5 border-white/10 text-white/40")}>
+                <div className={"w-full py-2 rounded-xl text-xs font-bold tracking-wide text-center border " + (isWinner ? "bg-goat border-goat text-black" : "bg-white/5 border-white/10 text-white/40")}>
                   {isWinner ? "Your pick" : "Pick him"}
                 </div>
               </button>
             )
           })}
-
-          {/* VS badge */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
             <div className="bg-goat text-black text-sm font-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg">VS</div>
           </div>
         </div>
       ) : null}
 
+      {impact && !voting && (
+        <div className="mt-4">
+          <div className="rounded-2xl border border-goat/20 overflow-hidden mb-3">
+            <div className="bg-goat/8 px-4 py-2.5 flex items-center gap-2 border-b border-goat/15">
+              <span className="text-sm">&#x26A1;</span>
+              <span className="text-sm font-bold text-goat">Your vote moved the ranking</span>
+            </div>
+            <div className="divide-y divide-white/5">
+              <div className="flex items-center gap-3 px-4 py-3">
+                {impact.winnerImg && <img src={impact.winnerImg} className="w-8 h-8 rounded-full object-cover object-top border border-goat/30 flex-shrink-0" alt=""/>}
+                <span className="font-bold text-sm text-white flex-1 uppercase tracking-wide truncate">{impact.winnerName}</span>
+                <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
+                  <span className="text-xs font-bold text-green-400">+{impact.eloChange} pts</span>
+                  {impact.winnerClimbed ? (
+                    <span className="text-[10px] text-green-400/70">&#x2191; #{impact.winnerRankBefore} to #{impact.winnerRankAfter}</span>
+                  ) : impact.winnerRankAfter ? (
+                    <span className="text-[10px] text-white/25">stays #{impact.winnerRankAfter}</span>
+                  ) : null}
+                </div>
+              </div>
+              <div className="flex items-center gap-3 px-4 py-3">
+                {impact.loserImg && <img src={impact.loserImg} className="w-8 h-8 rounded-full object-cover object-top border border-white/10 flex-shrink-0 opacity-60" alt=""/>}
+                <span className="font-bold text-sm text-white/55 flex-1 uppercase tracking-wide truncate">{impact.loserName}</span>
+                <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
+                  <span className="text-xs font-bold text-red-400/80">-{impact.eloChange} pts</span>
+                  {impact.loserFell ? (
+                    <span className="text-[10px] text-red-400/60">&#x2193; #{impact.loserRankBefore} to #{impact.loserRankAfter}</span>
+                  ) : impact.loserRankAfter ? (
+                    <span className="text-[10px] text-white/25">stays #{impact.loserRankAfter}</span>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-white/5 border border-goat/20">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-goat text-sm flex-shrink-0">&#x2713;</span>
+              <p className="text-sm text-white/70 truncate">
+                You picked <span className="text-white font-semibold">{impact.winnerName}</span> over <span className="text-white/50">{impact.loserName}</span>
+              </p>
+            </div>
+            <a
+              href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent(getShareText())}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 bg-black border border-white/10 px-3 py-1.5 rounded-full text-xs font-medium hover:bg-white/5 transition flex-shrink-0"
+            >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Share
+            </a>
+          </div>
+        </div>
+      )}
 
     </div>
 
-
-
-    {/* IMPACT PANEL */}
-    {impact && !voting && (
-      <div className="max-w-lg mx-auto w-full px-1 mb-4">
-        <div className="rounded-2xl border border-goat/20 overflow-hidden">
-          <div className="bg-goat/8 px-4 py-3 flex items-center gap-2 border-b border-goat/15">
-            <span className="text-sm">&#x26A1;</span>
-            <span className="text-sm font-bold text-goat">Your vote moved the ranking</span>
-          </div>
-          <div className="divide-y divide-white/5">
-            <div className="flex items-center gap-3 px-4 py-3">
-              {impact.winnerImg && <img src={impact.winnerImg} className="w-8 h-8 rounded-full object-cover object-top border border-goat/30 flex-shrink-0" alt=""/>}
-              <span className="font-bold text-sm text-white flex-1 uppercase tracking-wide">{impact.winnerName}</span>
-              <div className="flex flex-col items-end gap-0.5">
-                <span className="text-xs font-bold text-green-400">+{impact.eloGain} pts</span>
-                {impact.winnerClimbed && impact.winnerRankBefore && impact.winnerRankAfter ? (
-                  <span className="text-[10px] text-green-400/70">&#x2191; #{impact.winnerRankBefore} &#x2192; #{impact.winnerRankAfter}</span>
-                ) : (
-                  <span className="text-[10px] text-white/25">{impact.winnerRankAfter ? "stays #" + impact.winnerRankAfter : ""}</span>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-3 px-4 py-3">
-              {impact.loserImg && <img src={impact.loserImg} className="w-8 h-8 rounded-full object-cover object-top border border-white/10 flex-shrink-0 opacity-60" alt=""/>}
-              <span className="font-bold text-sm text-white/60 flex-1 uppercase tracking-wide">{impact.loserName}</span>
-              <div className="flex flex-col items-end gap-0.5">
-                <span className="text-xs font-bold text-red-400/80">-{impact.eloLoss} pts</span>
-                {impact.loserFell && impact.loserRankBefore && impact.loserRankAfter ? (
-                  <span className="text-[10px] text-red-400/60">&#x2193; #{impact.loserRankBefore} &#x2192; #{impact.loserRankAfter}</span>
-                ) : (
-                  <span className="text-[10px] text-white/25">{impact.loserRankAfter ? "stays #" + impact.loserRankAfter : ""}</span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
-
-    {/* RANKING */}
-    <div className="bg-background text-white px-4 py-8 mt-2 rounded-t-3xl">
+    <div className="bg-background text-white px-4 py-8 mt-4 rounded-t-3xl">
       <div className="flex items-center justify-center gap-2 mb-6">
         <h2 className="text-xl font-bold">Current Ranking</h2>
         <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-2.5 py-1">
