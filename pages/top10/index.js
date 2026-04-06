@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from “react”
-import { createClient } from “@supabase/supabase-js”
-import Head from “next/head”
+import { useEffect, useState, useRef } from "react"
+import { createClient } from "@supabase/supabase-js"
+import Head from "next/head"
 
 const supabase = createClient(
 process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -8,36 +8,36 @@ process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
 const classifyCategory = (slug) => {
-if (!slug) return “other”
+if (!slug) return "other"
 const s = slug.toLowerCase()
-if (s.includes(“real-madrid”) || s.includes(“fc-barcelona”) || s.includes(“barcelona-all-time”) || s.includes(“bayern”) || s.includes(“manchester-united”) || s.includes(“liverpool”) || s.includes(“ac-milan”) || s.includes(“milan-all-time”) || s.includes(“boca”) || s.includes(“river”)) return “club”
-if (s.startsWith(“brazil-”) || s.startsWith(“argentina-”) || s.startsWith(“france-”) || s.startsWith(“germany-”) || s.startsWith(“spain-”) || s.startsWith(“italy-”) || s.startsWith(“england-”)) return “country”
-return “position”
+if (s.includes("real-madrid") || s.includes("fc-barcelona") || s.includes("barcelona-all-time") || s.includes("bayern") || s.includes("manchester-united") || s.includes("liverpool") || s.includes("ac-milan") || s.includes("milan-all-time") || s.includes("boca") || s.includes("river")) return "club"
+if (s.startsWith("brazil-") || s.startsWith("argentina-") || s.startsWith("france-") || s.startsWith("germany-") || s.startsWith("spain-") || s.startsWith("italy-") || s.startsWith("england-")) return "country"
+return "position"
 }
 
 const getCategoryTheme = (slug) => {
-const base = { cardClass: “bg-white/[0.04] hover:bg-white/[0.08] border-white/10”, titleClass: “text-white” }
+const base = { cardClass: "bg-white/[0.04] hover:bg-white/[0.08] border-white/10", titleClass: "text-white" }
 if (!slug) return base
 const s = slug.toLowerCase()
-if (s.includes(“real-madrid”)) return { cardClass: “bg-gradient-to-br from-white via-gray-100 to-gray-300 border-gray-300 hover:border-goat”, titleClass: “text-black” }
-if (s.includes(“fc-barcelona”) || s.includes(“barcelona-all-time”)) return { cardClass: “bg-gradient-to-br from-[#004d98] via-[#004d98] to-[#a50044] border-[#a50044]/80 hover:border-white”, titleClass: “text-white” }
-if (s.includes(“bayern”)) return { cardClass: “bg-gradient-to-br from-[#dc052d] via-[#b80024] to-[#750014] border-[#ffb3c2]/40 hover:border-white”, titleClass: “text-white” }
-if (s.includes(“manchester-united”)) return { cardClass: “bg-gradient-to-br from-[#da291c] via-[#a00012] to-black border-[#fbe122]/40 hover:border-white”, titleClass: “text-white” }
-if (s.includes(“liverpool”)) return { cardClass: “bg-gradient-to-br from-[#c8102e] via-[#8b0018] to-[#111827] border-[#f6e3e7]/40 hover:border-white”, titleClass: “text-white” }
-if (s.includes(“ac-milan”) || s.includes(“milan-all-time”)) return { cardClass: “bg-gradient-to-br from-black via-[#111827] to-[#a0001e] border-[#ffccd5]/40 hover:border-white”, titleClass: “text-white” }
-if (s.includes(“boca”)) return { cardClass: “bg-gradient-to-br from-[#0033a0] via-[#0033a0] to-[#ffcc00] border-[#ffcc00]/60 hover:border-white”, titleClass: “text-white” }
-if (s.includes(“river”)) return { cardClass: “bg-gradient-to-br from-white via-[#f3f4f6] to-[#e11d48] border-[#fecaca]/60 hover:border-white”, titleClass: “text-black” }
-if (s.startsWith(“brazil-”)) return { cardClass: “bg-gradient-to-br from-[#ffdf00] via-[#ffdf00] to-[#009c3b] border-[#fde68a]/70 hover:border-white”, titleClass: “text-black” }
-if (s.startsWith(“argentina-”)) return { cardClass: “bg-gradient-to-br from-[#75aadb] via-[#75aadb] to-white border-[#bfdbfe]/70 hover:border-white”, titleClass: “text-black” }
-if (s.startsWith(“france-”)) return { cardClass: “bg-gradient-to-br from-[#0055a4] via-[#003366] to-[#e51b23] border-[#bfdbfe]/70 hover:border-white”, titleClass: “text-white” }
-if (s.startsWith(“germany-”)) return { cardClass: “bg-gradient-to-br from-black via-[#111827] to-white border-[#e5e7eb]/60 hover:border-white”, titleClass: “text-white” }
-if (s.startsWith(“spain-”)) return { cardClass: “bg-gradient-to-br from-[#aa151b] via-[#aa151b] to-[#f1bf00] border-[#fecaca]/70 hover:border-white”, titleClass: “text-white” }
-if (s.startsWith(“italy-”)) return { cardClass: “bg-gradient-to-br from-[#0072ce] via-[#0072ce] to-white border-[#bfdbfe]/70 hover:border-white”, titleClass: “text-white” }
-if (s.startsWith(“england-”)) return { cardClass: “bg-gradient-to-br from-white via-[#f3f4f6] to-[#c8102e] border-[#fecaca]/70 hover:border-white”, titleClass: “text-black” }
+if (s.includes("real-madrid")) return { cardClass: "bg-gradient-to-br from-white via-gray-100 to-gray-300 border-gray-300 hover:border-goat", titleClass: "text-black" }
+if (s.includes("fc-barcelona") || s.includes("barcelona-all-time")) return { cardClass: "bg-gradient-to-br from-[#004d98] via-[#004d98] to-[#a50044] border-[#a50044]/80 hover:border-white", titleClass: "text-white" }
+if (s.includes("bayern")) return { cardClass: "bg-gradient-to-br from-[#dc052d] via-[#b80024] to-[#750014] border-[#ffb3c2]/40 hover:border-white", titleClass: "text-white" }
+if (s.includes("manchester-united")) return { cardClass: "bg-gradient-to-br from-[#da291c] via-[#a00012] to-black border-[#fbe122]/40 hover:border-white", titleClass: "text-white" }
+if (s.includes("liverpool")) return { cardClass: "bg-gradient-to-br from-[#c8102e] via-[#8b0018] to-[#111827] border-[#f6e3e7]/40 hover:border-white", titleClass: "text-white" }
+if (s.includes("ac-milan") || s.includes("milan-all-time")) return { cardClass: "bg-gradient-to-br from-black via-[#111827] to-[#a0001e] border-[#ffccd5]/40 hover:border-white", titleClass: "text-white" }
+if (s.includes("boca")) return { cardClass: "bg-gradient-to-br from-[#0033a0] via-[#0033a0] to-[#ffcc00] border-[#ffcc00]/60 hover:border-white", titleClass: "text-white" }
+if (s.includes("river")) return { cardClass: "bg-gradient-to-br from-white via-[#f3f4f6] to-[#e11d48] border-[#fecaca]/60 hover:border-white", titleClass: "text-black" }
+if (s.startsWith("brazil-")) return { cardClass: "bg-gradient-to-br from-[#ffdf00] via-[#ffdf00] to-[#009c3b] border-[#fde68a]/70 hover:border-white", titleClass: "text-black" }
+if (s.startsWith("argentina-")) return { cardClass: "bg-gradient-to-br from-[#75aadb] via-[#75aadb] to-white border-[#bfdbfe]/70 hover:border-white", titleClass: "text-black" }
+if (s.startsWith("france-")) return { cardClass: "bg-gradient-to-br from-[#0055a4] via-[#003366] to-[#e51b23] border-[#bfdbfe]/70 hover:border-white", titleClass: "text-white" }
+if (s.startsWith("germany-")) return { cardClass: "bg-gradient-to-br from-black via-[#111827] to-white border-[#e5e7eb]/60 hover:border-white", titleClass: "text-white" }
+if (s.startsWith("spain-")) return { cardClass: "bg-gradient-to-br from-[#aa151b] via-[#aa151b] to-[#f1bf00] border-[#fecaca]/70 hover:border-white", titleClass: "text-white" }
+if (s.startsWith("italy-")) return { cardClass: "bg-gradient-to-br from-[#0072ce] via-[#0072ce] to-white border-[#bfdbfe]/70 hover:border-white", titleClass: "text-white" }
+if (s.startsWith("england-")) return { cardClass: "bg-gradient-to-br from-white via-[#f3f4f6] to-[#c8102e] border-[#fecaca]/70 hover:border-white", titleClass: "text-black" }
 return base
 }
 
-const TABS = [“All”, “Clubs”, “Countries”, “Positions”]
+const TABS = ["All", "Clubs", "Countries", "Positions"]
 
 export default function Top10IndexPage() {
 const [categories, setCategories] = useState([])
@@ -46,8 +46,8 @@ const [error, setError] = useState(null)
 const [user, setUser] = useState(null)
 const [showHelp, setShowHelp] = useState(false)
 const [showMenu, setShowMenu] = useState(false)
-const [activeTab, setActiveTab] = useState(“All”)
-const [search, setSearch] = useState(””)
+const [activeTab, setActiveTab] = useState("All")
+const [search, setSearch] = useState("")
 
 const menuRef = useRef(null)
 const helpRef = useRef(null)
@@ -68,13 +68,13 @@ if (menuRef.current && !menuRef.current.contains(event.target)) setShowMenu(fals
 if (helpRef.current && !helpRef.current.contains(event.target)) setShowHelp(false)
 }
 function handleEsc(event) {
-if (event.key === “Escape”) { setShowMenu(false); setShowHelp(false) }
+if (event.key === "Escape") { setShowMenu(false); setShowHelp(false) }
 }
-document.addEventListener(“mousedown”, handleClickOutside)
-document.addEventListener(“keydown”, handleEsc)
+document.addEventListener("mousedown", handleClickOutside)
+document.addEventListener("keydown", handleEsc)
 return () => {
-document.removeEventListener(“mousedown”, handleClickOutside)
-document.removeEventListener(“keydown”, handleEsc)
+document.removeEventListener("mousedown", handleClickOutside)
+document.removeEventListener("keydown", handleEsc)
 }
 }, [])
 
@@ -83,11 +83,11 @@ const fetchCategories = async () => {
 setIsLoading(true)
 setError(null)
 const { data, error } = await supabase
-.from(“top10_categories”)
-.select(“id, slug, title, description, entity_category_id, is_active”)
-.eq(“is_active”, true)
-.order(“title”, { ascending: true })
-if (error) { setError(“Error loading categories.”); setIsLoading(false); return }
+.from("top10_categories")
+.select("id, slug, title, description, entity_category_id, is_active")
+.eq("is_active", true)
+.order("title", { ascending: true })
+if (error) { setError("Error loading categories."); setIsLoading(false); return }
 setCategories(data || [])
 setIsLoading(false)
 }
@@ -96,8 +96,8 @@ fetchCategories()
 
 const grouped = categories.reduce((acc, cat) => {
 const type = classifyCategory(cat.slug)
-if (type === “club”) acc.clubs.push(cat)
-else if (type === “country”) acc.countries.push(cat)
+if (type === "club") acc.clubs.push(cat)
+else if (type === "country") acc.countries.push(cat)
 else acc.positions.push(cat)
 return acc
 }, { clubs: [], countries: [], positions: [] })
@@ -111,9 +111,9 @@ Positions: grouped.positions.length,
 
 const getVisible = () => {
 let items = []
-if (activeTab === “All”) items = categories
-else if (activeTab === “Clubs”) items = grouped.clubs
-else if (activeTab === “Countries”) items = grouped.countries
+if (activeTab === "All") items = categories
+else if (activeTab === "Clubs") items = grouped.clubs
+else if (activeTab === "Countries") items = grouped.countries
 else items = grouped.positions
 if (search.trim()) {
 const q = search.toLowerCase()
