@@ -139,9 +139,25 @@ style={{ background: theme.tint }}
 <span className="text-[15px] font-extrabold text-white leading-tight">
 {cat.title}
 </span>
-<span className="text-[10px] text-white/30 uppercase tracking-widest font-semibold">
-All-time · Football
-</span>
+{(() => {
+const s = cat.slug ? cat.slug.toLowerCase() : ""
+const names = s.includes("real-madrid") ? "Ronaldo, Di Stéfano, Zidane, Raúl"
+: (s.includes("fc-barcelona") || s.includes("barcelona-all-time")) ? "Messi, Xavi, Iniesta, Ronaldinho"
+: s.includes("bayern") ? "Müller, Beckenbauer, Ribéry, Lewandowski"
+: s.includes("manchester-united") ? "Giggs, Cantona, Scholes, Ronaldo"
+: s.includes("liverpool") ? "Gerrard, Dalglish, Rush, Salah"
+: (s.includes("ac-milan") || s.includes("milan-all-time")) ? "Maldini, Van Basten, Kaká, Baresi"
+: s.includes("brazil") ? "Pelé, Ronaldo, Ronaldinho, Zico"
+: s.includes("argentina") ? "Messi, Maradona, Di María, Riquelme"
+: s.includes("france") ? "Zidane, Platini, Henry, Mbappé"
+: s.includes("germany") ? "Beckenbauer, Müller, Klose, Lahm"
+: s.includes("spain") ? "Xavi, Iniesta, Ramos, Villa"
+: s.includes("italy") ? "Maldini, Del Piero, Totti, Buffon"
+: s.includes("england") ? "Beckham, Lineker, Shearer, Charlton"
+: null
+if (!names) return null
+return <span className="text-[10px] text-white/35 font-medium truncate">{names}</span>
+})()}
 </div>
 <svg className="w-4 h-4 text-white/20 group-hover:text-white/60 transition z-10 flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
