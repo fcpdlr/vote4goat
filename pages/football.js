@@ -110,7 +110,7 @@ const winner = duel.find(p => p.id === winnerId)
 const loser = duel.find(p => p.id === loserId)
 
 // snapshot ranking before vote
-const rankingBefore = fullRanking.length > 0 ? [...fullRanking] : [...ranking]
+const rankingBefore = fullRanking.length > 0 ? [...fullRanking] : await fetchRanking(100)
 const winnerBefore = rankingBefore.find(r => r.id === winnerId)
 const loserBefore = rankingBefore.find(r => r.id === loserId)
 const winnerEloBefore = winnerBefore?.elo_rating || 1200
@@ -145,7 +145,7 @@ setSessionVotes(v => v + 1)
 
 // fetch updated ranking
 await fetchRanking(100)
-const rankingAfter = await fetchRanking(limit)
+const rankingAfter = await fetchRanking(100)
 
 const winnerAfter = rankingAfter.find(r => r.id === winnerId)
 const loserAfter = rankingAfter.find(r => r.id === loserId)
@@ -162,8 +162,8 @@ setImpact({
   winnerRankAfter,
   loserRankBefore,
   loserRankAfter,
-  winnerClimbed: winnerRankBefore && winnerRankAfter && winnerRankAfter < winnerRankBefore,
-  loserFell: loserRankBefore && loserRankAfter && loserRankAfter > loserRankBefore,
+  winnerClimbed: winnerRankBefore != null && winnerRankAfter != null && winnerRankAfter < winnerRankBefore,
+loserFell: loserRankBefore != null && loserRankAfter != null && loserRankAfter > loserRankBefore,
 })
 
 await new Promise(resolve => setTimeout(resolve, 700))
