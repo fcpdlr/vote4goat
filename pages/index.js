@@ -72,7 +72,7 @@ const modes = [
 id: "dvels",
 label: ["D", "V", "E", "L", "S"],
 accent: [1, 4],
-descShort: "Two players appear. You choose the greatest. Every vote shapes the ranking.",
+desc: "Two players appear. You choose the greatest. Every vote shapes the ranking.",
 cta: "Start voting",
 icon: (active) => <Swords size={22} strokeWidth={1.5} className={active ? "text-goat" : "text-white/40"} />,
 },
@@ -80,7 +80,7 @@ icon: (active) => <Swords size={22} strokeWidth={1.5} className={active ? "text-
 id: "tops",
 label: ["T", "1", "0", "P", "S"],
 accent: [1, 2],
-descShort: "Select the category and build your Top 10. Save it, share it and compare with the world.",
+desc: "Select the category and build your Top 10. Save it, share it and compare with the world.",
 cta: "Build your Top 10",
 href: "/top10",
 icon: (active) => <TopsIcon active={active} />,
@@ -89,7 +89,7 @@ icon: (active) => <TopsIcon active={active} />,
 id: "rank",
 label: ["R", "4", "N", "K"],
 accent: [1],
-descShort: "Four options, you rank them. New debate every week.",
+desc: "Four options, you rank them. New debate every week.",
 cta: "See this week",
 href: "/rank4",
 icon: (active) => <RankIcon active={active} />,
@@ -125,46 +125,36 @@ return (
 
     <Header />
 
-    {/* HERO — impactante */}
-    <div className="relative px-4 pt-10 pb-10 text-center overflow-hidden">
-      {/* Glow background */}
+    {/* HERO */}
+    <div className="relative px-4 pt-12 pb-10 text-center overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] rounded-full bg-goat/5 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-goat/[0.06] blur-3xl" />
       </div>
 
-      {/* Overline */}
-      <p className="relative text-[10px] tracking-[0.3em] uppercase text-white/25 mb-5 font-medium">
-        The world decides
+      <p className="relative text-[10px] tracking-[0.35em] uppercase text-white/20 mb-4 font-medium">
+        Football · The world decides
       </p>
 
-      {/* Main headline */}
-      <h1 className="relative leading-none mb-4">
-        <span className="block text-[13vw] sm:text-[72px] font-black text-white tracking-tight uppercase" style={{ fontFamily: "system-ui, sans-serif" }}>
+      <h1 className="relative leading-[0.9] mb-6">
+        <span className="block font-black text-white uppercase"
+          style={{ fontSize: "clamp(52px, 14vw, 80px)", fontFamily: "system-ui, sans-serif", letterSpacing: "-0.02em" }}>
           WHO IS
         </span>
-        <span className="block text-[18vw] sm:text-[96px] font-black text-goat tracking-tight uppercase leading-none" style={{ fontFamily: "system-ui, sans-serif" }}>
+        <span className="block font-black text-goat uppercase"
+          style={{ fontSize: "clamp(64px, 18vw, 104px)", fontFamily: "system-ui, sans-serif", letterSpacing: "-0.02em" }}>
           THE GOAT?
         </span>
       </h1>
 
-      {/* Subline */}
-      <p className="relative text-sm text-white/30 max-w-xs mx-auto leading-relaxed">
-        Vote. Build your Top 10. Rank the debate.<br />
-        <span className="text-white/50">Football's greatest — decided by the world.</span>
+      <p className="relative text-sm text-white/30 max-w-[260px] mx-auto leading-relaxed mb-8">
+        Vote in duels, build your Top 10 or settle the weekly debate.
       </p>
 
-      {/* CTA direct */}
-      <div className="relative mt-7 flex items-center justify-center gap-3">
-        <a
-          href="/football"
-          className="bg-goat text-black px-6 py-3 rounded-full text-sm font-black tracking-wide hover:brightness-110 transition"
-        >
+      <div className="relative flex items-center justify-center gap-3">
+        <a href="/football" className="bg-goat text-black px-6 py-3 rounded-full text-sm font-black tracking-wide hover:brightness-110 transition">
           Start voting →
         </a>
-        <a
-          href="/top10"
-          className="border border-white/15 text-white/50 px-5 py-3 rounded-full text-sm font-semibold hover:border-white/30 hover:text-white/70 transition"
-        >
+        <a href="/top10" className="border border-white/10 text-white/40 px-5 py-3 rounded-full text-sm font-semibold hover:border-white/25 hover:text-white/60 transition">
           Build Top 10
         </a>
       </div>
@@ -179,14 +169,14 @@ return (
             <button
               key={mode.id}
               onClick={() => setActiveMode(mode.id)}
-              className={"flex-1 flex flex-col items-center gap-2 py-4 px-2 rounded-2xl border transition relative cursor-pointer " + (active ? "bg-white/5 border-goat/30" : "bg-background border-white/10 hover:bg-white/[0.03]")}
+              className={"flex-1 flex flex-col items-center gap-2 py-4 px-2 rounded-2xl border transition relative " + (active ? "bg-white/5 border-goat/30" : "bg-transparent border-white/8 hover:bg-white/[0.03] hover:border-white/15")}
             >
-              <div className={"w-11 h-11 rounded-xl flex items-center justify-center border transition " + (active ? "bg-goat/10 border-goat/30" : "bg-white/[0.04] border-white/10")}>
+              <div className={"w-11 h-11 rounded-xl flex items-center justify-center border transition " + (active ? "bg-goat/10 border-goat/30" : "bg-white/[0.03] border-white/8")}>
                 {mode.icon(active)}
               </div>
-              <div className="text-lg font-black tracking-wider leading-none" style={{ fontFamily: "system-ui, sans-serif" }}>
+              <div className="text-base font-black tracking-wider leading-none" style={{ fontFamily: "system-ui, sans-serif" }}>
                 {mode.label.map((letter, i) => (
-                  <span key={i} className={mode.accent.includes(i) ? "text-goat" : (active ? "text-white" : "text-white/50")}>
+                  <span key={i} className={mode.accent.includes(i) ? "text-goat" : (active ? "text-white" : "text-white/40")}>
                     {letter}
                   </span>
                 ))}
@@ -202,8 +192,8 @@ return (
     <div className="max-w-lg mx-auto w-full px-4 flex-1">
 
       {activeM && (
-        <div className="bg-white/5 border border-goat/20 rounded-2xl p-5 mb-4">
-          <p className="text-sm text-white/70 mb-4">{activeM.descShort}</p>
+        <div className="bg-white/[0.04] border border-white/8 rounded-2xl p-5 mb-4">
+          <p className="text-sm text-white/60 mb-4 leading-relaxed">{activeM.desc}</p>
           <a
             href={activeM.id === "dvels" ? "/football" : activeM.href}
             className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
@@ -213,24 +203,24 @@ return (
         </div>
       )}
 
-      {/* Mini ranking */}
+      {/* Mini ranking — DVELS */}
       {activeMode === "dvels" && ranking.length > 0 && (
-        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+        <div className="bg-white/[0.04] border border-white/8 rounded-2xl overflow-hidden mb-4">
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-            <span className="text-xs font-semibold text-white/50 uppercase tracking-wide">Current ranking — Football</span>
+            <span className="text-xs font-semibold text-white/40 uppercase tracking-wide">Current ranking</span>
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs text-white/30">live</span>
+              <span className="text-xs text-white/25">live</span>
             </div>
           </div>
           {ranking.map((player, i) => {
             const barPct = Math.round((player.elo_rating / topElo) * 100)
             const barColor = i === 0 ? "bg-goat" : i === 1 ? "bg-gray-400" : i === 2 ? "bg-amber-700" : "bg-white/20"
             return (
-              <div key={player.id} className={"flex items-center gap-3 px-4 py-2.5 border-t border-white/5 " + (i === 0 ? "bg-goat/5" : "")}>
-                <span className="text-xs w-5 text-center shrink-0 text-white/40">{medal(i) || i + 1}</span>
+              <div key={player.id} className={"flex items-center gap-3 px-4 py-2.5 border-t border-white/5 " + (i === 0 ? "bg-goat/[0.04]" : "")}>
+                <span className="text-xs w-5 text-center shrink-0 text-white/30">{medal(i) || i + 1}</span>
                 <img src={player.entities.image_url} alt={player.entities.name} className="w-6 h-6 rounded-full object-cover shrink-0 border border-white/10" />
-                <span className={"flex-1 text-sm font-medium truncate " + (i === 0 ? "text-goat" : "text-white/80")}>{player.entities.name}</span>
+                <span className={"flex-1 text-sm font-medium truncate " + (i === 0 ? "text-goat" : "text-white/70")}>{player.entities.name}</span>
                 <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden shrink-0">
                   <div className={"h-full rounded-full " + barColor} style={{ width: barPct + "%" }} />
                 </div>
@@ -245,7 +235,7 @@ return (
 
       {/* Active R4NK */}
       {activeMode === "rank" && activeRank4 && (
-        <a href={"/rank4/" + activeRank4.id} className="block bg-white/5 border border-goat/20 rounded-2xl p-5 hover:border-goat/40 transition">
+        <a href={"/rank4/" + activeRank4.id} className="block bg-white/[0.04] border border-white/8 rounded-2xl p-5 hover:border-goat/20 transition mb-4">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs text-goat font-semibold uppercase tracking-wide">This week</span>
             <span className="text-xs bg-green-900/40 text-green-400 px-2 py-0.5 rounded-full">Open</span>
@@ -255,7 +245,7 @@ return (
             {[activeRank4.option_1, activeRank4.option_2, activeRank4.option_3, activeRank4.option_4].map((opt, i) => (
               <div key={i} className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2">
                 <span className="text-goat text-xs font-bold shrink-0">{i + 1}</span>
-                <span className="text-xs text-white/60 truncate">{opt}</span>
+                <span className="text-xs text-white/50 truncate">{opt}</span>
               </div>
             ))}
           </div>
