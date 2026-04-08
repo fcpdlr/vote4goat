@@ -8,6 +8,16 @@ process.env.NEXT_PUBLIC_SUPABASE_URL,
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
+const CrownLogo = ({ size = 28, color = "white", accentColor = "#f5a623" }) => (
+<svg width={size} height={size * 0.875} viewBox="0 0 64 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 46 L6 28 L18 40 L32 10 L46 40 L58 28 L58 46 Z" stroke={color} strokeWidth="2.5" strokeLinejoin="round" fill="none"/>
+<line x1="6" y1="46" x2="58" y2="46" stroke={color} strokeWidth="2.5" strokeLinecap="round"/>
+<circle cx="32" cy="30" r="3.5" fill={accentColor}/>
+<circle cx="14" cy="42" r="2" fill={accentColor} opacity="0.5"/>
+<circle cx="50" cy="42" r="2" fill={accentColor} opacity="0.5"/>
+</svg>
+)
+
 const TopsIcon = ({ active }) => (
 <svg width="22" height="22" viewBox="0 0 88 88" fill="none">
 <rect x="10" y="8" width="68" height="11" rx="2.5" stroke={active ? "#f5a623" : "rgba(255,255,255,0.4)"} strokeWidth="2.5"/>
@@ -15,9 +25,6 @@ const TopsIcon = ({ active }) => (
 <rect x="10" y="38" width="68" height="11" rx="2.5" stroke={active ? "white" : "rgba(255,255,255,0.4)"} strokeWidth="2" opacity="0.7"/>
 <rect x="10" y="53" width="68" height="11" rx="2.5" stroke={active ? "white" : "rgba(255,255,255,0.4)"} strokeWidth="2" opacity="0.45"/>
 <rect x="10" y="68" width="68" height="11" rx="2.5" stroke={active ? "white" : "rgba(255,255,255,0.4)"} strokeWidth="2" opacity="0.25"/>
-<circle cx="28" cy="84" r="2" fill="white" opacity="0.2"/>
-<circle cx="44" cy="84" r="2" fill="white" opacity="0.2"/>
-<circle cx="60" cy="84" r="2" fill="white" opacity="0.2"/>
 </svg>
 )
 
@@ -36,7 +43,8 @@ const [user, setUser] = useState(null)
 const [showHelp, setShowHelp] = useState(false)
 const [showMenu, setShowMenu] = useState(false)
 const [activeMode, setActiveMode] = useState("dvels")
-const [activeSport, setActiveSport] = useState("all")
+// Sport selector hidden for now — football only
+const activeSport = "football"
 const [ranking, setRanking] = useState([])
 const [activeRank4, setActiveRank4] = useState(null)
 const [topElo, setTopElo] = useState(1)
@@ -72,11 +80,10 @@ checkUser()
 
 useEffect(() => {
 const fetchRanking = async () => {
-const categoryId = activeSport === "basketball" ? 2 : 1
 const { data } = await supabase
 .from("entity_rankings")
 .select("id, elo_rating, entities (name, image_url)")
-.eq("entity_category_id", categoryId)
+.eq("entity_category_id", 1)
 .order("elo_rating", { ascending: false })
 .limit(5)
 const results = data || []
@@ -84,7 +91,7 @@ setRanking(results)
 if (results.length > 0) setTopElo(results[0].elo_rating)
 }
 if (activeMode === "dvels") fetchRanking()
-}, [activeMode, activeSport])
+}, [activeMode])
 
 useEffect(() => {
 const fetchActiveRank4 = async () => {
@@ -100,21 +107,7 @@ if (data) setActiveRank4(data)
 fetchActiveRank4()
 }, [])
 
-const modesConfig = [
-{ id: "dvels", sports: ["football", "basketball", "tennis"] },
-{ id: "tops", sports: ["football"] },
-{ id: "rank", sports: ["football"] },
-]
-
-const isModeAvailable = (modeId) => {
-if (activeSport === "all") return true
-const mode = modesConfig.find(m => m.id === modeId)
-return mode?.sports.includes(activeSport)
-}
-
-const getDvelsHref = () => activeSport === "basketball" ? "/basketball" : "/football"
-
-const medal = (i) => i === 0 ? String.fromCodePoint(0x1F947) : i === 1 ? String.fromCodePoint(0x1F948) : i === 2 ? String.fromCodePoint(0x1F949) : null
+const medal = (i) => i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : null
 
 const modes = [
 {
@@ -122,45 +115,37 @@ id: "dvels",
 label: ["D", "V", "E", "L", "S"],
 accent: [1, 4],
 descShort: "Two players appear. You choose the greatest. Every vote shapes the ranking.",
-
-  tags: [
-    { label: "\u26BD Football", active: true },
-    { label: "🏀 Basketball", active: true },
-    { label: "\u{1F3BE} Tennis -- soon", active: false },
-  ],
-  cta: "Start voting",
-  icon: (active) => <Swords size={22} strokeWidth={1.5} className={active ? "text-goat" : "text-white/40"} />,
+tags: [
+{ label: "⚽ Football", active: true },
+{ label: "🏀 Basketball", active: true },
+],
+cta: "Start voting",
+icon: (active) => <Swords size={22} strokeWidth={1.5} className={active ? "text-goat" : "text-white/40"} />,
 },
 {
-  id: "tops",
-  label: ["T", "1", "0", "P", "S"],
-  accent: [1, 2],
-  descShort: "Select the category and build your Top 10. Save it, share it and compare with the world.",
-  
-  tags: [
-    { label: "⚽ Football", active: true },
-    { label: "🏀 Basketball -- soon", active: false },
-  ],
-  cta: "Build your Top 10",
-  href: "/top10",
-  icon: (active) => <TopsIcon active={active} />,
+id: "tops",
+label: ["T", "1", "0", "P", "S"],
+accent: [1, 2],
+descShort: "Select the category and build your Top 10. Save it, share it and compare with the world.",
+tags: [
+{ label: "⚽ Football", active: true },
+],
+cta: "Build your Top 10",
+href: "/top10",
+icon: (active) => <TopsIcon active={active} />,
 },
 {
-  id: "rank",
-  label: ["R", "4", "N", "K"],
-  accent: [1],
-  descShort: "Four options, you rank them. New debate every week.",
-  
-  tags: [
-    { label: "⚽ Football", active: true },
-    { label: "🏀 Basketball -- soon", active: false },
-  ],
-  cta: "See this week",
-  href: "/rank4",
-  icon: (active) => <RankIcon active={active} />,
+id: "rank",
+label: ["R", "4", "N", "K"],
+accent: [1],
+descShort: "Four options, you rank them. New debate every week.",
+tags: [
+{ label: "⚽ Football", active: true },
+],
+cta: "See this week",
+href: "/rank4",
+icon: (active) => <RankIcon active={active} />,
 },
-
-
 ]
 
 const activeM = modes.find(m => m.id === activeMode)
@@ -168,12 +153,12 @@ const activeM = modes.find(m => m.id === activeMode)
 return (
 <>
 <Head>
-<title>Vote4GOAT – The world decides who is the GOAT</title>
+<title>Vote4GOAT — The world decides who is the GOAT</title>
 <meta name="description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
 <meta name="robots" content="index, follow" />
 <link rel="canonical" href="https://vote4goat.com" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Vote4GOAT -- The world decides who is the GOAT" />
+<meta property="og:title" content="Vote4GOAT — The world decides who is the GOAT" />
 <meta property="og:description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
 <meta property="og:url" content="https://vote4goat.com" />
 <meta property="og:image" content="https://vote4goat.com/og-image.png" />
@@ -181,7 +166,7 @@ return (
 <meta property="og:image:height" content="630" />
 <meta property="og:site_name" content="Vote4GOAT" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Vote4GOAT -- The world decides who is the GOAT" />
+<meta name="twitter:title" content="Vote4GOAT — The world decides who is the GOAT" />
 <meta name="twitter:description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
 <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
 <link rel="icon" href="/favicon.ico" />
@@ -190,13 +175,24 @@ return (
 
   <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 
-    <header className="flex items-center justify-between px-3 py-2">
-      <a href="/" className="text-xl sm:text-2xl font-bold text-white hover:opacity-80 transition">Vote4GOAT</a>
+    {/* HEADER */}
+    <header className="flex items-center justify-between px-3 py-3">
+      {/* Logo */}
+      <a href="/" className="flex items-center gap-2.5 hover:opacity-90 transition group">
+        <CrownLogo size={26} />
+        <span className="text-lg font-extrabold tracking-wide leading-none">
+          <span className="text-white/50 font-bold">VOTE</span>
+          <span className="text-goat">4</span>
+          <span className="text-white font-extrabold">GOAT</span>
+        </span>
+      </a>
+
+      {/* Nav */}
       <nav className="flex items-center gap-3 text-xs sm:text-sm">
-        <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">About</button>
+        <button onClick={() => setShowHelp(!showHelp)} className="text-white/40 hover:text-white/70 transition text-xs">About</button>
         {user ? (
           <div className="relative" ref={menuRef}>
-            <button onClick={() => setShowMenu(!showMenu)} className="text-goat font-semibold hover:underline">My Account</button>
+            <button onClick={() => setShowMenu(!showMenu)} className="text-goat font-semibold hover:underline text-xs">My Account</button>
             {showMenu && (
               <div className="absolute right-0 mt-1 w-28 bg-white text-black rounded shadow-md z-50">
                 <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">Profile</a>
@@ -206,8 +202,8 @@ return (
           </div>
         ) : (
           <>
-            <a href="/login" className="hover:underline">Log In</a>
-            <a href="/signup" className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105">Sign Up</a>
+            <a href="/login" className="text-white/40 hover:text-white/70 transition text-xs">Log In</a>
+            <a href="/signup" className="bg-goat text-black px-3 py-1.5 rounded-full text-xs font-bold hover:brightness-105 transition">Sign Up</a>
           </>
         )}
       </nav>
@@ -221,6 +217,7 @@ return (
       </div>
     )}
 
+    {/* HERO */}
     <div className="text-center pt-10 pb-6 px-4">
       <p className="text-xs tracking-widest uppercase text-white/30 mb-3">The world decides</p>
       <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-2">
@@ -229,33 +226,22 @@ return (
       <p className="text-sm text-white/40 max-w-sm mx-auto">Vote. Rank. Decide.</p>
     </div>
 
-    <div className="flex justify-center gap-2 mb-6 flex-wrap">
-      {[
-        { id: "all", label: "All sports" },
-        { id: "football", label: "\u26BD Football" }, 
-        { id: "basketball", label: "\u{1F3C0} Basketball" }, 
-        { id: "tennis", label: "🎾 Tennis" },
-      ].map(sport => (
-        <button
-          key={sport.id}
-          onClick={() => { setActiveSport(sport.id); setActiveMode("dvels") }}
-          className={"px-3 py-1.5 rounded-full text-sm border transition " + (activeSport === sport.id ? "border-goat text-goat bg-goat/5" : "border-white/10 text-white/50 hover:border-white/20 hover:text-white/70")}
-        >
-          {sport.label}
-        </button>
-      ))}
+    {/* SPORT SELECTOR — hidden, ready to activate */}
+    {/* To re-enable: remove the hidden class and restore setActiveSport state */}
+    <div className="hidden">
+      {/* Sport filter buttons go here when multi-sport is ready */}
     </div>
 
+    {/* MODE SELECTOR */}
     <div className="max-w-lg mx-auto w-full px-1 mb-4">
       <div className="flex gap-2">
         {modes.map((mode) => {
-          const available = isModeAvailable(mode.id)
           const active = activeMode === mode.id
           return (
             <button
               key={mode.id}
-              onClick={() => available && setActiveMode(mode.id)}
-              className={"flex-1 flex flex-col items-center gap-2 py-4 px-2 rounded-2xl border transition relative " + (active ? "bg-white/5 border-goat/30" : "bg-background border-white/10 hover:bg-white/[0.03]") + (!available ? " opacity-20 cursor-not-allowed" : " cursor-pointer")}
+              onClick={() => setActiveMode(mode.id)}
+              className={"flex-1 flex flex-col items-center gap-2 py-4 px-2 rounded-2xl border transition relative cursor-pointer " + (active ? "bg-white/5 border-goat/30" : "bg-background border-white/10 hover:bg-white/[0.03]")}
             >
               <div className={"w-11 h-11 rounded-xl flex items-center justify-center border transition " + (active ? "bg-goat/10 border-goat/30" : "bg-white/[0.04] border-white/10")}>
                 {mode.icon(active)}
@@ -267,16 +253,14 @@ return (
                   </span>
                 ))}
               </div>
+              {active && <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-goat rounded-full" />}
+            </button>
+          )
+        })}
+      </div>
+    </div>
 
-
-{active && <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-goat rounded-full" />}
-</button>
-)
-})}
-</div>
-</div>
-
-
+    {/* MODE CONTENT */}
     <div className="max-w-lg mx-auto w-full px-1 flex-1">
 
       {activeM && (
@@ -290,20 +274,19 @@ return (
             ))}
           </div>
           <a
-            href={activeM.id === "dvels" ? getDvelsHref() : activeM.href}
+            href={activeM.id === "dvels" ? "/football" : activeM.href}
             className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
           >
-            {activeM.cta} {">"}
+            {activeM.cta} →
           </a>
         </div>
       )}
 
+      {/* Mini ranking — DVELS */}
       {activeMode === "dvels" && ranking.length > 0 && (
         <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-            <span className="text-xs font-semibold text-white/50 uppercase tracking-wide">
-              Current ranking -- {activeSport === "basketball" ? "Basketball" : "Football"}
-            </span>
+            <span className="text-xs font-semibold text-white/50 uppercase tracking-wide">Current ranking — Football</span>
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
               <span className="text-xs text-white/30">live</span>
@@ -324,11 +307,12 @@ return (
             )
           })}
           <div className="px-4 py-3 border-t border-white/5">
-            <a href={getDvelsHref()} className="text-xs text-goat hover:underline">See full ranking {">"}</a>
+            <a href="/football" className="text-xs text-goat hover:underline">See full ranking →</a>
           </div>
         </div>
       )}
 
+      {/* Active R4NK */}
       {activeMode === "rank" && activeRank4 && (
         <a href={"/rank4/" + activeRank4.id} className="block bg-white/5 border border-goat/20 rounded-2xl p-5 hover:border-goat/40 transition">
           <div className="flex items-center justify-between mb-3">
@@ -344,7 +328,7 @@ return (
               </div>
             ))}
           </div>
-          <p className="text-xs text-goat mt-3 text-right">Vote now {">"}</p>
+          <p className="text-xs text-goat mt-3 text-right">Vote now →</p>
         </a>
       )}
 
