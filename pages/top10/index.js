@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react"
 import { createClient } from "@supabase/supabase-js"
 import Head from "next/head"
-import Header from "../components/Header"
+import Header from "../../components/Header"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
