@@ -1,21 +1,13 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { createClient } from "@supabase/supabase-js"
 import Head from "next/head"
 import { Swords } from "lucide-react"
+import Header from "../components/Header"
+import Footer from "../components/Footer"
 
 const supabase = createClient(
 process.env.NEXT_PUBLIC_SUPABASE_URL,
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
-
-const CrownLogo = ({ size = 28, color = "white", accentColor = "#f5a623" }) => (
-<svg width={size} height={size * 0.875} viewBox="0 0 64 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M6 46 L6 28 L18 40 L32 10 L46 40 L58 28 L58 46 Z" stroke={color} strokeWidth="2.5" strokeLinejoin="round" fill="none"/>
-<line x1="6" y1="46" x2="58" y2="46" stroke={color} strokeWidth="2.5" strokeLinecap="round"/>
-<circle cx="32" cy="30" r="3.5" fill={accentColor}/>
-<circle cx="14" cy="42" r="2" fill={accentColor} opacity="0.5"/>
-<circle cx="50" cy="42" r="2" fill={accentColor} opacity="0.5"/>
-</svg>
 )
 
 const TopsIcon = ({ active }) => (
@@ -39,44 +31,10 @@ const RankIcon = ({ active }) => (
 )
 
 export default function Home() {
-const [user, setUser] = useState(null)
-const [showHelp, setShowHelp] = useState(false)
-const [showMenu, setShowMenu] = useState(false)
 const [activeMode, setActiveMode] = useState("dvels")
-// Sport selector hidden for now — football only
-const activeSport = "football"
 const [ranking, setRanking] = useState([])
 const [activeRank4, setActiveRank4] = useState(null)
 const [topElo, setTopElo] = useState(1)
-
-const menuRef = useRef()
-const helpRef = useRef()
-
-useEffect(() => {
-function handleClickOutside(event) {
-if (menuRef.current && !menuRef.current.contains(event.target)) setShowMenu(false)
-if (helpRef.current && !helpRef.current.contains(event.target)) setShowHelp(false)
-}
-function handleEsc(event) {
-if (event.key === "Escape") { setShowMenu(false); setShowHelp(false) }
-}
-document.addEventListener("mousedown", handleClickOutside)
-document.addEventListener("keydown", handleEsc)
-return () => {
-document.removeEventListener("mousedown", handleClickOutside)
-document.removeEventListener("keydown", handleEsc)
-}
-}, [])
-
-useEffect(() => {
-const checkUser = async () => {
-try {
-const { data: { user } } = await supabase.auth.getUser()
-setUser(user)
-} catch (err) {}
-}
-checkUser()
-}, [])
 
 useEffect(() => {
 const fetchRanking = async () => {
@@ -115,10 +73,6 @@ id: "dvels",
 label: ["D", "V", "E", "L", "S"],
 accent: [1, 4],
 descShort: "Two players appear. You choose the greatest. Every vote shapes the ranking.",
-tags: [
-{ label: "⚽ Football", active: true },
-{ label: "🏀 Basketball", active: true },
-],
 cta: "Start voting",
 icon: (active) => <Swords size={22} strokeWidth={1.5} className={active ? "text-goat" : "text-white/40"} />,
 },
@@ -127,9 +81,6 @@ id: "tops",
 label: ["T", "1", "0", "P", "S"],
 accent: [1, 2],
 descShort: "Select the category and build your Top 10. Save it, share it and compare with the world.",
-tags: [
-{ label: "⚽ Football", active: true },
-],
 cta: "Build your Top 10",
 href: "/top10",
 icon: (active) => <TopsIcon active={active} />,
@@ -139,9 +90,6 @@ id: "rank",
 label: ["R", "4", "N", "K"],
 accent: [1],
 descShort: "Four options, you rank them. New debate every week.",
-tags: [
-{ label: "⚽ Football", active: true },
-],
 cta: "See this week",
 href: "/rank4",
 icon: (active) => <RankIcon active={active} />,
@@ -173,67 +121,57 @@ return (
 </Head>
 
 
-  <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
+  <main className="min-h-screen bg-background text-white font-sans flex flex-col">
 
-    {/* HEADER */}
-    <header className="flex items-center justify-between px-3 py-3">
-      {/* Logo */}
-      <a href="/" className="flex items-center gap-2.5 hover:opacity-90 transition group">
-        <CrownLogo size={26} />
-        <span className="text-lg font-extrabold tracking-wide leading-none">
-          <span className="text-white/50 font-bold">VOTE</span>
-          <span className="text-goat">4</span>
-          <span className="text-white font-extrabold">GOAT</span>
-        </span>
-      </a>
+    <Header />
 
-      {/* Nav */}
-      <nav className="flex items-center gap-3 text-xs sm:text-sm">
-        <button onClick={() => setShowHelp(!showHelp)} className="text-white/40 hover:text-white/70 transition text-xs">About</button>
-        {user ? (
-          <div className="relative" ref={menuRef}>
-            <button onClick={() => setShowMenu(!showMenu)} className="text-goat font-semibold hover:underline text-xs">My Account</button>
-            {showMenu && (
-              <div className="absolute right-0 mt-1 w-28 bg-white text-black rounded shadow-md z-50">
-                <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">Profile</a>
-                <button onClick={async () => { await supabase.auth.signOut(); window.location.reload() }} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Logout</button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <>
-            <a href="/login" className="text-white/40 hover:text-white/70 transition text-xs">Log In</a>
-            <a href="/signup" className="bg-goat text-black px-3 py-1.5 rounded-full text-xs font-bold hover:brightness-105 transition">Sign Up</a>
-          </>
-        )}
-      </nav>
-    </header>
-
-    {showHelp && (
-      <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
-        <p className="mb-2 font-semibold text-goat">What is Vote4GOAT?</p>
-        <p className="mb-2">Everyone has an opinion on who is the greatest of all time. Vote4GOAT lets the world decide through duels, Top 10 lists, and weekly rankings.</p>
-        <p className="mt-4 font-semibold text-goat">Start voting. Shape the GOAT list.</p>
+    {/* HERO — impactante */}
+    <div className="relative px-4 pt-10 pb-10 text-center overflow-hidden">
+      {/* Glow background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] rounded-full bg-goat/5 blur-3xl" />
       </div>
-    )}
 
-    {/* HERO */}
-    <div className="text-center pt-10 pb-6 px-4">
-      <p className="text-xs tracking-widest uppercase text-white/30 mb-3">The world decides</p>
-      <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-2">
-        Who is the <span className="text-goat">GOAT?</span>
+      {/* Overline */}
+      <p className="relative text-[10px] tracking-[0.3em] uppercase text-white/25 mb-5 font-medium">
+        The world decides
+      </p>
+
+      {/* Main headline */}
+      <h1 className="relative leading-none mb-4">
+        <span className="block text-[13vw] sm:text-[72px] font-black text-white tracking-tight uppercase" style={{ fontFamily: "system-ui, sans-serif" }}>
+          WHO IS
+        </span>
+        <span className="block text-[18vw] sm:text-[96px] font-black text-goat tracking-tight uppercase leading-none" style={{ fontFamily: "system-ui, sans-serif" }}>
+          THE GOAT?
+        </span>
       </h1>
-      <p className="text-sm text-white/40 max-w-sm mx-auto">Vote. Rank. Decide.</p>
-    </div>
 
-    {/* SPORT SELECTOR — hidden, ready to activate */}
-    {/* To re-enable: remove the hidden class and restore setActiveSport state */}
-    <div className="hidden">
-      {/* Sport filter buttons go here when multi-sport is ready */}
+      {/* Subline */}
+      <p className="relative text-sm text-white/30 max-w-xs mx-auto leading-relaxed">
+        Vote. Build your Top 10. Rank the debate.<br />
+        <span className="text-white/50">Football's greatest — decided by the world.</span>
+      </p>
+
+      {/* CTA direct */}
+      <div className="relative mt-7 flex items-center justify-center gap-3">
+        <a
+          href="/football"
+          className="bg-goat text-black px-6 py-3 rounded-full text-sm font-black tracking-wide hover:brightness-110 transition"
+        >
+          Start voting →
+        </a>
+        <a
+          href="/top10"
+          className="border border-white/15 text-white/50 px-5 py-3 rounded-full text-sm font-semibold hover:border-white/30 hover:text-white/70 transition"
+        >
+          Build Top 10
+        </a>
+      </div>
     </div>
 
     {/* MODE SELECTOR */}
-    <div className="max-w-lg mx-auto w-full px-1 mb-4">
+    <div className="max-w-lg mx-auto w-full px-4 mb-4">
       <div className="flex gap-2">
         {modes.map((mode) => {
           const active = activeMode === mode.id
@@ -261,18 +199,11 @@ return (
     </div>
 
     {/* MODE CONTENT */}
-    <div className="max-w-lg mx-auto w-full px-1 flex-1">
+    <div className="max-w-lg mx-auto w-full px-4 flex-1">
 
       {activeM && (
         <div className="bg-white/5 border border-goat/20 rounded-2xl p-5 mb-4">
-          <p className="text-sm text-white/70 mb-2">{activeM.descShort}</p>
-          <div className="flex gap-2 flex-wrap mb-4">
-            {activeM.tags.map((tag, i) => (
-              <span key={i} className={"text-xs px-2 py-1 rounded-full " + (tag.active ? "bg-goat/10 text-goat" : "bg-white/5 text-white/30")}>
-                {tag.label}
-              </span>
-            ))}
-          </div>
+          <p className="text-sm text-white/70 mb-4">{activeM.descShort}</p>
           <a
             href={activeM.id === "dvels" ? "/football" : activeM.href}
             className="block w-full py-2.5 rounded-xl text-sm font-bold text-center bg-goat text-black hover:brightness-110 transition"
@@ -282,7 +213,7 @@ return (
         </div>
       )}
 
-      {/* Mini ranking — DVELS */}
+      {/* Mini ranking */}
       {activeMode === "dvels" && ranking.length > 0 && (
         <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
@@ -334,7 +265,7 @@ return (
 
     </div>
 
-    <div className="h-10" />
+    <Footer />
   </main>
 </>
 
