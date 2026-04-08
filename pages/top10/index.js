@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react"
 import { createClient } from "@supabase/supabase-js"
 import Head from "next/head"
+import Header from "../components/Header"
 
 const supabase = createClient(
 process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -42,13 +43,10 @@ export default function Top10IndexPage() {
 const [categories, setCategories] = useState([])
 const [isLoading, setIsLoading] = useState(true)
 const [error, setError] = useState(null)
-const [user, setUser] = useState(null)
 const [showHelp, setShowHelp] = useState(false)
-const [showMenu, setShowMenu] = useState(false)
 const [activeTab, setActiveTab] = useState("All")
 const [search, setSearch] = useState("")
 
-const menuRef = useRef(null)
 const helpRef = useRef(null)
 
 useEffect(() => {
@@ -224,28 +222,7 @@ return (
 
   <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 
-    <header className="flex items-center justify-between px-3 py-2">
-      <a href="/" className="text-xl sm:text-2xl font-bold text-white hover:opacity-80 transition">Vote4GOAT</a>
-      <nav className="flex items-center gap-3 text-xs sm:text-sm">
-        <button onClick={() => setShowHelp(!showHelp)} className="hover:underline">About</button>
-        {user ? (
-          <div className="relative" ref={menuRef}>
-            <button onClick={() => setShowMenu(!showMenu)} className="text-goat font-semibold hover:underline">My Account</button>
-            {showMenu && (
-              <div className="absolute right-0 mt-1 w-28 bg-white text-black rounded shadow-md z-50">
-                <a href="/account" className="block px-4 py-2 text-sm hover:bg-gray-100">Profile</a>
-                <button onClick={async () => { await supabase.auth.signOut(); window.location.reload() }} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Logout</button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <>
-            <a href="/login" className="hover:underline">Log In</a>
-            <a href="/signup" className="bg-goat text-black px-2 py-1 rounded-full font-semibold hover:brightness-105">Sign Up</a>
-          </>
-        )}
-      </nav>
-    </header>
+   <Header />
 
     {showHelp && (
       <div ref={helpRef} className="max-w-xl mx-auto text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10">
