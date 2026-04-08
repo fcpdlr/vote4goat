@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { createClient } from "@supabase/supabase-js"
 import Head from "next/head"
 import Header from "../../components/Header"
@@ -11,6 +11,7 @@ const supabase = createClient(
 const classifyCategory = (slug) => {
   if (!slug) return "other"
   const s = slug.toLowerCase()
+  if (["goat", "coaches-all-time", "clubs-all-time", "teams-all-time"].includes(s)) return "special"
   if (s.includes("real-madrid") || s.includes("fc-barcelona") || s.includes("barcelona-all-time") || s.includes("bayern") || s.includes("manchester-united") || s.includes("liverpool") || s.includes("ac-milan") || s.includes("milan-all-time") || s.includes("boca") || s.includes("river")) return "club"
   if (s.startsWith("brazil-") || s.startsWith("argentina-") || s.startsWith("france-") || s.startsWith("germany-") || s.startsWith("spain-") || s.startsWith("italy-") || s.startsWith("england-")) return "country"
   return "position"
@@ -19,6 +20,7 @@ const classifyCategory = (slug) => {
 const getCategoryTheme = (slug) => {
   if (!slug) return { bar: "#f5a623", tint: "rgba(245,166,35,0.06)" }
   const s = slug.toLowerCase()
+  if (s === "goat" || s === "coaches-all-time" || s === "clubs-all-time" || s === "teams-all-time") return { bar: "#f5a623", tint: "rgba(245,166,35,0.08)" }
   if (s.includes("real-madrid"))          return { bar: "#e8e0c8", tint: "rgba(232,224,200,0.06)" }
   if (s.includes("fc-barcelona") || s.includes("barcelona-all-time")) return { bar: "#a50044", tint: "rgba(165,0,68,0.10)" }
   if (s.includes("bayern"))               return { bar: "#dc052d", tint: "rgba(220,5,45,0.10)" }
@@ -37,7 +39,7 @@ const getCategoryTheme = (slug) => {
   return { bar: "#f5a623", tint: "rgba(245,166,35,0.06)" }
 }
 
-const TABS = ["All", "Clubs", "Countries", "Positions"]
+const TABS = ["All", "Special", "Clubs", "Countries", "Positions"]
 
 export default function Top10IndexPage() {
   const [categories, setCategories] = useState([])
@@ -64,14 +66,16 @@ export default function Top10IndexPage() {
 
   const grouped = categories.reduce((acc, cat) => {
     const type = classifyCategory(cat.slug)
-    if (type === "club") acc.clubs.push(cat)
+    if (type === "special") acc.special.push(cat)
+    else if (type === "club") acc.clubs.push(cat)
     else if (type === "country") acc.countries.push(cat)
     else acc.positions.push(cat)
     return acc
-  }, { clubs: [], countries: [], positions: [] })
+  }, { special: [], clubs: [], countries: [], positions: [] })
 
   const counts = {
     All: categories.length,
+    Special: grouped.special.length,
     Clubs: grouped.clubs.length,
     Countries: grouped.countries.length,
     Positions: grouped.positions.length,
@@ -80,6 +84,7 @@ export default function Top10IndexPage() {
   const getVisible = () => {
     let items = []
     if (activeTab === "All") items = categories
+    else if (activeTab === "Special") items = grouped.special
     else if (activeTab === "Clubs") items = grouped.clubs
     else if (activeTab === "Countries") items = grouped.countries
     else items = grouped.positions
@@ -105,7 +110,11 @@ export default function Top10IndexPage() {
           <span className="text-[15px] font-extrabold text-white leading-tight">{cat.title}</span>
           {(() => {
             const s = cat.slug ? cat.slug.toLowerCase() : ""
-            const names = s.includes("real-madrid") ? "Ronaldo, Di Stéfano, Zidane, Raúl"
+            const names = s === "goat" ? "Messi, Ronaldo, Maradona, Pelé"
+              : s === "coaches-all-time" ? "Guardiola, Ferguson, Cruyff, Mourinho"
+              : s === "clubs-all-time" ? "Real Madrid, Barcelona, Bayern, United"
+              : s === "teams-all-time" ? "Spain 2010, Brazil 1970, France 1998"
+              : s.includes("real-madrid") ? "Ronaldo, Di Stéfano, Zidane, Raúl"
               : (s.includes("fc-barcelona") || s.includes("barcelona-all-time")) ? "Messi, Xavi, Iniesta, Ronaldinho"
               : s.includes("bayern") ? "Müller, Beckenbauer, Ribéry, Lewandowski"
               : s.includes("manchester-united") ? "Giggs, Cantona, Scholes, Ronaldo"
@@ -153,6 +162,7 @@ export default function Top10IndexPage() {
     }
     return (
       <div className="pb-10">
+        {renderSection("Special", grouped.special)}
         {renderSection("Clubs", grouped.clubs)}
         {renderSection("Countries", grouped.countries)}
         {renderSection("Positions", grouped.positions)}
