@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { createClient } from "@supabase/supabase-js"
 import Header from "../../components/Header"
@@ -10,6 +10,12 @@ process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 const MIN_SLOTS = 5
 const MAX_SLOTS = 10
+
+// Compact: remove nulls and pad to MAX_SLOTS at the end
+const compact = (arr) => {
+const filled = arr.filter(Boolean)
+return [...filled, ...Array(MAX_SLOTS - filled.length).fill(null)]
+}
 
 export default function Top10CategoryPage() {
 const router = useRouter()
@@ -27,9 +33,9 @@ const [message, setMessage] = useState(null)
 const [error, setError] = useState(null)
 const [showInspiration, setShowInspiration] = useState(false)
 const [isGeneratingShare, setIsGeneratingShare] = useState(false)
+const [submittedSize, setSubmittedSize] = useState(null)
 
 const selectedCount = slots.filter(Boolean).length
-const filledSlots = slots.map((s, i) => ({ slot: s, index: i })).filter(s => s.slot !== null)
 const canSubmit = selectedCount >= MIN_SLOTS
 
 useEffect(() => {
@@ -99,7 +105,7 @@ setSearch("")
 const handleRemoveSlot = index => {
 const newSlots = [...slots]
 newSlots[index] = null
-setSlots(newSlots)
+setSlots(compact(newSlots))
 }
 
 const handleReset = () => {
@@ -107,6 +113,7 @@ setSlots(Array(MAX_SLOTS).fill(null))
 setSearch("")
 setMessage(null)
 setError(null)
+setSubmittedSize(null)
 }
 
 const handleDragStartSlot = (event, index) => {
@@ -123,26 +130,31 @@ const raw = event.dataTransfer.getData("text/plain")
 if (!raw) return
 let data
 try { data = JSON.parse(raw) } catch { return }
+
+
 if (data.type === "slot") {
-const fromIndex = data.index
-if (fromIndex === targetIndex) return
-const newSlots = [...slots]
-const temp = newSlots[fromIndex]
-newSlots[fromIndex] = newSlots[targetIndex]
-newSlots[targetIndex] = temp
-setSlots(newSlots)
-return
+  const fromIndex = data.index
+  if (fromIndex === targetIndex) return
+  const newSlots = [...slots]
+  const temp = newSlots[fromIndex]
+  newSlots[fromIndex] = newSlots[targetIndex]
+  newSlots[targetIndex] = temp
+  setSlots(compact(newSlots))
+  return
 }
+
 if (data.type === "candidate") {
-const candidate = candidates.find(c => c.id === data.id)
-if (!candidate) return
-const newSlots = [...slots]
-for (let i = 0; i < newSlots.length; i++) {
-if (newSlots[i]?.id === candidate.id) newSlots[i] = null
+  const candidate = candidates.find(c => c.id === data.id)
+  if (!candidate) return
+  const newSlots = [...slots]
+  for (let i = 0; i < newSlots.length; i++) {
+    if (newSlots[i]?.id === candidate.id) newSlots[i] = null
+  }
+  newSlots[targetIndex] = candidate
+  setSlots(compact(newSlots))
 }
-newSlots[targetIndex] = candidate
-setSlots(newSlots)
-}
+
+
 }
 
 const handleDragOver = event => event.preventDefault()
@@ -173,12 +185,13 @@ if (!ip) {
   } catch (e) {}
 }
 
-// Only send filled slots in order
 const filledIds = slots.filter(Boolean).map(s => s.id)
+const topSize = filledIds.length
 
 const { error: rpcError } = await supabase.rpc("submit_top10", {
   p_top10_category_id: Number(id),
   p_entity_ids: filledIds,
+  p_size: topSize,
   p_user_id: userId,
   p_ip_address: ip,
 })
@@ -188,10 +201,23 @@ if (rpcError) {
   setIsSubmitting(false)
   return
 }
+
+setSubmittedSize(topSize)
 setIsSubmitting(false)
 setMessage("submitted")
 
 
+}
+
+const getSubmitLabel = () => {
+if (isSubmitting) return "Saving..."
+if (selectedCount < MIN_SLOTS) return "Add " + (MIN_SLOTS - selectedCount) + " more to submit"
+return "Submit your Top " + selectedCount
+}
+
+const getSuccessTitle = () => {
+if (submittedSize === 10) return "Your Top 10 has been saved"
+return "Your Top " + submittedSize + " is in"
 }
 
 const handleShare = async () => {
@@ -207,144 +233,174 @@ await document.fonts.ready
 
   const filledSlotsList = slots.filter(Boolean)
   const count = filledSlotsList.length
-  const W = 640
-  const H = 800
   const canvas = document.createElement("canvas")
-  canvas.width = W
-  canvas.height = H
   const ctx = canvas.getContext("2d")
 
-  ctx.fillStyle = "#0d0f18"
-  ctx.fillRect(0, 0, W, H)
-
-  const glow = ctx.createRadialGradient(W / 2, 0, 0, W / 2, 0, H * 0.55)
-  glow.addColorStop(0, "rgba(245,166,35,0.13)")
-  glow.addColorStop(1, "rgba(0,0,0,0)")
-  ctx.fillStyle = glow
-  ctx.fillRect(0, 0, W, H)
-
-  const pad = 48
-
-  ctx.font = "900 28px ShareFont, sans-serif"
-  ctx.fillStyle = "#ffffff"
-  ctx.fillText("Vote4", pad, 72)
-  const v4w = ctx.measureText("Vote4").width
-  ctx.fillStyle = "#f5a623"
-  ctx.fillText("GOAT", pad + v4w, 72)
-
-  const badgeX = W - pad - 70
-  const badgeY = 48
-  const badgeW = 70
-  const badgeH = 28
-  const badgeR = 14
-  ctx.beginPath()
-  ctx.moveTo(badgeX + badgeR, badgeY)
-  ctx.lineTo(badgeX + badgeW - badgeR, badgeY)
-  ctx.quadraticCurveTo(badgeX + badgeW, badgeY, badgeX + badgeW, badgeY + badgeR)
-  ctx.lineTo(badgeX + badgeW, badgeY + badgeH - badgeR)
-  ctx.quadraticCurveTo(badgeX + badgeW, badgeY + badgeH, badgeX + badgeW - badgeR, badgeY + badgeH)
-  ctx.lineTo(badgeX + badgeR, badgeY + badgeH)
-  ctx.quadraticCurveTo(badgeX, badgeY + badgeH, badgeX, badgeY + badgeH - badgeR)
-  ctx.lineTo(badgeX, badgeY + badgeR)
-  ctx.quadraticCurveTo(badgeX, badgeY, badgeX + badgeR, badgeY)
-  ctx.closePath()
-  ctx.strokeStyle = "rgba(245,166,35,0.5)"
-  ctx.lineWidth = 1.5
-  ctx.stroke()
-  ctx.font = "700 11px ShareFont, sans-serif"
-  ctx.fillStyle = "rgba(245,166,35,0.9)"
-  ctx.textAlign = "center"
-  ctx.fillText("T0PS", badgeX + badgeW / 2, badgeY + 19)
-  ctx.textAlign = "left"
-
-  ctx.font = "400 12px ShareFont, sans-serif"
-  ctx.fillStyle = "rgba(255,255,255,0.3)"
-  ctx.fillText("MY TOP " + count, pad, 120)
-
-  ctx.font = "900 36px ShareFont, sans-serif"
-  ctx.fillStyle = "#ffffff"
-  const title = category ? category.title : "Top " + count
-  const maxW = W - pad * 2
-  const words = title.split(" ")
-  let line = ""
-  let ty = 168
-  for (let i = 0; i < words.length; i++) {
-    const test = line + (line ? " " : "") + words[i]
-    if (ctx.measureText(test).width > maxW && line) {
-      ctx.fillText(line, pad, ty)
-      line = words[i]
-      ty += 44
-    } else {
-      line = test
+  if (count === 5) {
+    canvas.width = 640
+    canvas.height = 640
+    const W = canvas.width, H = canvas.height, pad = 48
+    ctx.fillStyle = "#0d0f18"
+    ctx.fillRect(0, 0, W, H)
+    const glow = ctx.createRadialGradient(W * 0.7, H * 0.2, 0, W * 0.7, H * 0.2, W * 0.7)
+    glow.addColorStop(0, "rgba(245,166,35,0.18)")
+    glow.addColorStop(1, "rgba(0,0,0,0)")
+    ctx.fillStyle = glow
+    ctx.fillRect(0, 0, W, H)
+    ctx.font = "900 24px ShareFont, sans-serif"
+    ctx.fillStyle = "#fff"
+    ctx.fillText("Vote4", pad, 60)
+    ctx.fillStyle = "#f5a623"
+    ctx.fillText("GOAT", pad + ctx.measureText("Vote4").width, 60)
+    ctx.font = "900 52px ShareFont, sans-serif"
+    ctx.fillStyle = "#f5a623"
+    ctx.fillText("TOP 5", pad, 136)
+    ctx.font = "700 22px ShareFont, sans-serif"
+    ctx.fillStyle = "rgba(255,255,255,0.7)"
+    const tw5 = (category?.title || "").split(" ")
+    let line5 = "", ty5 = 176
+    for (const w of tw5) {
+      const test = line5 + (line5 ? " " : "") + w
+      if (ctx.measureText(test).width > W - pad * 2 && line5) { ctx.fillText(line5, pad, ty5); line5 = w; ty5 += 28 } else line5 = test
     }
+    ctx.fillText(line5, pad, ty5)
+    ctx.strokeStyle = "rgba(245,166,35,0.3)"
+    ctx.lineWidth = 1
+    ctx.beginPath(); ctx.moveTo(pad, ty5 + 16); ctx.lineTo(W - pad, ty5 + 16); ctx.stroke()
+    const startY5 = ty5 + 36
+    const rowH5 = (H - startY5 - 60) / 5
+    const colors5 = ["#f5a623", "#d8d8dd", "#d9a673", "rgba(255,255,255,0.55)", "rgba(255,255,255,0.4)"]
+    const sizes5 = [32, 28, 26, 22, 22]
+    filledSlotsList.forEach((slot, i) => {
+      const y = startY5 + i * rowH5
+      if (i > 0) { ctx.strokeStyle = "rgba(255,255,255,0.06)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke() }
+      ctx.font = "900 " + sizes5[i] + "px ShareFont, sans-serif"
+      ctx.fillStyle = colors5[i]
+      ctx.textAlign = "right"
+      ctx.fillText(String(i + 1), pad + 24, y + rowH5 * 0.68)
+      ctx.textAlign = "left"
+      ctx.font = (i === 0 ? "900 " : "700 ") + sizes5[i] + "px ShareFont, sans-serif"
+      ctx.fillStyle = i === 0 ? "#ffffff" : "rgba(255,255,255," + (0.85 - i * 0.1) + ")"
+      let name = slot.name.toUpperCase()
+      while (ctx.measureText(name).width > W - pad * 2 - 40 && name.length > 3) name = name.slice(0, -1)
+      if (name !== slot.name.toUpperCase()) name += "..."
+      ctx.fillText(name, pad + 36, y + rowH5 * 0.68)
+    })
+  } else if (count >= 6 && count <= 9) {
+    canvas.width = 640
+    canvas.height = 720
+    const W = canvas.width, H = canvas.height, pad = 48
+    ctx.fillStyle = "#0d0f18"
+    ctx.fillRect(0, 0, W, H)
+    const glow = ctx.createRadialGradient(W / 2, 0, 0, W / 2, 0, H * 0.6)
+    glow.addColorStop(0, "rgba(245,166,35,0.12)")
+    glow.addColorStop(1, "rgba(0,0,0,0)")
+    ctx.fillStyle = glow
+    ctx.fillRect(0, 0, W, H)
+    ctx.font = "900 22px ShareFont, sans-serif"
+    ctx.fillStyle = "#fff"
+    ctx.fillText("Vote4", pad, 56)
+    ctx.fillStyle = "#f5a623"
+    ctx.fillText("GOAT", pad + ctx.measureText("Vote4").width, 56)
+    ctx.font = "900 40px ShareFont, sans-serif"
+    ctx.fillStyle = "#f5a623"
+    ctx.fillText("TOP " + count, pad, 116)
+    ctx.font = "700 18px ShareFont, sans-serif"
+    ctx.fillStyle = "rgba(255,255,255,0.65)"
+    const tw69 = (category?.title || "").split(" ")
+    let line69 = "", ty69 = 150
+    for (const w of tw69) {
+      const test = line69 + (line69 ? " " : "") + w
+      if (ctx.measureText(test).width > W - pad * 2 && line69) { ctx.fillText(line69, pad, ty69); line69 = w; ty69 += 24 } else line69 = test
+    }
+    ctx.fillText(line69, pad, ty69)
+    ctx.strokeStyle = "rgba(245,166,35,0.25)"
+    ctx.lineWidth = 1
+    ctx.beginPath(); ctx.moveTo(pad, ty69 + 14); ctx.lineTo(W - pad, ty69 + 14); ctx.stroke()
+    const startY69 = ty69 + 30
+    const rowH69 = (H - startY69 - 56) / count
+    const numColors69 = ["#f5a623", "#d8d8dd", "#d9a673"]
+    filledSlotsList.forEach((slot, i) => {
+      const y = startY69 + i * rowH69
+      if (i > 0) { ctx.strokeStyle = "rgba(255,255,255,0.05)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke() }
+      ctx.font = "900 " + (i < 3 ? "22px" : "16px") + " ShareFont, sans-serif"
+      ctx.fillStyle = i < 3 ? numColors69[i] : "rgba(255,255,255,0.22)"
+      ctx.textAlign = "right"
+      ctx.fillText(String(i + 1), pad + 22, y + rowH69 * 0.67)
+      ctx.textAlign = "left"
+      ctx.font = (i < 3 ? "700 18px" : "400 16px") + " ShareFont, sans-serif"
+      ctx.fillStyle = i === 0 ? "#fff" : "rgba(255,255,255," + Math.max(0.35, 0.8 - i * 0.07) + ")"
+      let name = slot.name.toUpperCase()
+      while (ctx.measureText(name).width > W - pad * 2 - 44 && name.length > 3) name = name.slice(0, -1)
+      if (name !== slot.name.toUpperCase()) name += "..."
+      ctx.fillText(name, pad + 34, y + rowH69 * 0.67)
+    })
+  } else {
+    canvas.width = 640
+    canvas.height = 800
+    const W = canvas.width, H = canvas.height, pad = 48
+    ctx.fillStyle = "#0d0f18"
+    ctx.fillRect(0, 0, W, H)
+    const glow = ctx.createRadialGradient(W / 2, 0, 0, W / 2, 0, H * 0.55)
+    glow.addColorStop(0, "rgba(245,166,35,0.1)")
+    glow.addColorStop(1, "rgba(0,0,0,0)")
+    ctx.fillStyle = glow
+    ctx.fillRect(0, 0, W, H)
+    ctx.font = "900 20px ShareFont, sans-serif"
+    ctx.fillStyle = "#fff"
+    ctx.fillText("Vote4", pad, 52)
+    ctx.fillStyle = "#f5a623"
+    ctx.fillText("GOAT", pad + ctx.measureText("Vote4").width, 52)
+    ctx.font = "400 11px ShareFont, sans-serif"
+    ctx.fillStyle = "rgba(255,255,255,0.28)"
+    ctx.fillText("MY ALL-TIME TOP 10", pad, 96)
+    ctx.font = "900 34px ShareFont, sans-serif"
+    ctx.fillStyle = "#ffffff"
+    const tw10 = (category?.title || "").split(" ")
+    let line10 = "", ty10 = 140
+    for (const w of tw10) {
+      const test = line10 + (line10 ? " " : "") + w
+      if (ctx.measureText(test).width > W - pad * 2 && line10) { ctx.fillText(line10, pad, ty10); line10 = w; ty10 += 40 } else line10 = test
+    }
+    ctx.fillText(line10, pad, ty10)
+    ty10 += 24
+    ctx.strokeStyle = "rgba(255,255,255,0.07)"
+    ctx.lineWidth = 1
+    ctx.beginPath(); ctx.moveTo(pad, ty10 + 6); ctx.lineTo(W - pad, ty10 + 6); ctx.stroke()
+    ty10 += 20
+    const rowH10 = (H - ty10 - 52) / 10
+    const numColors10 = ["#f5a623", "rgba(255,255,255,0.5)", "rgba(180,140,70,0.8)"]
+    filledSlotsList.forEach((slot, i) => {
+      const y = ty10 + i * rowH10
+      if (i === 0) { ctx.fillStyle = "rgba(245,166,35,0.07)"; ctx.fillRect(pad - 8, y - 2, W - pad * 2 + 16, rowH10 - 1) }
+      if (i > 0) { ctx.strokeStyle = "rgba(255,255,255,0.05)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke() }
+      ctx.font = "900 " + (i < 3 ? "18px" : "13px") + " ShareFont, sans-serif"
+      ctx.fillStyle = i < 3 ? numColors10[i] : "rgba(255,255,255,0.18)"
+      ctx.textAlign = "right"
+      ctx.fillText(String(i + 1), pad + 20, y + rowH10 * 0.65)
+      ctx.textAlign = "left"
+      ctx.font = (i < 3 ? "700 15px" : "400 13px") + " ShareFont, sans-serif"
+      ctx.fillStyle = i === 0 ? "#fff" : "rgba(255,255,255," + Math.max(0.28, 0.82 - i * 0.06) + ")"
+      let name = slot.name.toUpperCase()
+      while (ctx.measureText(name).width > W - pad * 2 - 44 && name.length > 3) name = name.slice(0, -1)
+      if (name !== slot.name.toUpperCase()) name += "..."
+      ctx.fillText(name, pad + 32, y + rowH10 * 0.65)
+      if (i === 0) { ctx.font = "700 13px ShareFont, sans-serif"; ctx.fillStyle = "rgba(245,166,35,0.5)"; ctx.textAlign = "right"; ctx.fillText("#1", W - pad - 8, y + rowH10 * 0.65); ctx.textAlign = "left" }
+    })
   }
-  ctx.fillText(line, pad, ty)
-  ty += 28
 
-  ctx.strokeStyle = "rgba(255,255,255,0.08)"
+  // Footer shared
+  const W = canvas.width, H = canvas.height, pad = 48
+  ctx.strokeStyle = "rgba(255,255,255,0.06)"
   ctx.lineWidth = 1
-  ctx.beginPath()
-  ctx.moveTo(pad, ty + 8)
-  ctx.lineTo(W - pad, ty + 8)
-  ctx.stroke()
-  ty += 24
-
-  const rowH = (H - ty - 60) / count
-
-  filledSlotsList.forEach((slot, i) => {
-    const y = ty + i * rowH
-    const name = slot ? slot.name.toUpperCase() : ""
-
-    if (i === 0) {
-      ctx.fillStyle = "rgba(245,166,35,0.08)"
-      ctx.fillRect(pad - 8, y - 2, W - pad * 2 + 16, rowH - 2)
-    }
-
-    if (i > 0) {
-      ctx.strokeStyle = "rgba(255,255,255,0.06)"
-      ctx.lineWidth = 1
-      ctx.beginPath()
-      ctx.moveTo(pad, y)
-      ctx.lineTo(W - pad, y)
-      ctx.stroke()
-    }
-
-    const numColors = ["#f5a623", "rgba(255,255,255,0.5)", "rgba(180,140,70,0.8)"]
-    ctx.font = "900 " + (i < 3 ? "20px" : "15px") + " ShareFont, sans-serif"
-    ctx.fillStyle = i < 3 ? numColors[i] : "rgba(255,255,255,0.2)"
-    ctx.textAlign = "right"
-    ctx.fillText(String(i + 1), pad + 20, y + rowH * 0.65)
-    ctx.textAlign = "left"
-
-    ctx.font = (i < 3 ? "700 17px" : "400 15px") + " ShareFont, sans-serif"
-    ctx.fillStyle = i === 0 ? "#ffffff" : "rgba(255,255,255," + Math.max(0.3, 0.85 - i * 0.06) + ")"
-    let nameText = name
-    const maxNameW = W - pad * 2 - 50
-    while (ctx.measureText(nameText).width > maxNameW && nameText.length > 3) {
-      nameText = nameText.slice(0, -1)
-    }
-    if (nameText !== name) nameText += "..."
-    ctx.fillText(nameText, pad + 32, y + rowH * 0.65)
-
-    if (i === 0) {
-      ctx.font = "700 16px ShareFont, sans-serif"
-      ctx.fillText("#1", W - pad - 28, y + rowH * 0.65)
-    }
-  })
-
-  ctx.strokeStyle = "rgba(255,255,255,0.07)"
-  ctx.lineWidth = 1
-  ctx.beginPath()
-  ctx.moveTo(pad, H - 44)
-  ctx.lineTo(W - pad, H - 44)
-  ctx.stroke()
-
-  ctx.font = "400 12px ShareFont, sans-serif"
-  ctx.fillStyle = "rgba(255,255,255,0.2)"
-  ctx.fillText("vote4goat.com", pad, H - 20)
+  ctx.beginPath(); ctx.moveTo(pad, H - 36); ctx.lineTo(W - pad, H - 36); ctx.stroke()
+  ctx.font = "400 11px ShareFont, sans-serif"
+  ctx.fillStyle = "rgba(255,255,255,0.18)"
+  ctx.textAlign = "left"
+  ctx.fillText("vote4goat.com", pad, H - 16)
+  ctx.fillStyle = "rgba(245,166,35,0.35)"
   ctx.textAlign = "right"
-  ctx.fillStyle = "rgba(245,166,35,0.4)"
-  ctx.fillText("vote4goat.com/top10", W - pad, H - 20)
+  ctx.fillText("vote4goat.com/top10", W - pad, H - 16)
   ctx.textAlign = "left"
 
   const link = document.createElement("a")
@@ -359,8 +415,6 @@ setIsGeneratingShare(false)
 
 }
 
-const sportLabel = id => id === 1 ? "Football" : id === 2 ? "Basketball" : id === 3 ? "Tennis" : "Other"
-
 const slotBg = index => {
 if (index === 0) return "#f5d06f"
 if (index === 1) return "#d8d8dd"
@@ -368,21 +422,12 @@ if (index === 2) return "#d9a673"
 return null
 }
 
-const getSubmitLabel = () => {
-if (isSubmitting) return "Submitting..."
-if (selectedCount < MIN_SLOTS) return (MIN_SLOTS - selectedCount) + " more to submit"
-if (selectedCount < MAX_SLOTS) return "Submit your Top " + selectedCount
-return "Submit your Top 10"
-}
-
 return (
 <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
+<Header />
+<div className="flex-1 mt-2 mb-8">
+<div className="max-w-lg mx-auto">
 
-
-  <Header />
-
-  <div className="flex-1 mt-2 mb-8">
-    <div className="max-w-lg mx-auto">
 
       {isLoadingCategory ? (
         <div className="flex flex-col gap-3 mt-8 px-1">
@@ -391,15 +436,14 @@ return (
         </div>
       ) : !category ? (
         <p className="text-sm text-red-400 text-center mt-20">Category not found.</p>
-      ) : message === "submitted" ? (
 
+      ) : message === "submitted" ? (
         <div className="flex flex-col items-center gap-5 pt-8 px-1">
           <div className="text-center">
-            <div className="text-3xl mb-3">&#x2713;</div>
-            <h2 className="text-xl font-extrabold text-goat mb-1">Top {slots.filter(Boolean).length} submitted!</h2>
-            <p className="text-xs text-white/35">Your ranking has been saved.</p>
+            <div className="text-3xl mb-3">✓</div>
+            <h2 className="text-xl font-extrabold text-goat mb-1">{getSuccessTitle()}</h2>
+            <p className="text-xs text-white/35">Your ranking is part of the world's list.</p>
           </div>
-
           <div className="w-full">
             <p className="text-xs text-white/30 uppercase tracking-wide mb-2 text-center">Your card</p>
             <div className="w-64 mx-auto rounded-2xl overflow-hidden border border-white/8" style={{ background: "#0d0f18", padding: "16px" }}>
@@ -407,7 +451,7 @@ return (
                 <span className="text-sm font-black text-white">Vote4<span className="text-goat">GOAT</span></span>
                 <span className="text-[9px] font-bold text-goat/80 border border-goat/30 rounded-full px-2 py-0.5">T0PS</span>
               </div>
-              <div className="text-[9px] text-white/30 uppercase tracking-widest mb-1">My top {slots.filter(Boolean).length}</div>
+              <div className="text-[9px] text-white/30 uppercase tracking-widest mb-1">Top {submittedSize}</div>
               <div className="text-sm font-black text-white mb-2 leading-tight">{category.title}</div>
               <div className="flex flex-col">
                 {slots.filter(Boolean).map((slot, i) => (
@@ -419,17 +463,21 @@ return (
               </div>
             </div>
           </div>
-
           <div className="w-full flex flex-col gap-2 px-1">
             <button
               onClick={handleShare}
               disabled={isGeneratingShare}
-              className="w-full py-3.5 rounded-2xl text-sm font-bold bg-goat/10 border border-goat/25 text-goat hover:bg-goat/15 transition active:scale-[0.99] flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-2xl text-sm font-bold bg-goat/10 border border-goat/25 text-goat hover:bg-goat/15 transition active:scale-[0.99]"
             >
               {isGeneratingShare ? "Generating..." : "Save image"}
             </button>
             <a
-              href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent("My Top " + slots.filter(Boolean).length + " " + (category ? category.title : "") + ": 1. " + (slots.filter(Boolean)[0]?.name || "") + ", 2. " + (slots.filter(Boolean)[1]?.name || "") + ", 3. " + (slots.filter(Boolean)[2]?.name || "") + "... Do you agree? vote4goat.com #Vote4GOAT")}
+              href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent(
+                "My Top " + submittedSize + " " + (category?.title || "") + ": " +
+                slots.filter(Boolean).slice(0, 3).map((s, i) => (i + 1) + ". " + s.name).join(", ") +
+                (submittedSize > 3 ? "..." : "") +
+                " Do you agree? vote4goat.com #Vote4GOAT"
+              )}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full py-3 rounded-2xl text-sm font-bold bg-black border border-white/10 text-white/70 hover:bg-white/5 transition flex items-center justify-center gap-2"
@@ -438,7 +486,7 @@ return (
               Share on X
             </a>
             <a href="/top10" className="text-center text-xs text-white/30 hover:text-white/60 transition py-2">
-              &#x2190; Build another Top
+              ← Build another Top
             </a>
           </div>
         </div>
@@ -446,7 +494,7 @@ return (
       ) : (
         <>
           <div className="text-center pt-6 pb-5 px-2">
-            <p className="text-[10px] uppercase tracking-widest text-goat/60 mb-2">{sportLabel(category.entity_category_id)} -- T0PS</p>
+            <p className="text-[10px] uppercase tracking-widest text-goat/60 mb-2">T0PS</p>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 leading-tight">{category.title}</h1>
             {category.description && (
               <p className="text-xs text-white/35 max-w-xs mx-auto">{category.description}</p>
@@ -454,10 +502,10 @@ return (
           </div>
 
           <div className="flex items-center justify-between mb-3 px-1">
-            <span className="text-xs text-white/40 uppercase tracking-wide">Your Top {selectedCount >= MIN_SLOTS ? selectedCount : MIN_SLOTS + "–" + MAX_SLOTS}</span>
+            <span className="text-xs text-white/40 uppercase tracking-wide">Your ranking</span>
             <div className="flex items-center gap-3">
               <button onClick={() => setShowInspiration(p => !p)} className="text-xs text-goat/70 hover:text-goat transition">
-                {showInspiration ? "Hide list" : "Show all players"}
+                {showInspiration ? "Hide players" : "Show all players"}
               </button>
               <button onClick={handleReset} className="text-xs text-white/25 hover:text-red-400 transition">Reset</button>
             </div>
@@ -469,7 +517,7 @@ return (
               <span className="text-xs text-white/30">
                 <span className="text-goat font-bold">{selectedCount}</span> / {MAX_SLOTS}
                 {selectedCount >= MIN_SLOTS && selectedCount < MAX_SLOTS && (
-                  <span className="text-green-400 ml-1.5">· ready to submit</span>
+                  <span className="text-green-400 ml-1.5">· ready</span>
                 )}
               </span>
             </div>
@@ -477,7 +525,7 @@ return (
               <div className="h-10 bg-white/5 rounded-xl animate-pulse" />
             ) : (
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/25 text-sm">&#x1F50D;</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/25 text-sm">🔍</span>
                 <input
                   type="text"
                   value={search}
@@ -506,14 +554,11 @@ return (
             )}
           </div>
 
-          {/* Hint when 5+ filled */}
           {selectedCount >= MIN_SLOTS && selectedCount < MAX_SLOTS && (
             <div className="mb-3 px-1">
               <div className="px-4 py-2.5 rounded-xl bg-green-900/20 border border-green-400/20 flex items-center gap-2">
                 <span className="text-green-400 text-xs">✓</span>
-                <p className="text-xs text-green-400/80">
-                  You can submit now or keep adding up to {MAX_SLOTS} players.
-                </p>
+                <p className="text-xs text-green-400/80">Ready to submit. Add up to {MAX_SLOTS - selectedCount} more if you want.</p>
               </div>
             </div>
           )}
@@ -522,9 +567,7 @@ return (
             {slots.map((slot, index) => {
               const bg = slotBg(index)
               const isTop3 = index < 3
-              const isEmpty = slot === null
-              const isOptional = index >= MIN_SLOTS && isEmpty
-
+              const isOptional = index >= MIN_SLOTS && !slot
               return (
                 <div
                   key={index}
@@ -535,7 +578,7 @@ return (
                     backgroundColor: bg || (slot ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.02)"),
                     borderColor: bg ? "transparent" : slot ? "rgba(255,255,255,0.1)" : isOptional ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.06)",
                     minHeight: isTop3 ? "56px" : "48px",
-                    opacity: isOptional && !slot ? 0.5 : 1,
+                    opacity: isOptional ? 0.45 : 1,
                   }}
                 >
                   <span
@@ -566,7 +609,7 @@ return (
                         className="flex-shrink-0 w-5 h-5 flex items-center justify-center rounded-full transition text-xs"
                         style={{ color: bg ? "rgba(0,0,0,0.35)" : "rgba(255,255,255,0.25)" }}
                       >
-                        &#x2715;
+                        ✕
                       </button>
                     </div>
                   ) : (
@@ -613,7 +656,7 @@ return (
             </button>
             {selectedCount >= MIN_SLOTS && selectedCount < MAX_SLOTS && (
               <p className="text-center text-xs text-white/25 mt-2">
-                Or add {MAX_SLOTS - selectedCount} more to complete your Top 10
+                Or add {MAX_SLOTS - selectedCount} more for a full Top 10
               </p>
             )}
           </div>
