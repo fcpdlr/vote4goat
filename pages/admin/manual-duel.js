@@ -54,6 +54,61 @@ export default function DuelImage() {
     img.src = src
   })
 
+  const drawLogo = (ctx, x, y) => {
+    ctx.save()
+    ctx.translate(x, y)
+
+    // Corona — outline blanco
+    ctx.strokeStyle = 'rgba(255,255,255,0.88)'
+    ctx.lineWidth = 2.2
+    ctx.lineJoin = 'round'
+    ctx.beginPath()
+    ctx.moveTo(-26, 12)
+    ctx.lineTo(-26, -8)
+    ctx.lineTo(-13, 5)
+    ctx.lineTo(0, -13)
+    ctx.lineTo(13, 5)
+    ctx.lineTo(26, -8)
+    ctx.lineTo(26, 12)
+    ctx.closePath()
+    ctx.stroke()
+
+    // Puntos dorados
+    ctx.fillStyle = '#f5a623'
+    const dots = [[-26, 12], [0, -13], [26, 12]]
+    dots.forEach(([dx, dy]) => {
+      ctx.beginPath()
+      ctx.arc(dx, dy, 2.8, 0, Math.PI * 2)
+      ctx.fill()
+    })
+
+    // VOTE4GOAT texto — medimos para centrar bien
+    ctx.textBaseline = 'alphabetic'
+    ctx.textAlign = 'center'
+
+    // VOTE (gris claro)
+    ctx.fillStyle = 'rgba(255,255,255,0.65)'
+    ctx.font = '700 14px sans-serif'
+    const voteW = ctx.measureText('VOTE').width
+    const fourW = ctx.measureText('4').width
+    const goatW = ctx.measureText('GOAT').width
+    const totalW = voteW + fourW + goatW
+    const startX = -totalW / 2
+
+    ctx.textAlign = 'left'
+    ctx.fillText('VOTE', startX, 30)
+
+    // 4 (dorado)
+    ctx.fillStyle = '#f5a623'
+    ctx.fillText('4', startX + voteW, 30)
+
+    // GOAT (blanco)
+    ctx.fillStyle = 'rgba(255,255,255,0.88)'
+    ctx.fillText('GOAT', startX + voteW + fourW, 30)
+
+    ctx.restore()
+  }
+
   const drawCanvas = async () => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -73,45 +128,53 @@ export default function DuelImage() {
     ctx.lineWidth = 0.8
     ctx.strokeRect(12, 12, W - 24, H - 24)
 
+    // Logo centrado arriba
+    drawLogo(ctx, W / 2, 38)
+
+    // Línea bajo logo
+    ctx.strokeStyle = 'rgba(245,166,35,0.18)'
+    ctx.lineWidth = 0.8
+    ctx.beginPath(); ctx.moveTo(80, 82); ctx.lineTo(460, 82); ctx.stroke()
+
+    // DUEL OF THE DAY
+    ctx.fillStyle = '#f5a623'
+    ctx.font = '700 10px sans-serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'alphabetic'
+    ctx.fillText('DUEL OF THE DAY', W / 2, 100)
+
+    // Fotos
     const drawPhoto = async (img, x, y, w, h, r) => {
       if (!img) {
         ctx.fillStyle = '#111825'
-        ctx.beginPath()
-        ctx.roundRect(x, y, w, h, r)
-        ctx.fill()
+        ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill()
         ctx.strokeStyle = 'rgba(245,166,35,0.2)'
-        ctx.lineWidth = 1
-        ctx.stroke()
+        ctx.lineWidth = 1; ctx.stroke()
         ctx.fillStyle = 'rgba(245,166,35,0.2)'
         ctx.font = '400 13px sans-serif'
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
         ctx.fillText('?', x + w / 2, y + h / 2)
         return
       }
       ctx.save()
-      ctx.beginPath()
-      ctx.roundRect(x, y, w, h, r)
-      ctx.clip()
+      ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.clip()
       const scale = Math.max(w / img.width, h / img.height)
       const sw = img.width * scale, sh = img.height * scale
       ctx.drawImage(img, x - (sw - w) / 2, y - (sh - h) / 2, sw, sh)
       ctx.restore()
       ctx.strokeStyle = 'rgba(245,166,35,0.3)'
       ctx.lineWidth = 1.5
-      ctx.beginPath()
-      ctx.roundRect(x, y, w, h, r)
-      ctx.stroke()
+      ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.stroke()
     }
 
     const imgA = playerA?.image_url ? await loadImage(playerA.image_url) : null
     const imgB = playerB?.image_url ? await loadImage(playerB.image_url) : null
 
-    await drawPhoto(imgA, 26, 80, 218, 260, 14)
-    await drawPhoto(imgB, 296, 80, 218, 260, 14)
+    await drawPhoto(imgA, 26, 112, 218, 252, 14)
+    await drawPhoto(imgB, 296, 112, 218, 252, 14)
 
     // VS
-    const cx = 270, cy = 210
+    const cx = 270, cy = 238
     ctx.fillStyle = '#070a0f'
     ctx.beginPath(); ctx.arc(cx, cy, 30, 0, Math.PI * 2); ctx.fill()
     ctx.strokeStyle = '#f5a623'
@@ -121,60 +184,46 @@ export default function DuelImage() {
     ctx.beginPath(); ctx.arc(cx, cy, 24, 0, Math.PI * 2); ctx.fill()
     ctx.fillStyle = '#000'
     ctx.font = '900 14px sans-serif'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
     ctx.fillText('VS', cx, cy)
 
-    // Header
-    ctx.fillStyle = '#f5a623'
-    ctx.font = '700 11px sans-serif'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'alphabetic'
-    ctx.fillText('DUEL OF THE DAY', 270, 40)
-    ctx.strokeStyle = 'rgba(245,166,35,0.2)'
-    ctx.lineWidth = 0.8
-    ctx.beginPath(); ctx.moveTo(80, 50); ctx.lineTo(460, 50); ctx.stroke()
-
-    // Nombre A
+    // Nombres A
     const nameA2 = playerA?.name_line2 || playerA?.name || '?'
     const nameA1 = playerA?.name_line1 || ''
     const nameA3 = playerA?.name_line3 || ''
+    ctx.textBaseline = 'alphabetic'
+    ctx.textAlign = 'center'
     ctx.fillStyle = 'rgba(255,255,255,0.35)'
     ctx.font = '400 9px sans-serif'
-    ctx.textAlign = 'center'
-    if (nameA1) ctx.fillText(nameA1.toUpperCase(), 135, 364)
+    if (nameA1) ctx.fillText(nameA1.toUpperCase(), 135, 382)
     ctx.fillStyle = '#f5a623'
-    ctx.font = '900 19px sans-serif'
-    ctx.fillText(nameA2.toUpperCase(), 135, 386)
-    if (nameA3) {
-      ctx.fillText(nameA3.toUpperCase(), 135, 408)
-    }
+    ctx.font = '900 18px sans-serif'
+    ctx.fillText(nameA2.toUpperCase(), 135, 402)
+    if (nameA3) ctx.fillText(nameA3.toUpperCase(), 135, 422)
 
-    // Nombre B
+    // Nombres B
     const nameB2 = playerB?.name_line2 || playerB?.name || '?'
     const nameB1 = playerB?.name_line1 || ''
     const nameB3 = playerB?.name_line3 || ''
     ctx.fillStyle = 'rgba(255,255,255,0.35)'
     ctx.font = '400 9px sans-serif'
-    if (nameB1) ctx.fillText(nameB1.toUpperCase(), 405, 364)
+    if (nameB1) ctx.fillText(nameB1.toUpperCase(), 405, 382)
     ctx.fillStyle = '#f5a623'
-    ctx.font = '900 19px sans-serif'
-    ctx.fillText(nameB2.toUpperCase(), 405, 386)
-    if (nameB3) {
-      ctx.fillText(nameB3.toUpperCase(), 405, 408)
-    }
+    ctx.font = '900 18px sans-serif'
+    ctx.fillText(nameB2.toUpperCase(), 405, 402)
+    if (nameB3) ctx.fillText(nameB3.toUpperCase(), 405, 422)
 
     // Línea separadora
     ctx.strokeStyle = 'rgba(245,166,35,0.18)'
     ctx.lineWidth = 0.8
-    ctx.beginPath(); ctx.moveTo(60, 430); ctx.lineTo(480, 430); ctx.stroke()
+    ctx.beginPath(); ctx.moveTo(60, 438); ctx.lineTo(480, 438); ctx.stroke()
 
     // Subtítulo
     if (showSubtitle && subtitle) {
       ctx.fillStyle = 'rgba(255,255,255,0.45)'
       ctx.font = 'italic 400 11px sans-serif'
       ctx.textAlign = 'center'
-      ctx.fillText(subtitle, 270, 458)
+      ctx.fillText(subtitle, 270, 462)
     }
 
     // Fecha
@@ -182,14 +231,14 @@ export default function DuelImage() {
       ctx.fillStyle = 'rgba(255,255,255,0.2)'
       ctx.font = '400 9px sans-serif'
       ctx.textAlign = 'center'
-      ctx.fillText(date.toUpperCase(), 270, 480)
+      ctx.fillText(date.toUpperCase(), 270, 482)
     }
 
-    // Branding
-    ctx.fillStyle = 'rgba(255,255,255,0.1)'
-    ctx.font = '400 8px sans-serif'
+    // URL visible en dorado
+    ctx.fillStyle = 'rgba(245,166,35,0.5)'
+    ctx.font = '600 9px sans-serif'
     ctx.textAlign = 'center'
-    ctx.fillText('VOTE4GOAT.COM', 270, 524)
+    ctx.fillText('VOTE4GOAT.COM', 270, 520)
   }
 
   const handleExport = () => {
@@ -260,7 +309,6 @@ export default function DuelImage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
 
-          {/* Formulario */}
           <div className="flex flex-col gap-4">
             <PlayerSearch label="Player A" value={playerA} search={searchA} setSearch={setSearchA} setPlayer={setPlayerA} filtered={filteredA} />
             <PlayerSearch label="Player B" value={playerB} search={searchB} setSearch={setSearchB} setPlayer={setPlayerB} filtered={filteredB} />
@@ -311,7 +359,6 @@ export default function DuelImage() {
             </button>
           </div>
 
-          {/* Canvas preview */}
           <div className="flex flex-col gap-3">
             <p className="text-xs text-white/40 uppercase tracking-widest">Preview</p>
             <canvas
