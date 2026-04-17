@@ -1,50 +1,59 @@
 export default function Logo({ className = "" }) {
   return (
     <svg
+      viewBox="0 0 220 40"
       className={className}
-      viewBox="0 0 200 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Corona */}
-      <path
-        d="M4 30 L4 10 L14 20 L22 4 L30 20 L40 10 L40 30 Z"
-        stroke="rgba(255,255,255,0.80)"
-        strokeWidth="2.2"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <circle cx="4"  cy="30" r="2.4" fill="#c8922a" />
-      <circle cx="22" cy="4"  r="2.4" fill="#c8922a" />
-      <circle cx="40" cy="30" r="2.4" fill="#c8922a" />
+      {/* Crown */}
+      <g transform="translate(0,4)">
+        <path
+          d="M6 26 L6 12 L16 20 L24 6 L32 20 L42 12 L42 26 Z"
+          stroke="white"
+          strokeOpacity="0.85"
+          strokeWidth="2.2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+        <circle cx="6" cy="26" r="2.4" fill="#f5a623" />
+        <circle cx="24" cy="6" r="2.4" fill="#f5a623" />
+        <circle cx="42" cy="26" r="2.4" fill="#f5a623" />
+      </g>
 
-      {/* VOTE */}
+      {/* Text */}
       <text
-        x="52" y="28"
-        fontFamily="sans-serif"
-        fontWeight="700"
+        x="58"
+        y="28"
         fontSize="24"
-        fill="rgba(255,255,255,0.45)"
-      >VOTE</text>
+        fontWeight="700"
+        fill="rgba(255,255,255,0.6)"
+        fontFamily="system-ui, sans-serif"
+      >
+        VOTE
+      </text>
 
-      {/* 4 */}
       <text
-        x="118" y="28"
-        fontFamily="sans-serif"
-        fontWeight="700"
+        x="120"
+        y="28"
         fontSize="24"
-        fill="#c8922a"
-      >4</text>
+        fontWeight="700"
+        fill="#f5a623"
+        fontFamily="system-ui, sans-serif"
+      >
+        4
+      </text>
 
-      {/* GOAT */}
       <text
-        x="135" y="28"
-        fontFamily="sans-serif"
-        fontWeight="700"
+        x="136"
+        y="28"
         fontSize="24"
-        fill="rgba(255,255,255,0.92)"
-      >GOAT</text>
+        fontWeight="700"
+        fill="white"
+        fontFamily="system-ui, sans-serif"
+      >
+        GOAT
+      </text>
     </svg>
   )
 }
