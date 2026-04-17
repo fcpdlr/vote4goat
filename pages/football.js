@@ -35,7 +35,7 @@ export default function FootballPage() {
 
   useEffect(() => {
     fetchDuel()
-    fetchRanking(100)
+    fetchRanking(limit)
     checkUser()
     fetchIp()
   }, [duelLimit])
@@ -82,17 +82,18 @@ export default function FootballPage() {
     setLoading(false)
   }
 
-  const fetchRanking = async (top) => {
+  // Carga TODOS los jugadores para cálculos internos,
+  // pero solo muestra `visibleLimit` en la tabla.
+  const fetchRanking = async (visibleLimit) => {
     const { data, error } = await supabase
       .from("entity_rankings")
       .select("id, elo_rating, entities (name, name_line1, name_line2, name_line3, image_url)")
       .eq("entity_category_id", ENTITY_CATEGORY_ID)
       .order("elo_rating", { ascending: false })
-      .limit(top)
     if (error) console.error("Error in fetchRanking:", error)
     const results = data || []
-    setRanking(results)
-    if (top >= 100) setFullRanking(results)
+    setFullRanking(results)
+    setRanking(results.slice(0, visibleLimit))
     if (results.length > 0) setTopElo(results[0].elo_rating)
     return results
   }
@@ -106,7 +107,7 @@ export default function FootballPage() {
     const winner = duel.find(p => p.id === winnerId)
     const loser = duel.find(p => p.id === loserId)
 
-    const rankingBefore = fullRanking.length > 0 ? [...fullRanking] : await fetchRanking(100)
+    const rankingBefore = fullRanking.length > 0 ? [...fullRanking] : await fetchRanking(limit)
     const winnerBefore = rankingBefore.find(r => r.id === winnerId)
     const loserBefore = rankingBefore.find(r => r.id === loserId)
     const winnerEloBefore = winnerBefore?.elo_rating || 1200
@@ -137,8 +138,7 @@ export default function FootballPage() {
 
     setSessionVotes(v => v + 1)
 
-    await fetchRanking(100)
-    const rankingAfter = await fetchRanking(100)
+    const rankingAfter = await fetchRanking(limit)
 
     const winnerAfter = rankingAfter.find(r => r.id === winnerId)
     const loserAfter = rankingAfter.find(r => r.id === loserId)
@@ -205,7 +205,7 @@ export default function FootballPage() {
 
         <div className="px-4">
           <div className="text-center pt-6 pb-2">
-            <p className="text-xs tracking-widest uppercase text-white/25 mb-1">Football -- All time</p>
+            <p className="text-xs tracking-widest uppercase text-white/25 mb-1">Football — All time</p>
             <h1 className="text-2xl font-extrabold text-white">Who is the <span className="text-goat">greatest?</span></h1>
           </div>
 
@@ -240,7 +240,7 @@ export default function FootballPage() {
                 {duel.map((player) => {
                   const isWinner = selected === player.id
                   const isLoser = selected !== null && selected !== player.id
-                  const rank = (fullRanking.length > 0 ? fullRanking : ranking).findIndex(r => r.id === player.id)
+                  const rank = fullRanking.findIndex(r => r.id === player.id)
                   const rankNum = rank >= 0 ? rank + 1 : null
                   return (
                     <button
@@ -359,14 +359,16 @@ export default function FootballPage() {
                 </thead>
                 <tbody>
                   {ranking.map((player, i) => {
-                    const medal = i === 0 ? String.fromCodePoint(0x1F947) : i === 1 ? String.fromCodePoint(0x1F948) : i === 2 ? String.fromCodePoint(0x1F949) : null
-                    const rowStyle = i === 0 ? "bg-goat/10 font-bold" : i === 1 ? "bg-white/5 font-semibold" : i === 2 ? "bg-white/5" : ""
-                    const nameColor = i === 0 ? "text-goat" : i === 1 ? "text-white/90" : i === 2 ? "text-white/80" : "text-white/70"
+                    const globalRank = fullRanking.findIndex(r => r.id === player.id)
+                    const rankPos = globalRank >= 0 ? globalRank + 1 : i + 1
+                    const medal = rankPos === 1 ? String.fromCodePoint(0x1F947) : rankPos === 2 ? String.fromCodePoint(0x1F948) : rankPos === 3 ? String.fromCodePoint(0x1F949) : null
+                    const rowStyle = rankPos === 1 ? "bg-goat/10 font-bold" : rankPos === 2 ? "bg-white/5 font-semibold" : rankPos === 3 ? "bg-white/5" : ""
+                    const nameColor = rankPos === 1 ? "text-goat" : rankPos === 2 ? "text-white/90" : rankPos === 3 ? "text-white/80" : "text-white/70"
                     const barPct = Math.round((player.elo_rating / topElo) * 100)
-                    const barColor = i === 0 ? "bg-goat" : i === 1 ? "bg-gray-400" : i === 2 ? "bg-amber-700" : "bg-white/20"
+                    const barColor = rankPos === 1 ? "bg-goat" : rankPos === 2 ? "bg-gray-400" : rankPos === 3 ? "bg-amber-700" : "bg-white/20"
                     return (
                       <tr key={player.id} className={"border-t border-white/5 hover:bg-white/5 transition " + rowStyle}>
-                        <td className="pl-2 pr-1 py-2.5 text-xs text-white/40 w-8">{medal || i + 1}</td>
+                        <td className="pl-2 pr-1 py-2.5 text-xs text-white/40 w-8">{medal || rankPos}</td>
                         <td className="pl-1 pr-2 py-2.5">
                           <div className="flex items-center gap-2">
                             <img src={player.entities.image_url} alt={player.entities.name} className="w-7 h-7 rounded-full object-cover flex-shrink-0 border border-white/10" />
@@ -385,8 +387,17 @@ export default function FootballPage() {
                 </tbody>
               </table>
             </div>
-            {ranking.length >= limit && limit < 100 && (
-              <button className="mt-6 text-goat underline text-sm mx-auto block" onClick={() => { const n = limit + 20; setLimit(n); fetchRanking(n) }}>Show more</button>
+            {ranking.length < fullRanking.length && (
+              <button
+                className="mt-6 text-goat underline text-sm mx-auto block"
+                onClick={() => {
+                  const newLimit = limit + 20
+                  setLimit(newLimit)
+                  setRanking(fullRanking.slice(0, newLimit))
+                }}
+              >
+                Show more
+              </button>
             )}
           </div>
         </div>
