@@ -6,6 +6,8 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
+const S = 2 // escala — canvas real 1080x1080, visual 540x540
+
 export default function DuelImage() {
   const [players, setPlayers] = useState([])
   const [playerA, setPlayerA] = useState(null)
@@ -54,24 +56,24 @@ export default function DuelImage() {
     img.src = src
   })
 
-  const drawLogo = (ctx, x, y, height = 32) => {
+  const drawLogo = (ctx, x, y, height = 64) => {
     return new Promise((resolve) => {
-      const svgStr = `<svg viewBox="0 0 200 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 30 L4 10 L14 20 L22 4 L30 20 L40 10 L40 30 Z"
+      const svgStr = `<svg viewBox="0 0 200 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 34 L2 17 L13 27 L23.5 6 L34 24 L45 17.5 L45 34 Z"
           stroke="rgba(255,255,255,0.80)" stroke-width="2.2"
           stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-        <circle cx="4"  cy="30" r="2.4" fill="#c8922a"/>
-        <circle cx="22" cy="4"  r="2.4" fill="#c8922a"/>
-        <circle cx="40" cy="30" r="2.4" fill="#c8922a"/>
-        <text x="52"  y="28" font-family="sans-serif" font-weight="700" font-size="24" fill="rgba(255,255,255,0.45)">VOTE</text>
-        <text x="118" y="28" font-family="sans-serif" font-weight="700" font-size="24" fill="#c8922a">4</text>
-        <text x="135" y="28" font-family="sans-serif" font-weight="700" font-size="24" fill="rgba(255,255,255,0.92)">GOAT</text>
+        <circle cx="8"    cy="28.5" r="2.0" fill="#f5a623" fill-opacity="0.65"/>
+        <circle cx="23.5" cy="20"   r="3.0" fill="#f5a623"/>
+        <circle cx="39"   cy="26"   r="2.0" fill="#f5a623" fill-opacity="0.65"/>
+        <text x="58"  y="30" font-family="sans-serif" font-weight="700" font-size="24" fill="rgba(255,255,255,0.45)">VOTE</text>
+        <text x="122" y="30" font-family="sans-serif" font-weight="700" font-size="24" fill="#f5a623">4</text>
+        <text x="139" y="30" font-family="sans-serif" font-weight="700" font-size="24" fill="rgba(255,255,255,0.92)">GOAT</text>
       </svg>`
       const blob = new Blob([svgStr], { type: 'image/svg+xml' })
       const url = URL.createObjectURL(blob)
       const img = new Image()
       img.onload = () => {
-        const w = (height / 36) * 200
+        const w = (height / 40) * 200
         ctx.drawImage(img, x - w / 2, y - height / 2, w, height)
         URL.revokeObjectURL(url)
         resolve()
@@ -84,7 +86,7 @@ export default function DuelImage() {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    const W = 540, H = 540
+    const W = 540 * S, H = 540 * S
     ctx.clearRect(0, 0, W, H)
 
     // BG
@@ -93,48 +95,48 @@ export default function DuelImage() {
 
     // Frames
     ctx.strokeStyle = 'rgba(245,166,35,0.25)'
-    ctx.lineWidth = 1.2
-    ctx.strokeRect(7, 7, W - 14, H - 14)
+    ctx.lineWidth = 1.2 * S
+    ctx.strokeRect(7 * S, 7 * S, W - 14 * S, H - 14 * S)
     ctx.strokeStyle = 'rgba(245,166,35,0.07)'
-    ctx.lineWidth = 0.7
-    ctx.strokeRect(14, 14, W - 28, H - 28)
+    ctx.lineWidth = 0.7 * S
+    ctx.strokeRect(14 * S, 14 * S, W - 28 * S, H - 28 * S)
 
     // Logo
-    await drawLogo(ctx, W / 2, 36)
+    await drawLogo(ctx, W / 2, 36 * S, 32 * S)
 
     // Header line
     ctx.strokeStyle = 'rgba(245,166,35,0.10)'
-    ctx.lineWidth = 0.8
-    ctx.beginPath(); ctx.moveTo(70, 64); ctx.lineTo(470, 64); ctx.stroke()
+    ctx.lineWidth = 0.8 * S
+    ctx.beginPath(); ctx.moveTo(70 * S, 64 * S); ctx.lineTo(470 * S, 64 * S); ctx.stroke()
 
     // DUEL OF THE DAY
     ctx.fillStyle = 'rgba(245,166,35,0.70)'
-    ctx.font = '700 8.5px sans-serif'
+    ctx.font = `700 ${8.5 * S}px sans-serif`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'alphabetic'
-    ctx.fillText('DUEL OF THE DAY', W / 2, 78)
+    ctx.fillText('DUEL OF THE DAY', W / 2, 78 * S)
 
-    // Subtitle encima de las fotos
+    // Subtitle
     if (showSubtitle && subtitle) {
       ctx.fillStyle = 'rgba(255,255,255,0.38)'
-      ctx.font = 'italic 300 12px sans-serif'
+      ctx.font = `italic 300 ${12 * S}px sans-serif`
       ctx.textAlign = 'center'
-      ctx.fillText(subtitle, W / 2, 96)
+      ctx.fillText(subtitle, W / 2, 96 * S)
     }
 
     // Fotos
-    const PY = 110, PH = 278, PW = 232
-    const PAX = 20, PBX = W - 20 - PW
-    const R = 12
+    const PY = 110 * S, PH = 278 * S, PW = 232 * S
+    const PAX = 20 * S, PBX = W - 20 * S - PW
+    const R = 12 * S
 
     const drawPhoto = async (img, x, y, w, h, r) => {
       if (!img) {
         ctx.beginPath(); ctx.roundRect(x, y, w, h, r)
         ctx.fillStyle = '#111825'; ctx.fill()
         ctx.strokeStyle = 'rgba(245,166,35,0.18)'
-        ctx.lineWidth = 1; ctx.stroke()
+        ctx.lineWidth = 1 * S; ctx.stroke()
         ctx.fillStyle = 'rgba(245,166,35,0.15)'
-        ctx.font = '300 32px sans-serif'
+        ctx.font = `300 ${32 * S}px sans-serif`
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
         ctx.fillText('?', x + w / 2, y + h / 2)
         return
@@ -145,15 +147,13 @@ export default function DuelImage() {
       const sw = img.width * scale, sh = img.height * scale
       ctx.drawImage(img, x - (sw - w) / 2, y - (sh - h) / 2, sw, sh)
       ctx.restore()
-      // gradiente inferior
-      const grad = ctx.createLinearGradient(x, y + h - 60, x, y + h)
+      const grad = ctx.createLinearGradient(x, y + h - 60 * S, x, y + h)
       grad.addColorStop(0, 'rgba(7,10,15,0)')
       grad.addColorStop(1, 'rgba(7,10,15,0.65)')
       ctx.fillStyle = grad
       ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill()
-      // borde
       ctx.strokeStyle = 'rgba(245,166,35,0.20)'
-      ctx.lineWidth = 1
+      ctx.lineWidth = 1 * S
       ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.stroke()
     }
 
@@ -171,23 +171,23 @@ export default function DuelImage() {
     vg.addColorStop(0.75, 'rgba(245,166,35,0.12)')
     vg.addColorStop(1, 'transparent')
     ctx.strokeStyle = vg
-    ctx.lineWidth = 1
+    ctx.lineWidth = 1 * S
     ctx.beginPath(); ctx.moveTo(cx, PY); ctx.lineTo(cx, PY + PH); ctx.stroke()
 
     ctx.fillStyle = '#070a0f'
-    ctx.beginPath(); ctx.arc(cx, cy, 24, 0, Math.PI * 2); ctx.fill()
+    ctx.beginPath(); ctx.arc(cx, cy, 24 * S, 0, Math.PI * 2); ctx.fill()
     ctx.strokeStyle = '#f5a623'
-    ctx.lineWidth = 1.8
-    ctx.beginPath(); ctx.arc(cx, cy, 24, 0, Math.PI * 2); ctx.stroke()
+    ctx.lineWidth = 1.8 * S
+    ctx.beginPath(); ctx.arc(cx, cy, 24 * S, 0, Math.PI * 2); ctx.stroke()
     ctx.fillStyle = '#f5a623'
-    ctx.beginPath(); ctx.arc(cx, cy, 17, 0, Math.PI * 2); ctx.fill()
+    ctx.beginPath(); ctx.arc(cx, cy, 17 * S, 0, Math.PI * 2); ctx.fill()
     ctx.fillStyle = '#000'
-    ctx.font = '900 11px sans-serif'
+    ctx.font = `900 ${11 * S}px sans-serif`
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
     ctx.fillText('VS', cx, cy)
 
     // Nombres
-    const nameY = PY + PH + 14
+    const nameY = PY + PH + 14 * S
     const cAx = PAX + PW / 2
     const cBx = PBX + PW / 2
 
@@ -200,15 +200,15 @@ export default function DuelImage() {
       let y = baseY
       if (line1) {
         ctx.fillStyle = 'rgba(255,255,255,0.28)'
-        ctx.font = '400 9px sans-serif'
+        ctx.font = `400 ${9 * S}px sans-serif`
         ctx.fillText(line1.toUpperCase(), ncx, y)
-        y += 16
+        y += 16 * S
       }
       ctx.fillStyle = '#f5a623'
-      ctx.font = '900 22px sans-serif'
+      ctx.font = `900 ${22 * S}px sans-serif`
       ctx.fillText(line2.toUpperCase(), ncx, y)
       if (line3) {
-        ctx.fillText(line3.toUpperCase(), ncx, y + 24)
+        ctx.fillText(line3.toUpperCase(), ncx, y + 24 * S)
       }
     }
 
@@ -217,21 +217,21 @@ export default function DuelImage() {
 
     // Divider
     ctx.strokeStyle = 'rgba(245,166,35,0.10)'
-    ctx.lineWidth = 0.8
-    ctx.beginPath(); ctx.moveTo(55, 464); ctx.lineTo(485, 464); ctx.stroke()
+    ctx.lineWidth = 0.8 * S
+    ctx.beginPath(); ctx.moveTo(55 * S, 464 * S); ctx.lineTo(485 * S, 464 * S); ctx.stroke()
 
     // Footer
     if (showDate && date) {
       ctx.fillStyle = 'rgba(255,255,255,0.16)'
-      ctx.font = '400 8px sans-serif'
+      ctx.font = `400 ${8 * S}px sans-serif`
       ctx.textAlign = 'center'
-      ctx.fillText(date.toUpperCase(), W / 2, 480)
+      ctx.fillText(date.toUpperCase(), W / 2, 480 * S)
     }
 
     ctx.fillStyle = 'rgba(245,166,35,0.52)'
-    ctx.font = '600 9.5px sans-serif'
+    ctx.font = `600 ${9.5 * S}px sans-serif`
     ctx.textAlign = 'center'
-    ctx.fillText('VOTE4GOAT.COM', W / 2, 498)
+    ctx.fillText('VOTE4GOAT.COM', W / 2, 498 * S)
   }
 
   const handleExport = () => {
@@ -353,10 +353,12 @@ export default function DuelImage() {
 
           <div className="flex flex-col gap-3">
             <p className="text-xs text-white/40 uppercase tracking-widest">Preview</p>
+            {/* Canvas real 1080x1080, mostrado a 540px */}
             <canvas
               ref={canvasRef}
-              width={540}
-              height={540}
+              width={540 * S}
+              height={540 * S}
+              style={{ width: '540px', height: '540px' }}
               className="rounded-xl border border-white/10 w-full max-w-[540px]"
             />
           </div>
