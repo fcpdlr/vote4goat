@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" fill="none">
+  <path d="M2 34 L2 17 L13 27 L23.5 6 L34 24 L45 17.5 L45 34 Z"
+    stroke="black" stroke-width="2.2" stroke-opacity="0.30"
+    stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+  <circle cx="8"    cy="28.5" r="2.0" fill="#b8821e" fill-opacity="0.65"/>
+  <circle cx="23.5" cy="20"   r="3.0" fill="#b8821e"/>
+  <circle cx="39"   cy="26"   r="2.0" fill="#b8821e" fill-opacity="0.65"/>
+  <text x="58" y="30"
+    font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-weight="700" font-size="24" letter-spacing="1"
+    fill="rgba(0,0,0,0.38)">VOTE</text>
+  <text x="122" y="30"
+    font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-weight="700" font-size="24"
+    fill="#b8821e">4</text>
+  <text x="139" y="30"
+    font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-weight="700" font-size="24" letter-spacing="1"
+    fill="rgba(0,0,0,0.85)">GOAT</text>
+</svg>
