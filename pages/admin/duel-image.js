@@ -1,12 +1,8 @@
 import { useEffect, useState, useRef } from 'react'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+import { supabase } from '../../lib/supabase'
 
 export default function DuelImagePage() {
+  const [authChecked, setAuthChecked] = useState(false)
   const [players, setPlayers] = useState([])
   const [playerA, setPlayerA] = useState(null)
   const [playerB, setPlayerB] = useState(null)
@@ -18,6 +14,13 @@ export default function DuelImagePage() {
   const [showDate, setShowDate] = useState(true)
   const [isExporting, setIsExporting] = useState(false)
   const previewRef = useRef(null)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) window.location.replace('/login')
+      else setAuthChecked(true)
+    })
+  }, [])
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -114,6 +117,12 @@ export default function DuelImagePage() {
           </button>
         )}
       </div>
+    </div>
+  )
+
+  if (!authChecked) return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-5 h-5 border-2 border-goat/40 border-t-goat rounded-full animate-spin" />
     </div>
   )
 

@@ -1,12 +1,7 @@
 import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/router"
-import { createClient } from "@supabase/supabase-js"
+import { supabase } from "../../lib/supabase"
 import Header from "../../components/Header"
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
 
 export default function Rank4VotePage() {
   const router = useRouter()

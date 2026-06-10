@@ -1,11 +1,6 @@
 import { useState, useRef, useEffect } from "react"
-import { createClient } from "@supabase/supabase-js"
+import { supabase } from "../lib/supabase"
 import { useRouter } from "next/router"
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
 
 const CrownLogo = () => (
   <svg width="24" height="22" viewBox="0 0 48 44" fill="none" xmlns="http://www.w3.org/2000/svg">

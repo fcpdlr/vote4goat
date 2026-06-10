@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react"
-import { createClient } from "@supabase/supabase-js"
+import { supabase } from "../lib/supabase"
 import Head from "next/head"
 import { Swords } from "lucide-react"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
-
-const supabase = createClient(
-process.env.NEXT_PUBLIC_SUPABASE_URL,
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
 
 const TopsIcon = ({ active }) => (
 <svg width="22" height="22" viewBox="0 0 88 88" fill="none">
