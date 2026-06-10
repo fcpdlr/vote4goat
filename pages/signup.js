@@ -1,23 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { COUNTRIES } from '../lib/countries'
 import Head from 'next/head'
-
-const COUNTRIES = [
-  'Afghanistan','Albania','Algeria','Andorra','Angola','Argentina','Armenia','Australia','Austria','Azerbaijan',
-  'Bahrain','Bangladesh','Belarus','Belgium','Bolivia','Bosnia and Herzegovina','Brazil','Bulgaria',
-  'Cambodia','Cameroon','Canada','Chile','China','Colombia','Costa Rica','Croatia','Cuba','Czech Republic',
-  'Denmark','Dominican Republic','Ecuador','Egypt','El Salvador','Estonia','Ethiopia',
-  'Finland','France','Georgia','Germany','Ghana','Greece','Guatemala','Honduras','Hungary',
-  'Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy',
-  'Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kosovo','Kuwait',
-  'Latvia','Lebanon','Libya','Lithuania','Luxembourg',
-  'Malaysia','Mexico','Moldova','Montenegro','Morocco','Netherlands','New Zealand','Nigeria','North Korea','Norway',
-  'Pakistan','Palestine','Panama','Paraguay','Peru','Philippines','Poland','Portugal',
-  'Qatar','Romania','Russia','Saudi Arabia','Senegal','Serbia','Singapore','Slovakia','Slovenia',
-  'South Africa','South Korea','Spain','Sri Lanka','Sweden','Switzerland','Syria',
-  'Taiwan','Thailand','Tunisia','Turkey','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan',
-  'Venezuela','Vietnam','Yemen','Zimbabwe'
-]
 
 const CURRENT_YEAR = new Date().getFullYear()
 const YEARS = Array.from({ length: CURRENT_YEAR - 1920 - 12 }, (_, i) => CURRENT_YEAR - 13 - i)
