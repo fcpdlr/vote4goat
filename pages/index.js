@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { supabase } from "../lib/supabase"
-import Head from "next/head"
+import Meta from "../components/Meta"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
 
@@ -43,25 +43,7 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>Vote4GOAT — The world decides who is the GOAT</title>
-        <meta name="description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://vote4goat.com" />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="Vote4GOAT — The world decides who is the GOAT" />
-        <meta property="og:description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
-        <meta property="og:url" content="https://vote4goat.com" />
-        <meta property="og:image" content="https://vote4goat.com/og-image.png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:site_name" content="Vote4GOAT" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Vote4GOAT — The world decides who is the GOAT" />
-        <meta name="twitter:description" content="Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world." />
-        <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Meta />
 
       <main className="min-h-screen bg-background text-white font-sans flex flex-col">
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { supabase } from "../../lib/supabase"
+import Head from "next/head"
 import Header from "../../components/Header"
 
 const MIN_SLOTS = 5
@@ -419,6 +420,27 @@ return null
 
 return (
 <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
+<Head>
+  <title>{category ? `${category.title} | Vote4GOAT` : "Top 10 | Vote4GOAT"}</title>
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="robots" content="index, follow" />
+  {category && <>
+    <meta name="description" content={category.description || `Build your all-time ${category.title} Top 10 and compare with the world.`} />
+    <link rel="canonical" href={`https://vote4goat.com/top10/${category.id}`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={`${category.title} | Vote4GOAT`} />
+    <meta property="og:description" content={category.description || `Build your all-time ${category.title} Top 10 and compare with the world.`} />
+    <meta property="og:url" content={`https://vote4goat.com/top10/${category.id}`} />
+    <meta property="og:image" content="https://vote4goat.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Vote4GOAT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${category.title} | Vote4GOAT`} />
+    <meta name="twitter:description" content={category.description || `Build your all-time ${category.title} Top 10 and compare with the world.`} />
+    <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
+  </>}
+</Head>
 <Header />
 <div className="flex-1 mt-2 mb-8">
 <div className="max-w-lg mx-auto">

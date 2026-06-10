@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
-import Head from "next/head"
+import Meta from "../../components/Meta"
 import Header from "../../components/Header"
 
 const classifyCategory = (slug) => {
@@ -264,20 +264,11 @@ export default function Top10IndexPage() {
 
   return (
     <>
-      <Head>
-        <title>Build your Top 10 | Vote4GOAT</title>
-        <meta name="description" content="Build your all-time Top 10 by club or national team and see how it compares with the world." />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://vote4goat.com/top10" />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="Build your Top 10 | Vote4GOAT" />
-        <meta property="og:description" content="Build your all-time Top 10 by club or national team and see how it compares with the world." />
-        <meta property="og:url" content="https://vote4goat.com/top10" />
-        <meta property="og:image" content="https://vote4goat.com/og-image.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Meta
+        title="Build your Top 10"
+        description="Build your all-time Top 10 by club or national team and see how it compares with the world."
+        url="/top10"
+      />
 
       <main className="min-h-screen bg-background text-white font-sans flex flex-col pb-12">
         <Header />

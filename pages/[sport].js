@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react"
 import Head from "next/head"
+import Meta from "../components/Meta"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
 import { supabase } from "../lib/supabase"
@@ -189,25 +190,24 @@ export default function SportPage({ sport }) {
 
   return (
     <>
-      <Head>
-        <title>{config.metaTitle}</title>
-        <meta name="description" content={config.metaDesc} />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href={config.canonical} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={config.metaTitle} />
-        <meta property="og:description" content={config.metaDesc} />
-        <meta property="og:url" content={config.canonical} />
-        <meta property="og:image" content="https://vote4goat.com/og-image.png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:site_name" content="Vote4GOAT" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={config.metaTitle} />
-        <meta name="twitter:description" content={config.metaDesc} />
-        <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Meta
+        title={config.metaTitle.replace(" | Vote4GOAT", "")}
+        description={config.metaDesc}
+        url={`/${sport}`}
+        jsonLd={fullRanking.length > 0 ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "name": config.metaTitle,
+          "description": config.metaDesc,
+          "url": config.canonical,
+          "numberOfItems": fullRanking.length,
+          "itemListElement": fullRanking.slice(0, 20).map((item, i) => ({
+            "@type": "ListItem",
+            "position": i + 1,
+            "name": item.entities?.name || [item.entities?.name_line1, item.entities?.name_line2, item.entities?.name_line3].filter(Boolean).join(" ")
+          }))
+        } : undefined}
+      />
 
       <main className="min-h-screen bg-background text-white font-sans flex flex-col">
 

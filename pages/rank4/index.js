@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
-import Head from "next/head"
+import Meta from "../../components/Meta"
 import Header from "../../components/Header"
 
 export default function Rank4IndexPage() {
@@ -38,25 +38,11 @@ export default function Rank4IndexPage() {
 
   return (
     <>
-      <Head>
-        <title>R4NK - Weekly Rankings | Vote4GOAT</title>
-        <meta name="description" content="Order 4 players from best to worst. One question per week. The world's verdict revealed." />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://vote4goat.com/rank4" />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="R4NK - Weekly Rankings | Vote4GOAT" />
-        <meta property="og:description" content="Order 4 players from best to worst. One question per week. The world's verdict revealed." />
-        <meta property="og:url" content="https://vote4goat.com/rank4" />
-        <meta property="og:image" content="https://vote4goat.com/og-image.png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:site_name" content="Vote4GOAT" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="R4NK - Weekly Rankings | Vote4GOAT" />
-        <meta name="twitter:description" content="Order 4 players from best to worst. One question per week. The world's verdict revealed." />
-        <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Meta
+        title="R4NK - Weekly Rankings"
+        description="Order 4 players from best to worst. One question per week. The world's verdict revealed."
+        url="/rank4"
+      />
 
       <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 

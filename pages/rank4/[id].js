@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/router"
 import { supabase } from "../../lib/supabase"
+import Head from "next/head"
 import Header from "../../components/Header"
 
 export default function Rank4VotePage() {
@@ -193,6 +194,28 @@ export default function Rank4VotePage() {
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
+
+      <Head>
+        <title>{question ? `${question.title} | Vote4GOAT` : "R4NK | Vote4GOAT"}</title>
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="robots" content="index, follow" />
+        {question && <>
+          <meta name="description" content={question.description || `Rank ${question.option_1}, ${question.option_2} and more from best to worst. Cast your vote on Vote4GOAT.`} />
+          <link rel="canonical" href={`https://vote4goat.com/rank4/${question.id}`} />
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content={`${question.title} | Vote4GOAT`} />
+          <meta property="og:description" content={question.description || `Rank ${question.option_1}, ${question.option_2} and more from best to worst.`} />
+          <meta property="og:url" content={`https://vote4goat.com/rank4/${question.id}`} />
+          <meta property="og:image" content="https://vote4goat.com/og-image.png" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:site_name" content="Vote4GOAT" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={`${question.title} | Vote4GOAT`} />
+          <meta name="twitter:description" content={question.description || `Rank ${question.option_1}, ${question.option_2} and more from best to worst.`} />
+          <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
+        </>}
+      </Head>
 
       <Header />
 

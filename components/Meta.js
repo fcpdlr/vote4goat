@@ -1,6 +1,6 @@
 import Head from 'next/head'
 
-export default function Meta({ title, description, url }) {
+export default function Meta({ title, description, url, jsonLd }) {
   const defaultTitle = 'Vote4GOAT — The world decides who is the GOAT'
   const defaultDesc = 'Vote in 1v1 duels, build your Top 10 and rank the greatest athletes of all time. The only ranking built by the world.'
   const defaultUrl = 'https://vote4goat.com'
@@ -34,6 +34,13 @@ export default function Meta({ title, description, url }) {
 
       {/* Favicon */}
       <link rel="icon" href="/favicon.ico" />
+
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
     </Head>
   )
 }
