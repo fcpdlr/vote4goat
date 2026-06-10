@@ -14,6 +14,20 @@ const EMOJIS = [
 const CURRENT_YEAR = new Date().getFullYear()
 const YEARS = Array.from({ length: CURRENT_YEAR - 1920 - 12 }, (_, i) => CURRENT_YEAR - 13 - i)
 
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr)
+  const m = Math.floor(diff / 60000)
+  if (m < 2) return "just now"
+  if (m < 60) return `${m}m ago`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `${h}h ago`
+  const d = Math.floor(h / 24)
+  if (d < 7) return `${d}d ago`
+  const w = Math.floor(d / 7)
+  if (w < 5) return `${w}w ago`
+  return new Date(dateStr).toLocaleDateString("en", { month: "short", year: "numeric" })
+}
+
 export default function AccountPage() {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
@@ -31,6 +45,8 @@ export default function AccountPage() {
   const [usernameError, setUsernameError] = useState("")
 
   const [stats, setStats] = useState({ dvels: 0, tops: 0, rank4: 0 })
+  const [history, setHistory] = useState({ dvels: [], tops: [], rank4: [] })
+  const [historyTab, setHistoryTab] = useState("dvels")
 
   useEffect(() => {
     const init = async () => {
@@ -74,6 +90,89 @@ export default function AccountPage() {
         tops: topsCount || 0,
         rank4: rank4Count || 0
       })
+
+      // DVELS history
+      let dvelsHistory = []
+      const { data: dvelsRaw } = await supabase
+        .from("votes")
+        .select("id, created_at, winner_id, loser_id")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(5)
+      if (dvelsRaw?.length > 0) {
+        const allIds = [...new Set(dvelsRaw.flatMap(v => [v.winner_id, v.loser_id]))]
+        const { data: rankings } = await supabase
+          .from("entity_rankings")
+          .select("id, entities(name, name_line2, image_url)")
+          .in("id", allIds)
+        const rankMap = Object.fromEntries((rankings || []).map(r => [r.id, r.entities]))
+        dvelsHistory = dvelsRaw.map(v => ({
+          id: v.id,
+          created_at: v.created_at,
+          winner: rankMap[v.winner_id],
+          loser: rankMap[v.loser_id],
+        }))
+      }
+
+      // T0PS history
+      let topsHistory = []
+      const { data: topsRaw } = await supabase
+        .from("top10_votes")
+        .select("id, created_at, top10_category_id")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(5)
+      if (topsRaw?.length > 0) {
+        const catIds = [...new Set(topsRaw.map(v => v.top10_category_id).filter(Boolean))]
+        if (catIds.length > 0) {
+          const { data: cats } = await supabase
+            .from("top10_categories")
+            .select("id, title")
+            .in("id", catIds)
+          const catMap = Object.fromEntries((cats || []).map(c => [c.id, c.title]))
+          topsHistory = topsRaw.map(v => ({
+            id: v.id,
+            created_at: v.created_at,
+            title: catMap[v.top10_category_id] || "Top 10",
+          }))
+        } else {
+          topsHistory = topsRaw.map(v => ({ id: v.id, created_at: v.created_at, title: "Top 10" }))
+        }
+      }
+
+      // R4NK history
+      let rank4History = []
+      const { data: rankRaw } = await supabase
+        .from("rank4_votes")
+        .select("id, created_at, question_id, position_1, position_2, position_3, position_4")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(5)
+      if (rankRaw?.length > 0) {
+        const qIds = [...new Set(rankRaw.map(v => v.question_id).filter(Boolean))]
+        if (qIds.length > 0) {
+          const { data: qs } = await supabase
+            .from("rank4_questions")
+            .select("id, title")
+            .in("id", qIds)
+          const qMap = Object.fromEntries((qs || []).map(q => [q.id, q.title]))
+          rank4History = rankRaw.map(v => ({
+            id: v.id,
+            created_at: v.created_at,
+            title: qMap[v.question_id] || "R4NK",
+            positions: [v.position_1, v.position_2, v.position_3, v.position_4].filter(Boolean),
+          }))
+        } else {
+          rank4History = rankRaw.map(v => ({
+            id: v.id,
+            created_at: v.created_at,
+            title: "R4NK",
+            positions: [v.position_1, v.position_2, v.position_3, v.position_4].filter(Boolean),
+          }))
+        }
+      }
+
+      setHistory({ dvels: dvelsHistory, tops: topsHistory, rank4: rank4History })
 
       setLoading(false)
     }
@@ -299,6 +398,81 @@ export default function AccountPage() {
               </div>
 
             </div>
+          </div>
+
+          {/* HISTORY */}
+          <div className="mx-4 mb-6">
+            <p className="text-xs text-white/30 uppercase tracking-widest mb-3">Recent activity</p>
+
+            <div className="flex gap-2 mb-3">
+              {[
+                { id: "dvels", label: "DVELS" },
+                { id: "tops", label: "T0PS" },
+                { id: "rank4", label: "R4NK" },
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setHistoryTab(tab.id)}
+                  className={"px-3 py-1.5 rounded-full text-xs font-bold transition " + (historyTab === tab.id ? "bg-goat text-black" : "bg-white/5 text-white/40 hover:text-white/70")}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {historyTab === "dvels" && (
+              <div className="flex flex-col gap-2">
+                {history.dvels.length === 0 ? (
+                  <p className="text-sm text-white/25 text-center py-4">No DVELS votes yet.</p>
+                ) : history.dvels.map(v => (
+                  <div key={v.id} className="flex items-center gap-3 bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2.5">
+                    {v.winner?.image_url && (
+                      <img src={v.winner.image_url} className="w-7 h-7 rounded-full object-cover object-top border border-goat/30 flex-shrink-0" alt="" loading="lazy" />
+                    )}
+                    <p className="text-sm text-white flex-1 truncate">
+                      <span className="font-semibold">{v.winner?.name_line2 || v.winner?.name || "?"}</span>
+                      <span className="text-white/30"> over </span>
+                      <span className="text-white/60">{v.loser?.name_line2 || v.loser?.name || "?"}</span>
+                    </p>
+                    <span className="text-[10px] text-white/25 flex-shrink-0">{timeAgo(v.created_at)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {historyTab === "tops" && (
+              <div className="flex flex-col gap-2">
+                {history.tops.length === 0 ? (
+                  <p className="text-sm text-white/25 text-center py-4">No T0PS votes yet.</p>
+                ) : history.tops.map(v => (
+                  <div key={v.id} className="flex items-center gap-3 bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2.5">
+                    <div className="w-7 h-7 rounded-full bg-goat/10 border border-goat/20 flex items-center justify-center text-sm flex-shrink-0">🏆</div>
+                    <p className="text-sm text-white flex-1 truncate font-medium">{v.title}</p>
+                    <span className="text-[10px] text-white/25 flex-shrink-0">{timeAgo(v.created_at)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {historyTab === "rank4" && (
+              <div className="flex flex-col gap-2">
+                {history.rank4.length === 0 ? (
+                  <p className="text-sm text-white/25 text-center py-4">No R4NK votes yet.</p>
+                ) : history.rank4.map(v => (
+                  <div key={v.id} className="bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2.5">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <p className="text-sm text-white font-medium truncate flex-1">{v.title}</p>
+                      <span className="text-[10px] text-white/25 flex-shrink-0 ml-2">{timeAgo(v.created_at)}</span>
+                    </div>
+                    <div className="flex gap-1 flex-wrap">
+                      {v.positions.map((p, i) => (
+                        <span key={i} className="text-[10px] bg-white/5 text-white/50 px-1.5 py-0.5 rounded-md">{i + 1}. {p}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* SAVE */}

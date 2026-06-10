@@ -3,6 +3,7 @@ import { useRouter } from "next/router"
 import { supabase } from "../../lib/supabase"
 import Head from "next/head"
 import Header from "../../components/Header"
+import Footer from "../../components/Footer"
 
 export default function Rank4VotePage() {
   const router = useRouter()
@@ -315,6 +316,8 @@ export default function Rank4VotePage() {
           </div>
         </div>
       ) : null}
+
+      <Footer />
     </main>
   )
 }

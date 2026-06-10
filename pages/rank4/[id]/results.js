@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { supabase } from "../../../lib/supabase"
+import Head from "next/head"
 import Header from "../../../components/Header"
+import Footer from "../../../components/Footer"
 
 export default function Rank4ResultsPage() {
   const router = useRouter()
@@ -60,6 +62,28 @@ export default function Rank4ResultsPage() {
 
   return (
     <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
+
+      <Head>
+        <title>{question ? `${question.title} — Results | Vote4GOAT` : "R4NK Results | Vote4GOAT"}</title>
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="robots" content="index, follow" />
+        {question && <>
+          <meta name="description" content={`See how the world ranked: ${results.map(r => r.option_text).join(", ")}. ${totalVotes.toLocaleString()} votes cast on Vote4GOAT.`} />
+          <link rel="canonical" href={`https://vote4goat.com/rank4/${id}/results`} />
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content={`${question.title} — Results | Vote4GOAT`} />
+          <meta property="og:description" content={`See how the world ranked: ${results.map(r => r.option_text).join(", ")}.`} />
+          <meta property="og:url" content={`https://vote4goat.com/rank4/${id}/results`} />
+          <meta property="og:image" content="https://vote4goat.com/og-image.png" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:site_name" content="Vote4GOAT" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={`${question.title} — Results | Vote4GOAT`} />
+          <meta name="twitter:description" content={`See how the world ranked: ${results.map(r => r.option_text).join(", ")}.`} />
+          <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
+        </>}
+      </Head>
 
       <Header />
 
@@ -150,6 +174,8 @@ export default function Rank4ResultsPage() {
           </div>
         </div>
       ) : null}
+
+      <Footer />
     </main>
   )
 }
