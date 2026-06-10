@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
 import Meta from "../../components/Meta"
 import Header from "../../components/Header"
+import Footer from "../../components/Footer"
 
 const classifyCategory = (slug) => {
   if (!slug) return "other"
@@ -372,6 +373,7 @@ export default function Top10IndexPage() {
 
         </div>
       </main>
+      <Footer />
     </>
   )
 }

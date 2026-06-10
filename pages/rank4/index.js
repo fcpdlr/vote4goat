@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
 import Meta from "../../components/Meta"
 import Header from "../../components/Header"
+import Footer from "../../components/Footer"
 
 export default function Rank4IndexPage() {
   const [questions, setQuestions] = useState([])
@@ -108,6 +109,7 @@ export default function Rank4IndexPage() {
         </div>
 
       </main>
+      <Footer />
     </>
   )
 }

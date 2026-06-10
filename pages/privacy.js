@@ -1,6 +1,9 @@
+import Footer from '../components/Footer'
+
 export default function Privacy() {
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <>
+    <main className="min-h-screen bg-background text-white p-8 font-sans max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-4">Privacy Policy</h1>
       <p className="mb-4"><strong>Last Updated:</strong> June 21, 2025</p>
 
@@ -67,5 +70,7 @@ export default function Privacy() {
         For any questions or concerns about your data, please email us at <a className="underline" href="mailto:hello@vote4goat.com">hello@vote4goat.com</a>.
       </p>
     </main>
-  );
+    <Footer />
+    </>
+  )
 }

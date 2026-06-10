@@ -1,6 +1,9 @@
+import Footer from '../components/Footer'
+
 export default function Cookies() {
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <>
+    <main className="min-h-screen bg-background text-white p-8 font-sans max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-4">Cookie Policy</h1>
       <p className="mb-4">
         Vote4GOAT uses cookies to enhance your browsing experience and to collect analytics data via Google Analytics.
@@ -16,5 +19,7 @@ export default function Cookies() {
       </p>
       <p>Contact: hello@vote4goat.com</p>
     </main>
+    <Footer />
+    </>
   )
 }

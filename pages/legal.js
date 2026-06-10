@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Footer from '../components/Footer'
 
 export default function LegalPage() {
   return (
@@ -129,6 +130,7 @@ export default function LegalPage() {
 
         </div>
       </main>
+      <Footer />
     </>
   )
 }

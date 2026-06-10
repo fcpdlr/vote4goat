@@ -3,6 +3,7 @@ import { useRouter } from "next/router"
 import { supabase } from "../../lib/supabase"
 import Head from "next/head"
 import Header from "../../components/Header"
+import Footer from "../../components/Footer"
 
 const MIN_SLOTS = 5
 const MAX_SLOTS = 10
@@ -682,7 +683,6 @@ return (
     </div>
   </div>
 </main>
-
-
+<Footer />
 )
 }
