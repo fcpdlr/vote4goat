@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react"
-import Head from "next/head"
 import Meta from "../components/Meta"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
@@ -30,30 +29,35 @@ const SPORTS = {
   },
 }
 
-export default function SportPage({ sport }) {
+export default function SportPage({ sport, initialRanking }) {
   const config = SPORTS[sport]
 
   const [duel, setDuel] = useState([])
-  const [ranking, setRanking] = useState([])
+  const [ranking, setRanking] = useState(initialRanking.slice(0, 20))
   const [limit, setLimit] = useState(20)
   const [selected, setSelected] = useState(null)
   const [duelLimit, setDuelLimit] = useState(null)
   const [user, setUser] = useState(null)
   const [ipAddress, setIpAddress] = useState(null)
   const [voting, setVoting] = useState(false)
-  const [topElo, setTopElo] = useState(1)
+  const [topElo, setTopElo] = useState(initialRanking.length > 0 ? initialRanking[0].elo_rating : 1)
   const [impact, setImpact] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [fullRanking, setFullRanking] = useState([])
+  const [fullRanking, setFullRanking] = useState(initialRanking)
   const [loginNudge, setLoginNudge] = useState(false)
 
   const helpRef = useRef()
 
   useEffect(() => {
     fetchDuel()
-    fetchRanking(limit)
     checkUser()
     fetchIp()
+  }, [])
+
+  useEffect(() => {
+    if (duelLimit === null) return
+    fetchDuel()
+    fetchRanking(limit)
   }, [duelLimit])
 
   useEffect(() => {
@@ -426,13 +430,16 @@ export default function SportPage({ sport }) {
   )
 }
 
-export async function getStaticPaths() {
-  return {
-    paths: [{ params: { sport: "football" } }, { params: { sport: "basketball" } }],
-    fallback: false,
-  }
-}
+export async function getServerSideProps({ params }) {
+  const sport = params.sport
+  if (!SPORTS[sport]) return { notFound: true }
 
-export async function getStaticProps({ params }) {
-  return { props: { sport: params.sport } }
+  const config = SPORTS[sport]
+  const { data } = await supabase
+    .from("entity_rankings")
+    .select("id, elo_rating, entities (name, name_line1, name_line2, name_line3, image_url)")
+    .eq("entity_category_id", config.entityCategoryId)
+    .order("elo_rating", { ascending: false })
+
+  return { props: { sport, initialRanking: data || [] } }
 }
