@@ -1,44 +1,9 @@
-import { useEffect, useState } from "react"
 import { supabase } from "../lib/supabase"
 import Meta from "../components/Meta"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
 
-export default function Home() {
-  const [ranking, setRanking] = useState([])
-  const [activeRank4, setActiveRank4] = useState(null)
-  const [categories, setCategories] = useState([])
-  const [loadingPodium, setLoadingPodium] = useState(true)
-
-  useEffect(() => {
-    supabase
-      .from("entity_rankings")
-      .select("id, elo_rating, entities (name, image_url)")
-      .eq("entity_category_id", 1)
-      .order("elo_rating", { ascending: false })
-      .limit(3)
-      .then(({ data }) => {
-        setRanking(data || [])
-        setLoadingPodium(false)
-      })
-
-    supabase
-      .from("rank4_questions")
-      .select("id, title, option_1, option_2, option_3, option_4")
-      .eq("is_active", true)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single()
-      .then(({ data }) => { if (data) setActiveRank4(data) })
-
-    supabase
-      .from("top10_categories")
-      .select("id, title")
-      .eq("is_active", true)
-      .limit(6)
-      .then(({ data }) => setCategories(data || []))
-  }, [])
-
+export default function Home({ ranking, activeRank4, categories }) {
   const [p1, p2, p3] = ranking
 
   return (
@@ -71,14 +36,7 @@ export default function Home() {
 
         {/* PODIO — top 3 visible sin scroll */}
         <div className="px-4 pt-6 pb-4 max-w-sm mx-auto w-full">
-          {loadingPodium ? (
-            <div className="flex items-end justify-center gap-4 h-28">
-              <div className="w-16 h-16 rounded-full bg-white/[0.06] animate-pulse self-center" />
-              <div className="w-20 h-20 rounded-full bg-white/[0.06] animate-pulse self-start" />
-              <div className="w-16 h-16 rounded-full bg-white/[0.06] animate-pulse self-center" />
-            </div>
-          ) : (
-            <div className="flex items-end justify-center gap-2">
+          <div className="flex items-end justify-center gap-2">
 
               {/* #2 — izquierda */}
               <div className="flex flex-col items-center gap-1.5 flex-1">
@@ -132,7 +90,6 @@ export default function Home() {
               </div>
 
             </div>
-          )}
 
           {/* Live indicator + CTA principal */}
           <div className="mt-5 flex flex-col items-center gap-3">
@@ -225,4 +182,35 @@ export default function Home() {
       </main>
     </>
   )
+}
+
+export async function getServerSideProps() {
+  const [rankingRes, rank4Res, categoriesRes] = await Promise.all([
+    supabase
+      .from("entity_rankings")
+      .select("id, elo_rating, entities (name, image_url)")
+      .eq("entity_category_id", 1)
+      .order("elo_rating", { ascending: false })
+      .limit(3),
+    supabase
+      .from("rank4_questions")
+      .select("id, title, option_1, option_2, option_3, option_4")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from("top10_categories")
+      .select("id, title")
+      .eq("is_active", true)
+      .limit(6),
+  ])
+
+  return {
+    props: {
+      ranking: rankingRes.data || [],
+      activeRank4: rank4Res.data || null,
+      categories: categoriesRes.data || [],
+    },
+  }
 }
