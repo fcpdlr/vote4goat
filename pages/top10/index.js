@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react"
-import { createClient } from "@supabase/supabase-js"
+import { supabase } from "../../lib/supabase"
 import Head from "next/head"
 import Header from "../../components/Header"
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
 
 const classifyCategory = (slug) => {
   if (!slug) return "other"

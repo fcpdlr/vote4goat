@@ -1,12 +1,8 @@
 import { useEffect, useState, useRef } from "react"
-import { createClient } from "@supabase/supabase-js"
 import Head from "next/head"
 import Header from "../components/Header"
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+import Footer from "../components/Footer"
+import { supabase } from "../lib/supabase"
 
 const K = 32
 
@@ -14,23 +10,42 @@ function expectedScore(rA, rB) {
   return 1 / (1 + Math.pow(10, (rB - rA) / 400))
 }
 
-export default function FootballPage() {
+const SPORTS = {
+  football: {
+    entityCategoryId: 1,
+    label: "Football",
+    metaTitle: "Football GOAT Ranking | Vote4GOAT",
+    metaDesc: "Vote in 1v1 duels and shape the all-time football GOAT ranking. Updated in real time with every vote.",
+    canonical: "https://vote4goat.com/football",
+    shareTag: "#Vote4GOAT #GOAT #Football",
+  },
+  basketball: {
+    entityCategoryId: 2,
+    label: "Basketball",
+    metaTitle: "Basketball GOAT Ranking | Vote4GOAT",
+    metaDesc: "Vote in 1v1 duels and shape the all-time basketball GOAT ranking. Updated in real time with every vote.",
+    canonical: "https://vote4goat.com/basketball",
+    shareTag: "#Vote4GOAT #GOAT #Basketball",
+  },
+}
+
+export default function SportPage({ sport }) {
+  const config = SPORTS[sport]
+
   const [duel, setDuel] = useState([])
   const [ranking, setRanking] = useState([])
   const [limit, setLimit] = useState(20)
   const [selected, setSelected] = useState(null)
-  const [showHelp, setShowHelp] = useState(false)
   const [duelLimit, setDuelLimit] = useState(null)
   const [user, setUser] = useState(null)
   const [ipAddress, setIpAddress] = useState(null)
   const [voting, setVoting] = useState(false)
   const [topElo, setTopElo] = useState(1)
   const [impact, setImpact] = useState(null)
-  const [sessionVotes, setSessionVotes] = useState(0)
   const [loading, setLoading] = useState(true)
   const [fullRanking, setFullRanking] = useState([])
+  const [loginNudge, setLoginNudge] = useState(false)
 
-  const ENTITY_CATEGORY_ID = 1
   const helpRef = useRef()
 
   useEffect(() => {
@@ -42,11 +57,9 @@ export default function FootballPage() {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (helpRef.current && !helpRef.current.contains(event.target)) setShowHelp(false)
+      if (helpRef.current && !helpRef.current.contains(event.target)) {}
     }
-    function handleEsc(event) {
-      if (event.key === "Escape") setShowHelp(false)
-    }
+    function handleEsc(event) {}
     document.addEventListener("mousedown", handleClickOutside)
     document.addEventListener("keydown", handleEsc)
     return () => {
@@ -74,7 +87,7 @@ export default function FootballPage() {
     setSelected(null)
     setLoading(true)
     const { data, error } = await supabase.rpc("get_duel", {
-      entity_category_input: ENTITY_CATEGORY_ID,
+      entity_category_input: config.entityCategoryId,
       limit_rank: duelLimit,
     })
     if (error) console.error("Error in fetchDuel:", error)
@@ -82,13 +95,11 @@ export default function FootballPage() {
     setLoading(false)
   }
 
-  // Carga TODOS los jugadores para cálculos internos,
-  // pero solo muestra `visibleLimit` en la tabla.
   const fetchRanking = async (visibleLimit) => {
     const { data, error } = await supabase
       .from("entity_rankings")
       .select("id, elo_rating, entities (name, name_line1, name_line2, name_line3, image_url)")
-      .eq("entity_category_id", ENTITY_CATEGORY_ID)
+      .eq("entity_category_id", config.entityCategoryId)
       .order("elo_rating", { ascending: false })
     if (error) console.error("Error in fetchRanking:", error)
     const results = data || []
@@ -126,7 +137,7 @@ export default function FootballPage() {
       winner_id_input: winnerId,
       loser_id_input: loserId,
       user_id_input: userId,
-      ip_address_input: ipAddress
+      ip_address_input: ipAddress,
     })
 
     if (error) {
@@ -135,8 +146,6 @@ export default function FootballPage() {
       setSelected(null)
       return
     }
-
-    setSessionVotes(v => v + 1)
 
     const rankingAfter = await fetchRanking(limit)
 
@@ -166,27 +175,36 @@ export default function FootballPage() {
 
   const getShareText = () => {
     if (!impact) return ""
-    return "My pick in the football GOAT debate: " + impact.winnerName + " over " + impact.loserName + ". Do you agree? Vote now at vote4goat.com #Vote4GOAT #GOAT #Football"
+    return `My pick in the ${config.label.toLowerCase()} GOAT debate: ${impact.winnerName} over ${impact.loserName}. Do you agree? Vote now at vote4goat.com ${config.shareTag}`
+  }
+
+  const handleFilterClick = (f) => {
+    if (f.auth && !user) {
+      setLoginNudge(true)
+      setTimeout(() => setLoginNudge(false), 3000)
+      return
+    }
+    setDuelLimit(f.val)
   }
 
   return (
     <>
       <Head>
-        <title>Football GOAT Ranking | Vote4GOAT</title>
-        <meta name="description" content="Vote in 1v1 duels and shape the all-time football GOAT ranking. Updated in real time with every vote." />
+        <title>{config.metaTitle}</title>
+        <meta name="description" content={config.metaDesc} />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://vote4goat.com/football" />
+        <link rel="canonical" href={config.canonical} />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Football GOAT Ranking | Vote4GOAT" />
-        <meta property="og:description" content="Vote in 1v1 duels and shape the all-time football GOAT ranking. Updated in real time with every vote." />
-        <meta property="og:url" content="https://vote4goat.com/football" />
+        <meta property="og:title" content={config.metaTitle} />
+        <meta property="og:description" content={config.metaDesc} />
+        <meta property="og:url" content={config.canonical} />
         <meta property="og:image" content="https://vote4goat.com/og-image.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:site_name" content="Vote4GOAT" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Football GOAT Ranking | Vote4GOAT" />
-        <meta name="twitter:description" content="Vote in 1v1 duels and shape the all-time football GOAT ranking. Updated in real time with every vote." />
+        <meta name="twitter:title" content={config.metaTitle} />
+        <meta name="twitter:description" content={config.metaDesc} />
         <meta name="twitter:image" content="https://vote4goat.com/og-image.png" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -195,34 +213,33 @@ export default function FootballPage() {
 
         <Header />
 
-        {showHelp && (
-          <div ref={helpRef} className="max-w-xl mx-auto w-full text-sm bg-white/5 text-white p-4 rounded-xl mt-2 border border-white/10 px-4">
-            <p className="mb-2 font-semibold text-goat">What is Vote4GOAT?</p>
-            <p className="mb-2">Two players appear. You pick the greatest. Every vote updates the ranking using Elo.</p>
-            <p className="mt-4 font-semibold text-goat">Start voting. Shape the GOAT list.</p>
-          </div>
-        )}
-
         <div className="px-4">
           <div className="text-center pt-6 pb-2">
-            <p className="text-xs tracking-widest uppercase text-white/25 mb-1">Football — All time</p>
+            <p className="text-xs tracking-widest uppercase text-white/25 mb-1">{config.label} — All time</p>
             <h1 className="text-2xl font-extrabold text-white">Who is the <span className="text-goat">greatest?</span></h1>
           </div>
 
-          <div className="flex justify-center gap-2 mt-3 mb-4">
-            {[
-              { label: "All Players", val: null },
-              { label: "Top 100", val: 100, auth: true },
-              { label: "Top 50", val: 50, auth: true },
-            ].map(f => (
-              <button
-                key={f.label}
-                onClick={() => { if (f.auth && !user) { alert("Please log in to use this filter."); return } setDuelLimit(f.val) }}
-                className={"px-3 py-1 rounded-full text-xs border transition " + (duelLimit === f.val ? "bg-goat border-goat text-black font-bold" : (f.auth && !user ? "border-white/10 text-white/20 cursor-not-allowed" : "border-white/20 text-white/50 hover:border-white/40"))}
-              >
-                {f.label}
-              </button>
-            ))}
+          <div className="flex flex-col items-center gap-1 mt-3 mb-4">
+            <div className="flex justify-center gap-2">
+              {[
+                { label: "All Players", val: null },
+                { label: "Top 100", val: 100, auth: true },
+                { label: "Top 50", val: 50, auth: true },
+              ].map(f => (
+                <button
+                  key={f.label}
+                  onClick={() => handleFilterClick(f)}
+                  className={"px-3 py-1 rounded-full text-xs border transition " + (duelLimit === f.val ? "bg-goat border-goat text-black font-bold" : (f.auth && !user ? "border-white/10 text-white/20 cursor-not-allowed" : "border-white/20 text-white/50 hover:border-white/40"))}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+            {loginNudge && (
+              <p className="text-xs text-white/40 mt-0.5">
+                <a href="/login" className="text-goat hover:underline">Log in</a> to filter by rank tier
+              </p>
+            )}
           </div>
 
           <div className="max-w-lg mx-auto w-full">
@@ -260,6 +277,7 @@ export default function FootballPage() {
                           src={player.image_url}
                           alt={player.name_line2 || player.name_line1}
                           className={"w-20 h-20 rounded-full object-cover object-top border-2 " + (isWinner ? "border-goat" : "border-white/15")}
+                          loading="lazy"
                         />
                         {rankNum && (
                           <div className={"absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border " + (isWinner ? "bg-goat border-goat text-black" : "bg-background border-white/20 text-white/50")}>
@@ -291,7 +309,7 @@ export default function FootballPage() {
                   </div>
                   <div className="divide-y divide-white/5">
                     <div className="flex items-center gap-3 px-4 py-3">
-                      {impact.winnerImg && <img src={impact.winnerImg} className="w-8 h-8 rounded-full object-cover object-top border border-goat/30 flex-shrink-0" alt="" />}
+                      {impact.winnerImg && <img src={impact.winnerImg} className="w-8 h-8 rounded-full object-cover object-top border border-goat/30 flex-shrink-0" alt="" loading="lazy" />}
                       <span className="font-bold text-sm text-white flex-1 uppercase tracking-wide truncate">{impact.winnerName}</span>
                       <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
                         <span className="text-xs font-bold text-green-400">+{impact.eloChange} pts</span>
@@ -303,7 +321,7 @@ export default function FootballPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3 px-4 py-3">
-                      {impact.loserImg && <img src={impact.loserImg} className="w-8 h-8 rounded-full object-cover object-top border border-white/10 flex-shrink-0 opacity-60" alt="" />}
+                      {impact.loserImg && <img src={impact.loserImg} className="w-8 h-8 rounded-full object-cover object-top border border-white/10 flex-shrink-0 opacity-60" alt="" loading="lazy" />}
                       <span className="font-bold text-sm text-white/55 flex-1 uppercase tracking-wide truncate">{impact.loserName}</span>
                       <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
                         <span className="text-xs font-bold text-red-400/80">-{impact.eloChange} pts</span>
@@ -371,7 +389,7 @@ export default function FootballPage() {
                         <td className="pl-2 pr-1 py-2.5 text-xs text-white/40 w-8">{medal || rankPos}</td>
                         <td className="pl-1 pr-2 py-2.5">
                           <div className="flex items-center gap-2">
-                            <img src={player.entities.image_url} alt={player.entities.name} className="w-7 h-7 rounded-full object-cover flex-shrink-0 border border-white/10" />
+                            <img src={player.entities.image_url} alt={player.entities.name} className="w-7 h-7 rounded-full object-cover flex-shrink-0 border border-white/10" loading="lazy" />
                             <span className={"truncate text-sm font-semibold " + nameColor}>{player.entities.name}</span>
                           </div>
                         </td>
@@ -402,7 +420,19 @@ export default function FootballPage() {
           </div>
         </div>
 
+        <Footer />
       </main>
     </>
   )
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [{ params: { sport: "football" } }, { params: { sport: "basketball" } }],
+    fallback: false,
+  }
+}
+
+export async function getStaticProps({ params }) {
+  return { props: { sport: params.sport } }
 }

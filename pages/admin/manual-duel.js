@@ -1,14 +1,10 @@
 import { useEffect, useState, useRef } from 'react'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+import { supabase } from '../../lib/supabase'
 
 const S = 2
 
 export default function DuelImage() {
+  const [authChecked, setAuthChecked] = useState(false)
   const [players, setPlayers] = useState([])
   const [playerA, setPlayerA] = useState(null)
   const [playerB, setPlayerB] = useState(null)
@@ -20,6 +16,13 @@ export default function DuelImage() {
   const [showDate, setShowDate] = useState(true)
   const [isExporting, setIsExporting] = useState(false)
   const canvasRef = useRef(null)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) window.location.replace('/login')
+      else setAuthChecked(true)
+    })
+  }, [])
 
   useEffect(() => {
     const today = new Date()
@@ -275,6 +278,12 @@ export default function DuelImage() {
           <button onClick={() => { setPlayer(null); setSearch('') }} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 text-xs">✕</button>
         )}
       </div>
+    </div>
+  )
+
+  if (!authChecked) return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-5 h-5 border-2 border-goat/40 border-t-goat rounded-full animate-spin" />
     </div>
   )
 
