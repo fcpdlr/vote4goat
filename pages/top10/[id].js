@@ -420,6 +420,7 @@ return null
 }
 
 return (
+<>
 <main className="min-h-screen bg-background px-4 pt-2 text-white font-sans flex flex-col">
 <Head>
   <title>{category ? `${category.title} | Vote4GOAT` : "Top 10 | Vote4GOAT"}</title>
@@ -684,5 +685,6 @@ return (
   </div>
 </main>
 <Footer />
+</>
 )
 }
