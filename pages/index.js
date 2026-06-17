@@ -184,7 +184,7 @@ export default function Home({ ranking, activeRank4, categories }) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const [rankingRes, rank4Res, categoriesRes] = await Promise.all([
     supabase
       .from("entity_rankings")
@@ -212,5 +212,6 @@ export async function getServerSideProps() {
       activeRank4: rank4Res.data || null,
       categories: categoriesRes.data || [],
     },
+    revalidate: 60,
   }
 }

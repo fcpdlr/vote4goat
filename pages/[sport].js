@@ -430,7 +430,14 @@ export default function SportPage({ sport, initialRanking }) {
   )
 }
 
-export async function getServerSideProps({ params }) {
+export async function getStaticPaths() {
+  return {
+    paths: Object.keys(SPORTS).map((sport) => ({ params: { sport } })),
+    fallback: false,
+  }
+}
+
+export async function getStaticProps({ params }) {
   const sport = params.sport
   if (!SPORTS[sport]) return { notFound: true }
 
@@ -441,5 +448,5 @@ export async function getServerSideProps({ params }) {
     .eq("entity_category_id", config.entityCategoryId)
     .order("elo_rating", { ascending: false })
 
-  return { props: { sport, initialRanking: data || [] } }
+  return { props: { sport, initialRanking: data || [] }, revalidate: 60 }
 }
