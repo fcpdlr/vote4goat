@@ -117,6 +117,18 @@ export default function Home({ ranking, activeRank4, categories }) {
         {/* CARDS SECUNDARIAS */}
         <div className="px-4 py-6 max-w-lg mx-auto w-full flex flex-col gap-4 flex-1">
 
+          {/* BASKETBALL */}
+          <a href="/basketball" className="block bg-white/[0.03] border border-white/8 rounded-2xl p-5 hover:border-white/15 transition">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-black text-white uppercase tracking-wider">🏀 Basketball</span>
+              <span className="text-[10px] text-white/25 uppercase tracking-widest">DVELS</span>
+            </div>
+            <p className="text-xs text-white/40 mb-3 leading-relaxed">
+              Vote in 1v1 duels and shape the all-time basketball GOAT ranking.
+            </p>
+            <span className="text-xs text-goat/60 font-medium">Vote now →</span>
+          </a>
+
           {/* T0PS */}
           <a href="/top10" className="block bg-white/[0.03] border border-white/8 rounded-2xl p-5 hover:border-white/15 transition">
             <div className="flex items-center justify-between mb-2">

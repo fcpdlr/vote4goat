@@ -223,6 +223,22 @@ export default function SportPage({ sport, initialRanking }) {
             <h1 className="text-2xl font-extrabold text-white">Who is the <span className="text-goat">greatest?</span></h1>
           </div>
 
+          <div className="flex justify-center gap-2 mt-3 mb-1">
+            {Object.entries(SPORTS).map(([key, s]) => (
+              <a
+                key={key}
+                href={`/${key}`}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold border transition ${
+                  sport === key
+                    ? "bg-goat border-goat text-black"
+                    : "border-white/15 text-white/40 hover:border-white/30 hover:text-white/60"
+                }`}
+              >
+                {s.label}
+              </a>
+            ))}
+          </div>
+
           <div className="flex flex-col items-center gap-1 mt-3 mb-4">
             <div className="flex justify-center gap-2">
               {[
