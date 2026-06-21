@@ -26,7 +26,7 @@ const getActiveMode = (pathname) => {
   return null
 }
 
-export default function Header() {
+export default function Header({ hideNav = false }) {
   const [user, setUser] = useState(null)
   const [showMenu, setShowMenu] = useState(false)
   const menuRef = useRef()
@@ -118,7 +118,7 @@ export default function Header() {
       </div>
 
       {/* Level 2 — mode nav */}
-      <div className="flex items-stretch border-t border-white/5">
+      {!hideNav && <div className="flex items-stretch border-t border-white/5">
         {MODES.map((mode) => {
           const isActive = activeMode === mode.id
           return (
@@ -154,7 +154,7 @@ export default function Header() {
             </a>
           )
         })}
-      </div>
+      </div>}
 
     </header>
   )
