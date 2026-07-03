@@ -4,6 +4,8 @@ import Footer from "../../components/Footer"
 import { supabase } from "../../lib/supabase"
 import { SPORTS, sportForCategoryId } from "../../lib/sports"
 
+const NEARBY_WINDOW = 3
+
 function displayName(entity) {
   return entity.name || [entity.name_line1, entity.name_line2, entity.name_line3].filter(Boolean).join(" ")
 }
@@ -16,19 +18,21 @@ export default function PlayerPage({
   rankPosition,
   totalInCategory,
   winRate,
-  totalDuels,
-  prevPlayer,
-  nextPlayer,
+  movement,
+  totalVotesInCategory,
+  topPlayer,
+  nearby,
   canonicalUrl,
 }) {
   const name = displayName(entity)
   const elo = Math.round(ranking.elo_rating)
   const question = `Is ${name} the GOAT of ${config.label.toLowerCase()}?`
-  const answer = `${name} ranks #${rankPosition} of ${totalInCategory} in the Vote4GOAT ${config.label.toLowerCase()} ranking, with a ${elo} Elo rating${
-    winRate != null ? ` and a ${winRate}% win rate across ${totalDuels} head-to-head duels` : ""
+  const answer = `${name} ranks #${rankPosition} of ${totalInCategory} in the Vote4GOAT ${config.label.toLowerCase()} ranking${
+    winRate != null ? `, with a ${elo} Elo rating and a ${winRate}% win rate` : `, with a ${elo} Elo rating`
   } voted on by fans worldwide.`
   const metaTitle = `${name} — ${config.label} GOAT Ranking`
   const metaDesc = answer
+  const shareText = `${name} ranks #${rankPosition} in the Vote4GOAT ${config.label.toLowerCase()} GOAT ranking. Do you agree? ${config.shareTag}`
 
   return (
     <>
@@ -82,10 +86,12 @@ export default function PlayerPage({
             <h1 className="text-2xl font-extrabold text-white">{name}</h1>
             <p className="text-sm text-white/40 mt-1">
               Ranked <span className="text-goat font-bold">#{rankPosition}</span> of {totalInCategory}
+              {movement > 0 && <span className="text-green-400 font-semibold ml-1.5">&#x2191;{movement} this week</span>}
+              {movement < 0 && <span className="text-red-400/80 font-semibold ml-1.5">&#x2193;{-movement} this week</span>}
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 mb-6">
+          <div className="grid grid-cols-2 gap-2 mb-6">
             <div className="bg-white/5 border border-white/10 rounded-2xl py-3 text-center">
               <div className="text-lg font-black text-goat">{elo}</div>
               <div className="text-[10px] uppercase tracking-wide text-white/30 mt-0.5">Elo Rating</div>
@@ -94,33 +100,61 @@ export default function PlayerPage({
               <div className="text-lg font-black text-goat">{winRate != null ? `${winRate}%` : "—"}</div>
               <div className="text-[10px] uppercase tracking-wide text-white/30 mt-0.5">Win Rate</div>
             </div>
-            <div className="bg-white/5 border border-white/10 rounded-2xl py-3 text-center">
-              <div className="text-lg font-black text-goat">{totalDuels}</div>
-              <div className="text-[10px] uppercase tracking-wide text-white/30 mt-0.5">Duels</div>
-            </div>
           </div>
 
-          <p className="text-sm text-white/60 leading-relaxed mb-8">{answer}</p>
+          <p className="text-sm text-white/60 leading-relaxed mb-2">{answer}</p>
+          {totalVotesInCategory > 0 && (
+            <p className="text-xs text-white/30 mb-6">
+              Part of {totalVotesInCategory.toLocaleString("en")} votes cast in the {config.label.toLowerCase()} ranking so far.
+            </p>
+          )}
 
-          <div className="flex items-stretch gap-2 mb-10">
-            {prevPlayer ? (
-              <a
-                href={`/${sport}/${prevPlayer.slug}`}
-                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-left hover:bg-white/10 transition"
-              >
-                <div className="text-[10px] uppercase tracking-wide text-white/25">&larr; Higher rank</div>
-                <div className="text-xs font-semibold text-white/70 truncate">{prevPlayer.name}</div>
-              </a>
-            ) : <div className="flex-1" />}
-            {nextPlayer ? (
-              <a
-                href={`/${sport}/${nextPlayer.slug}`}
-                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-right hover:bg-white/10 transition"
-              >
-                <div className="text-[10px] uppercase tracking-wide text-white/25">Lower rank &rarr;</div>
-                <div className="text-xs font-semibold text-white/70 truncate">{nextPlayer.name}</div>
-              </a>
-            ) : <div className="flex-1" />}
+          <a
+            href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1.5 bg-black border border-white/10 px-4 py-2.5 rounded-full text-xs font-medium hover:bg-white/5 transition mb-8"
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Share
+          </a>
+
+          <div className="mb-10">
+            <h2 className="text-sm font-bold text-white/70 mb-3">Ranking context</h2>
+            <div className="rounded-xl border border-white/10 overflow-hidden">
+              {topPlayer && (
+                <>
+                  <a
+                    href={`/${sport}/${topPlayer.slug}`}
+                    className="flex items-center justify-between px-3 py-2 hover:bg-white/5 transition border-b border-white/5"
+                  >
+                    <span className="text-xs text-white/50 w-8">#{topPlayer.rank}</span>
+                    <span className="text-xs font-semibold text-white/70 truncate flex-1 text-right">{topPlayer.name}</span>
+                  </a>
+                  <div className="text-center text-white/20 text-xs py-1 border-b border-white/5">&#183;&#183;&#183;</div>
+                </>
+              )}
+              {nearby.map((row) =>
+                row.isCurrent ? (
+                  <div
+                    key={row.rank}
+                    className="flex items-center justify-between px-3 py-2 bg-goat/10 border-b border-white/5 last:border-0"
+                  >
+                    <span className="text-xs text-goat font-bold w-8">#{row.rank}</span>
+                    <span className="text-xs font-bold text-goat truncate flex-1 text-right">{row.name}</span>
+                  </div>
+                ) : (
+                  <a
+                    key={row.rank}
+                    href={`/${sport}/${row.slug}`}
+                    className="flex items-center justify-between px-3 py-2 hover:bg-white/5 transition border-b border-white/5 last:border-0"
+                  >
+                    <span className="text-xs text-white/50 w-8">#{row.rank}</span>
+                    <span className="text-xs text-white/70 truncate flex-1 text-right">{row.name}</span>
+                  </a>
+                )
+              )}
+            </div>
           </div>
         </div>
 
@@ -174,11 +208,47 @@ export async function getStaticProps({ params }) {
   const ranking = categoryList[index]
   const rankPosition = index + 1
   const totalInCategory = categoryList.length
-  const prevPlayer = index > 0 ? categoryList[index - 1].entities : null
-  const nextPlayer = index < categoryList.length - 1 ? categoryList[index + 1].entities : null
 
+  // wins/losses can be skewed by one-off manual corrections (e.g. an admin
+  // running manual duels to stabilize a player's rating), so only win rate
+  // is shown — never the raw duel count, which isn't comparable across
+  // players when that's happened.
   const totalDuels = ranking.wins + ranking.losses
   const winRate = totalDuels > 0 ? Math.round((ranking.wins / totalDuels) * 1000) / 10 : null
+
+  let start = Math.max(0, index - NEARBY_WINDOW)
+  if (start === 1) start = 0
+  const end = Math.min(categoryList.length - 1, index + NEARBY_WINDOW)
+  const nearby = categoryList.slice(start, end + 1).map((r, i) => ({
+    rank: start + i + 1,
+    name: r.entities.name,
+    slug: r.entities.slug,
+    isCurrent: r.entity_id === entity.id,
+  }))
+  const topPlayer = start > 1
+    ? { rank: 1, name: categoryList[0].entities.name, slug: categoryList[0].entities.slug }
+    : null
+
+  // Weekly movement — same "at least 3 days old" comparison [sport].js uses,
+  // so an arrow keeps showing week-over-week movement right after a fresh
+  // snapshot. Empty/absent until ranking_snapshots builds up history.
+  let movement = 0
+  const threeDaysAgo = new Date(Date.now() - 3 * 864e5).toISOString()
+  const { data: snapRows } = await supabase
+    .from("ranking_snapshots")
+    .select("rank")
+    .eq("entity_category_id", config.entityCategoryId)
+    .eq("entity_ranking_id", ranking.id)
+    .lte("created_at", threeDaysAgo)
+    .order("created_at", { ascending: false })
+    .limit(1)
+  if (snapRows?.length) {
+    movement = snapRows[0].rank - rankPosition
+  }
+
+  const { data: totalVotesInCategory } = await supabase.rpc("get_total_votes", {
+    category_input: config.entityCategoryId,
+  })
 
   return {
     props: {
@@ -189,9 +259,10 @@ export async function getStaticProps({ params }) {
       rankPosition,
       totalInCategory,
       winRate,
-      totalDuels,
-      prevPlayer,
-      nextPlayer,
+      movement,
+      totalVotesInCategory: totalVotesInCategory || 0,
+      topPlayer,
+      nearby,
       canonicalUrl: `${config.canonical}/${entity.slug}`,
     },
     revalidate: 300,
