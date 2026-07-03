@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react"
 import { supabase } from "../lib/supabase"
-import { useRouter } from "next/router"
 
 const CrownLogo = () => (
   <svg width="24" height="22" viewBox="0 0 48 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -13,25 +12,10 @@ const CrownLogo = () => (
   </svg>
 )
 
-const MODES = [
-  { id: "dvels", label: "DVELS", micro: "1v1",    href: "/football" },
-  { id: "tops",  label: "T0PS",  micro: "Top 10", href: "/top10" },
-  { id: "rank",  label: "R4NK",  micro: "Weekly", href: "/rank4" },
-]
-
-const getActiveMode = (pathname) => {
-  if (pathname.startsWith("/football") || pathname.startsWith("/basketball")) return "dvels"
-  if (pathname.startsWith("/top10")) return "tops"
-  if (pathname.startsWith("/rank4")) return "rank"
-  return null
-}
-
-export default function Header({ hideNav = false }) {
+export default function Header() {
   const [user, setUser] = useState(null)
   const [showMenu, setShowMenu] = useState(false)
   const menuRef = useRef()
-  const router = useRouter()
-  const activeMode = getActiveMode(router.pathname)
 
   useEffect(() => {
     const checkUser = async () => {
@@ -116,45 +100,6 @@ export default function Header({ hideNav = false }) {
           )}
         </div>
       </div>
-
-      {/* Level 2 — mode nav */}
-      {!hideNav && <div className="flex items-stretch border-t border-white/5">
-        {MODES.map((mode) => {
-          const isActive = activeMode === mode.id
-          return (
-            <a
-              key={mode.id}
-              href={mode.href}
-              className={`relative flex-1 flex flex-col items-center justify-center py-2 gap-0.5 transition ${
-                isActive ? "text-white" : "text-white/30 hover:text-white/60"
-              }`}
-            >
-              <span
-                className={`text-sm font-black tracking-wider leading-none ${isActive ? "text-white" : ""}`}
-                style={{ fontFamily: "system-ui, sans-serif" }}
-              >
-                {mode.label.split("").map((char, i) => {
-                  const isAccent =
-                    (mode.id === "dvels" && (i === 1 || i === 4)) ||
-                    (mode.id === "tops"  && (i === 1 || i === 2)) ||
-                    (mode.id === "rank"  && i === 1)
-                  return (
-                    <span key={i} className={isAccent ? "text-goat" : ""}>
-                      {char}
-                    </span>
-                  )
-                })}
-              </span>
-              <span className={`text-[9px] tracking-widest uppercase leading-none font-medium transition ${isActive ? "text-white/40" : "text-white/15"}`}>
-                {mode.micro}
-              </span>
-              {isActive && (
-                <span className="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-goat rounded-full" />
-              )}
-            </a>
-          )
-        })}
-      </div>}
 
     </header>
   )
