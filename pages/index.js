@@ -206,7 +206,7 @@ export default function Home({ footballRanking, basketballRanking, totalVotes = 
 
       <main className="min-h-screen bg-background text-white font-sans flex flex-col">
 
-        <Header hideNav />
+        <Header />
 
         <div className="flex-1 px-4 max-w-lg mx-auto w-full flex flex-col gap-6 pt-5 pb-4">
 
