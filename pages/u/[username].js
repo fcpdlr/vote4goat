@@ -32,9 +32,9 @@ export default function PublicProfile() {
 
       if (prof.is_public) {
         const [{ count: dvels }, { count: tops }, { count: rank4 }] = await Promise.all([
-          supabase.from("votes_new").select("*", { count: "exact", head: true }).eq("user_id", prof.id),
-          supabase.from("top10_votes").select("*", { count: "exact", head: true }).eq("user_id", prof.id),
-          supabase.from("rank4_votes").select("*", { count: "exact", head: true }).eq("user_id", prof.id),
+          supabase.from("votes_new").select("id", { count: "exact", head: true }).eq("user_id", prof.id),
+          supabase.from("top10_submissions").select("id", { count: "exact", head: true }).eq("user_id", prof.id),
+          supabase.from("rank4_votes").select("id", { count: "exact", head: true }).eq("user_id", prof.id),
         ])
         setStats({ dvels: dvels || 0, tops: tops || 0, rank4: rank4 || 0 })
       }

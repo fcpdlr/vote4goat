@@ -72,12 +72,12 @@ export default function AccountPage() {
 
       const { count: dvelsCount } = await supabase
         .from("votes_new")
-        .select("*", { count: "exact", head: true })
+        .select("id", { count: "exact", head: true })
         .eq("user_id", user.id)
 
       const { count: topsCount } = await supabase
-        .from("top10_votes")
-        .select("*", { count: "exact", head: true })
+        .from("top10_submissions")
+        .select("id", { count: "exact", head: true })
         .eq("user_id", user.id)
 
       const { count: rank4Count } = await supabase
@@ -117,7 +117,7 @@ export default function AccountPage() {
       // T0PS history
       let topsHistory = []
       const { data: topsRaw } = await supabase
-        .from("top10_votes")
+        .from("top10_submissions")
         .select("id, created_at, top10_category_id")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
