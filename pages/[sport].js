@@ -3,30 +3,12 @@ import Meta from "../components/Meta"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
 import { supabase } from "../lib/supabase"
+import { SPORTS } from "../lib/sports"
 
 const K = 32
 
 function expectedScore(rA, rB) {
   return 1 / (1 + Math.pow(10, (rB - rA) / 400))
-}
-
-const SPORTS = {
-  football: {
-    entityCategoryId: 1,
-    label: "Football",
-    metaTitle: "Football GOAT Ranking | Vote4GOAT",
-    metaDesc: "Vote in 1v1 duels and shape the all-time football GOAT ranking. Updated in real time with every vote.",
-    canonical: "https://vote4goat.com/football",
-    shareTag: "#Vote4GOAT #GOAT #Football",
-  },
-  basketball: {
-    entityCategoryId: 2,
-    label: "Basketball",
-    metaTitle: "Basketball GOAT Ranking | Vote4GOAT",
-    metaDesc: "Vote in 1v1 duels and shape the all-time basketball GOAT ranking. Updated in real time with every vote.",
-    canonical: "https://vote4goat.com/basketball",
-    shareTag: "#Vote4GOAT #GOAT #Basketball",
-  },
 }
 
 export default function SportPage({ sport, initialRanking, movement = {}, totalVotes = 0 }) {
@@ -103,7 +85,7 @@ export default function SportPage({ sport, initialRanking, movement = {}, totalV
   const fetchRanking = async (visibleLimit) => {
     const { data, error } = await supabase
       .from("entity_rankings")
-      .select("id, elo_rating, entities (name, name_line1, name_line2, name_line3, image_url)")
+      .select("id, elo_rating, entities (name, name_line1, name_line2, name_line3, image_url, slug)")
       .eq("entity_category_id", config.entityCategoryId)
       .order("elo_rating", { ascending: false })
     if (error) console.error("Error in fetchRanking:", error)
@@ -413,7 +395,10 @@ export default function SportPage({ sport, initialRanking, movement = {}, totalV
                       <tr key={player.id} className={"border-t border-white/5 hover:bg-white/5 transition " + rowStyle}>
                         <td className="pl-2 pr-1 py-2.5 text-xs text-white/40 w-8">{medal || rankPos}</td>
                         <td className="pl-1 pr-2 py-2.5">
-                          <div className="flex items-center gap-2">
+                          <a
+                            href={player.entities.slug ? `/${sport}/${player.entities.slug}` : undefined}
+                            className="flex items-center gap-2"
+                          >
                             <img src={player.entities.image_url} alt={player.entities.name} className="w-7 h-7 rounded-full object-cover flex-shrink-0 border border-white/10" loading="lazy" />
                             <span className={"truncate text-sm font-semibold " + nameColor}>{player.entities.name}</span>
                             {movement[player.id] > 0 && (
@@ -426,7 +411,7 @@ export default function SportPage({ sport, initialRanking, movement = {}, totalV
                                 &#x2193;{-movement[player.id]}
                               </span>
                             )}
-                          </div>
+                          </a>
                         </td>
                         <td className="px-2 py-2.5 text-right text-xs text-white/40 w-14">{Math.round(player.elo_rating)}</td>
                         <td className="px-2 py-2.5 w-16 sm:w-28">
@@ -475,7 +460,7 @@ export async function getStaticProps({ params }) {
   const config = SPORTS[sport]
   const { data } = await supabase
     .from("entity_rankings")
-    .select("id, elo_rating, entities (name, name_line1, name_line2, name_line3, image_url)")
+    .select("id, elo_rating, entities (name, name_line1, name_line2, name_line3, image_url, slug)")
     .eq("entity_category_id", config.entityCategoryId)
     .order("elo_rating", { ascending: false })
 
