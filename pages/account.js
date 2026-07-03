@@ -71,7 +71,7 @@ export default function AccountPage() {
       }
 
       const { count: dvelsCount } = await supabase
-        .from("votes")
+        .from("votes_new")
         .select("*", { count: "exact", head: true })
         .eq("user_id", user.id)
 
@@ -94,10 +94,10 @@ export default function AccountPage() {
       // DVELS history
       let dvelsHistory = []
       const { data: dvelsRaw } = await supabase
-        .from("votes")
-        .select("id, created_at, winner_id, loser_id")
+        .from("votes_new")
+        .select("id, created_at:timestamp, winner_id:winner_ranking_id, loser_id:loser_ranking_id")
         .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
+        .order("timestamp", { ascending: false })
         .limit(5)
       if (dvelsRaw?.length > 0) {
         const allIds = [...new Set(dvelsRaw.flatMap(v => [v.winner_id, v.loser_id]))]
