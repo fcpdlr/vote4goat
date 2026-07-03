@@ -291,16 +291,14 @@ export async function getStaticProps() {
       .eq("entity_category_id", 2)
       .order("elo_rating", { ascending: false })
       .limit(3),
-    supabase
-      .from("votes")
-      .select("*", { count: "exact", head: true }),
+    supabase.rpc("get_total_votes"),
   ])
 
   return {
     props: {
       footballRanking: footballRes.data || [],
       basketballRanking: basketballRes.data || [],
-      totalVotes: votesRes.count || 0,
+      totalVotes: votesRes.data || 0,
     },
     revalidate: 60,
   }

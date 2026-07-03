@@ -481,9 +481,9 @@ export async function getStaticProps({ params }) {
 
   const ranking = data || []
 
-  const { count: totalVotes } = await supabase
-    .from("votes")
-    .select("*", { count: "exact", head: true })
+  // RLS on votes only allows users to read their own rows, so an anonymous
+  // count returns nothing — this security-definer RPC exposes just the total.
+  const { data: totalVotes } = await supabase.rpc("get_total_votes")
 
   // Weekly rank movement — compares live rank vs last week's snapshot.
   // Degrades silently (no arrows) if the ranking_snapshots table doesn't exist yet.
