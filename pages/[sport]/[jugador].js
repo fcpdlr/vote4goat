@@ -17,7 +17,6 @@ export default function PlayerPage({
   totalInCategory,
   winRate,
   totalDuels,
-  recentDuels,
   prevPlayer,
   nextPlayer,
   canonicalUrl,
@@ -101,49 +100,7 @@ export default function PlayerPage({
             </div>
           </div>
 
-          <p className="text-sm text-white/60 leading-relaxed mb-6">{answer}</p>
-
-          <a
-            href={`/${sport}`}
-            className="block text-center bg-goat text-black font-bold px-4 py-3 rounded-full hover:brightness-105 transition mb-8"
-          >
-            Vote in a duel &rarr;
-          </a>
-
-          {recentDuels.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-sm font-bold text-white/70 mb-3">Recent duels</h2>
-              <div className="flex flex-col gap-2">
-                {recentDuels.map((duel) => (
-                  <div
-                    key={duel.id}
-                    className="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl px-3 py-2"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span
-                        className={
-                          "text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 " +
-                          (duel.won ? "bg-green-400/15 text-green-400" : "bg-red-400/15 text-red-400/80")
-                        }
-                      >
-                        {duel.won ? "W" : "L"}
-                      </span>
-                      {duel.opponent?.slug ? (
-                        <a href={`/${sport}/${duel.opponent.slug}`} className="text-xs text-white/60 truncate hover:text-white transition">
-                          vs {duel.opponent.name}
-                        </a>
-                      ) : (
-                        <span className="text-xs text-white/60 truncate">vs {duel.opponent?.name || "Unknown"}</span>
-                      )}
-                    </div>
-                    <span className="text-[10px] text-white/25 flex-shrink-0">
-                      {new Date(duel.timestamp).toLocaleDateString("en", { month: "short", day: "numeric" })}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <p className="text-sm text-white/60 leading-relaxed mb-8">{answer}</p>
 
           <div className="flex items-stretch gap-2 mb-10">
             {prevPlayer ? (
@@ -201,72 +158,27 @@ export async function getStaticProps({ params }) {
     .maybeSingle()
   if (!entity) return { notFound: true }
 
-  const { data: ranking } = await supabase
+  // Fetch the whole category ordered by Postgres itself and locate this
+  // player by index, instead of re-querying with elo_rating as a filter:
+  // that value round-trips through a JS float and loses precision (the
+  // column stores far more decimal digits than a JS number can hold), which
+  // made a player's own row occasionally count as "greater than itself".
+  const { data: categoryList } = await supabase
     .from("entity_rankings")
-    .select("id, elo_rating, wins, losses, entity_category_id")
-    .eq("entity_id", entity.id)
+    .select("id, entity_id, elo_rating, wins, losses, entities(name, slug)")
     .eq("entity_category_id", config.entityCategoryId)
-    .maybeSingle()
-  if (!ranking) return { notFound: true }
+    .order("elo_rating", { ascending: false })
 
-  const [{ count: better }, { count: totalInCategory }] = await Promise.all([
-    supabase
-      .from("entity_rankings")
-      .select("id", { count: "exact", head: true })
-      .eq("entity_category_id", config.entityCategoryId)
-      .gt("elo_rating", ranking.elo_rating),
-    supabase
-      .from("entity_rankings")
-      .select("id", { count: "exact", head: true })
-      .eq("entity_category_id", config.entityCategoryId),
-  ])
-  const rankPosition = (better || 0) + 1
+  const index = (categoryList || []).findIndex((r) => r.entity_id === entity.id)
+  if (index === -1) return { notFound: true }
+  const ranking = categoryList[index]
+  const rankPosition = index + 1
+  const totalInCategory = categoryList.length
+  const prevPlayer = index > 0 ? categoryList[index - 1].entities : null
+  const nextPlayer = index < categoryList.length - 1 ? categoryList[index + 1].entities : null
 
   const totalDuels = ranking.wins + ranking.losses
   const winRate = totalDuels > 0 ? Math.round((ranking.wins / totalDuels) * 1000) / 10 : null
-
-  const { data: recentRaw } = await supabase
-    .from("votes_new")
-    .select("id, timestamp, winner_ranking_id, loser_ranking_id")
-    .or(`winner_ranking_id.eq.${ranking.id},loser_ranking_id.eq.${ranking.id}`)
-    .order("timestamp", { ascending: false })
-    .limit(6)
-
-  let recentDuels = []
-  if (recentRaw?.length > 0) {
-    const opponentIds = [
-      ...new Set(recentRaw.map((d) => (d.winner_ranking_id === ranking.id ? d.loser_ranking_id : d.winner_ranking_id))),
-    ]
-    const { data: opponents } = await supabase
-      .from("entity_rankings")
-      .select("id, entities(name, slug)")
-      .in("id", opponentIds)
-    const opponentMap = Object.fromEntries((opponents || []).map((o) => [o.id, o.entities]))
-    recentDuels = recentRaw.map((d) => {
-      const won = d.winner_ranking_id === ranking.id
-      const opponentId = won ? d.loser_ranking_id : d.winner_ranking_id
-      return { id: d.id, timestamp: d.timestamp, won, opponent: opponentMap[opponentId] }
-    })
-  }
-
-  const [{ data: prevRow }, { data: nextRow }] = await Promise.all([
-    supabase
-      .from("entity_rankings")
-      .select("elo_rating, entities(name, slug)")
-      .eq("entity_category_id", config.entityCategoryId)
-      .lt("elo_rating", ranking.elo_rating)
-      .order("elo_rating", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    supabase
-      .from("entity_rankings")
-      .select("elo_rating, entities(name, slug)")
-      .eq("entity_category_id", config.entityCategoryId)
-      .gt("elo_rating", ranking.elo_rating)
-      .order("elo_rating", { ascending: true })
-      .limit(1)
-      .maybeSingle(),
-  ])
 
   return {
     props: {
@@ -275,12 +187,11 @@ export async function getStaticProps({ params }) {
       entity,
       ranking,
       rankPosition,
-      totalInCategory: totalInCategory || 0,
+      totalInCategory,
       winRate,
       totalDuels,
-      recentDuels,
-      prevPlayer: prevRow ? prevRow.entities : null,
-      nextPlayer: nextRow ? nextRow.entities : null,
+      prevPlayer,
+      nextPlayer,
       canonicalUrl: `${config.canonical}/${entity.slug}`,
     },
     revalidate: 300,
