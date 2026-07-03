@@ -29,7 +29,7 @@ const SPORTS = {
   },
 }
 
-export default function SportPage({ sport, initialRanking }) {
+export default function SportPage({ sport, initialRanking, movement = {}, totalVotes = 0 }) {
   const config = SPORTS[sport]
 
   const [duel, setDuel] = useState([])
@@ -378,13 +378,18 @@ export default function SportPage({ sport, initialRanking }) {
           </div>
 
           <div className="bg-background text-white px-4 py-8 mt-4 rounded-t-3xl">
-            <div className="flex items-center justify-center gap-2 mb-6">
+            <div className="flex items-center justify-center gap-2 mb-1">
               <h2 className="text-xl font-bold">Current Ranking</h2>
               <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-2.5 py-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                 <span className="text-white/40 text-xs">live</span>
               </div>
             </div>
+            {totalVotes > 0 && (
+              <p className="text-center text-xs text-white/25 mb-6">
+                Built from <span className="text-goat/80 font-semibold">{totalVotes.toLocaleString("en")}</span> votes by fans worldwide
+              </p>
+            )}
             <div className="flex justify-center">
               <table className="w-full max-w-md text-sm">
                 <thead>
@@ -411,6 +416,16 @@ export default function SportPage({ sport, initialRanking }) {
                           <div className="flex items-center gap-2">
                             <img src={player.entities.image_url} alt={player.entities.name} className="w-7 h-7 rounded-full object-cover flex-shrink-0 border border-white/10" loading="lazy" />
                             <span className={"truncate text-sm font-semibold " + nameColor}>{player.entities.name}</span>
+                            {movement[player.id] > 0 && (
+                              <span className="text-[10px] font-bold text-green-400 flex-shrink-0" title={`Up ${movement[player.id]} this week`}>
+                                &#x2191;{movement[player.id]}
+                              </span>
+                            )}
+                            {movement[player.id] < 0 && (
+                              <span className="text-[10px] font-bold text-red-400/70 flex-shrink-0" title={`Down ${-movement[player.id]} this week`}>
+                                &#x2193;{-movement[player.id]}
+                              </span>
+                            )}
                           </div>
                         </td>
                         <td className="px-2 py-2.5 text-right text-xs text-white/40 w-14">{Math.round(player.elo_rating)}</td>
@@ -464,5 +479,66 @@ export async function getStaticProps({ params }) {
     .eq("entity_category_id", config.entityCategoryId)
     .order("elo_rating", { ascending: false })
 
-  return { props: { sport, initialRanking: data || [] }, revalidate: 60 }
+  const ranking = data || []
+
+  const { count: totalVotes } = await supabase
+    .from("votes")
+    .select("*", { count: "exact", head: true })
+
+  // Weekly rank movement — compares live rank vs last week's snapshot.
+  // Degrades silently (no arrows) if the ranking_snapshots table doesn't exist yet.
+  const movement = {}
+  try {
+    const now = Date.now()
+    const threeDaysAgo = new Date(now - 3 * 864e5).toISOString()
+
+    const { data: latest } = await supabase
+      .from("ranking_snapshots")
+      .select("created_at")
+      .eq("entity_category_id", config.entityCategoryId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+
+    const latestAt = latest?.[0]?.created_at ? new Date(latest[0].created_at).getTime() : null
+
+    // Comparison target: newest snapshot at least 3 days old, so arrows
+    // keep showing week-over-week movement right after a fresh snapshot.
+    const { data: snapRows } = await supabase
+      .from("ranking_snapshots")
+      .select("entity_ranking_id, rank")
+      .eq("entity_category_id", config.entityCategoryId)
+      .lte("created_at", threeDaysAgo)
+      .order("created_at", { ascending: false })
+      .limit(ranking.length || 500)
+
+    if (snapRows?.length) {
+      const prevRank = {}
+      for (const row of snapRows) {
+        if (!(row.entity_ranking_id in prevRank)) prevRank[row.entity_ranking_id] = row.rank
+      }
+      ranking.forEach((r, i) => {
+        const prev = prevRank[r.id]
+        if (prev) {
+          const delta = prev - (i + 1)
+          if (delta !== 0) movement[r.id] = delta
+        }
+      })
+    }
+
+    // Take a new snapshot once a week (runs inside ISR regeneration).
+    if ((!latestAt || latestAt < now - 7 * 864e5) && ranking.length > 0) {
+      await supabase.from("ranking_snapshots").insert(
+        ranking.map((r, i) => ({
+          entity_category_id: config.entityCategoryId,
+          entity_ranking_id: r.id,
+          rank: i + 1,
+        }))
+      )
+    }
+  } catch (e) {}
+
+  return {
+    props: { sport, initialRanking: ranking, movement, totalVotes: totalVotes || 0 },
+    revalidate: 60,
+  }
 }

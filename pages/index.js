@@ -191,7 +191,7 @@ function CategoryList({ active }) {
 
 // ─── page ─────────────────────────────────────────────────────────────────────
 
-export default function Home({ footballRanking, basketballRanking }) {
+export default function Home({ footballRanking, basketballRanking, totalVotes = 0 }) {
   const [activeCat, setActiveCat] = useState("football")
 
   const cat = CATEGORIES.find(c => c.key === activeCat)
@@ -238,6 +238,11 @@ export default function Home({ footballRanking, basketballRanking }) {
             <p className="relative text-sm text-white/35 mt-3 max-w-xs mx-auto leading-relaxed">
               {cat.subtitle}
             </p>
+            {totalVotes > 0 && (
+              <p className="relative text-xs text-white/25 mt-3">
+                <span className="text-goat font-bold">{totalVotes.toLocaleString("en")}</span> votes cast · and counting
+              </p>
+            )}
           </div>
 
           {/* Live ranking */}
@@ -273,7 +278,7 @@ export default function Home({ footballRanking, basketballRanking }) {
 // ─── data ─────────────────────────────────────────────────────────────────────
 
 export async function getStaticProps() {
-  const [footballRes, basketballRes] = await Promise.all([
+  const [footballRes, basketballRes, votesRes] = await Promise.all([
     supabase
       .from("entity_rankings")
       .select("id, elo_rating, entities (name, image_url)")
@@ -286,12 +291,16 @@ export async function getStaticProps() {
       .eq("entity_category_id", 2)
       .order("elo_rating", { ascending: false })
       .limit(3),
+    supabase
+      .from("votes")
+      .select("*", { count: "exact", head: true }),
   ])
 
   return {
     props: {
       footballRanking: footballRes.data || [],
       basketballRanking: basketballRes.data || [],
+      totalVotes: votesRes.count || 0,
     },
     revalidate: 60,
   }
